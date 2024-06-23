@@ -1,0 +1,2997 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Gibbs sampling &#8212; Uncertainty Quantification in Inverse Problems with CUQIpy</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=3ee479438cf8b5e0d341" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=3ee479438cf8b5e0d341" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=3ee479438cf8b5e0d341" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=3ee479438cf8b5e0d341" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=a3416100" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=87e54e7c" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=3ee479438cf8b5e0d341" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=3ee479438cf8b5e0d341" />
+  <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=3ee479438cf8b5e0d341"></script>
+
+    <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js?v=4a39c7ea"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"tex": {"macros": {"dd": "\\mathrm{d}", "abs": ["\\left\\vert#1\\right\\vert", 1], "ve": ["\\bm{#1}", 1], "mat": ["\\mathbf{#1}", 1], "N": "\\mathbb{N}", "floor": ["\\lfloor#1\\rfloor", 1], "bmat": ["\\left[\\begin{array}"], "emat": ["\\end{array}\\right]"], "bm": ["{\\boldsymbol #1}", 1]}}, "options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'chapter02/gibbs';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Chapter 3: Sampling with CUQIpy" href="../chapter03/chapter03.html" />
+    <link rel="prev" title="Distributions, priors, and basic sampling in CUQIpy" href="prior.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+
+<a class="navbar-brand logo" href="../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/logo.png" class="logo__image only-light" alt="Uncertainty Quantification in Inverse Problems with CUQIpy - Home"/>
+    <script>document.write(`<img src="../_static/logo.png" class="logo__image only-dark" alt="Uncertainty Quantification in Inverse Problems with CUQIpy - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../intro.html">
+                    Welcome to the “Uncertainty Quantification in Inverse Problems with CUQIpy” mini-book!
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../chapter01/chapter01.html">Chapter 1: Introduction to Bayesian Inverse Problems (BIP) in CUQIpy</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../chapter01/introduction_overview_of_cuqipy.html">Overview of CUQIpy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter01/Intro_example.html">Probably the simplest BIP in the world</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter01/two_forward_problems_new.html">Two forward models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter01/extra_forward_models.html">Extra material: Forward models, data generation and forward UQ</a></li>
+
+
+
+
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="chapter02.html">Chapter 2: Prior and Hierarchical Bayesian Models</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="prior.html">Distributions, priors, and basic sampling in CUQIpy</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Gibbs sampling</a></li>
+
+
+
+
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../chapter03/chapter03.html">Chapter 3: Sampling with CUQIpy</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../chapter03/sampling_with_cuqipy_two_target.html">Sampling with CUQIpy: Two target distributions and exploring the posterior using the BayesianProblem class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter03/gradient_based_sampling_with_cuqipy.html">Sampling with CUQIpy: five little stories</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../chapter04/chapter04.html">Chapter 4: Advanced Bayesian Inference in CUQIpy</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../chapter04/project.html">CUQIpy component final project</a></li>
+
+
+
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-launch-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Launch interactive content">
+    <i class="fas fa-rocket"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://colab.research.google.com/github/CUQI-DTU/CUQI-Book/blob/master/chapter02/gibbs.ipynb" target="_blank"
+   class="btn btn-sm dropdown-item"
+   title="Launch on Colab"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  
+    <img alt="Colab logo" src="../_static/images/logo_colab.png">
+  </span>
+<span class="btn__text-container">Colab</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="initThebeSBT()"
+  class="btn btn-sm btn-launch-thebe dropdown-item"
+  title="Launch Thebe"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-play"></i>
+  </span>
+<span class="btn__text-container">Live Code</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/CUQI-DTU/CUQI-Book" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/CUQI-DTU/CUQI-Book/issues/new?title=Issue%20on%20page%20%2Fchapter02/gibbs.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/chapter02/gibbs.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Gibbs sampling</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Gibbs sampling</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#table-of-contents"><font color="#CD853F"> Table of contents </font></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#learning-objectives"><font color="CD853F"> 0. Learning objectives </font> <a name="Learning-objectives"></a></a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#the-basics-of-gibbs-sampling"><font color="CD853F">  1. The basics of Gibbs sampling </font> <a class="anchor" id="basics"></a></a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#defining-a-sampling-strategy"><font color="CD853F">  1.1 Defining a sampling strategy </font></a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#gibbs-for-inverse-problems"><font color="CD853F">  2. Gibbs for inverse problems </font> <a class="anchor" id="inverse"></a></a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#deterministic-forward-model-and-data"><font color="CD853F">  2.1 Deterministic forward model and data </font></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#hierarchical-bayesian-model"><font color="CD853F">  2.2 Hierarchical Bayesian model </font></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercise"><font color="#8B4513"> ★ Exercise </font></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#posterior-distribution"><font color="CD853F">  Posterior distribution </font></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1"><font color="#8B4513"> Exercise </font></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gibbs-sampler"><font color="CD853F">  2.3 Gibbs Sampler </font></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#analyze-results"><font color="CD853F">  2.4 Analyze results </font></a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#exploring-other-priors"><font color="CD853F">  3 Exploring other priors </font> <a class="anchor" id="exploring-other-priors"></a></a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gibbs-sampler-with-laplace-prior"><font color="CD853F">  3.1 Gibbs Sampler (with Laplace prior) </font></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2"><font color="CD853F">  3.2 Analyze results </font></a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#connection-to-bayesianproblem-class"><font color="CD853F">  4. Connection to BayesianProblem class </font> <a class="anchor" id="BayesianProblem"></a></a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id3"><font color="#8B4513"> ★ Exercise </font></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id4"><font color="#8B4513"> ★ Exercise </font></a></li>
+</ul>
+</li>
+</ul>
+
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="gibbs-sampling">
+<h1>Gibbs sampling<a class="headerlink" href="#gibbs-sampling" title="Link to this heading">#</a></h1>
+<p>In this notebook, we show how to use CUQIpy to sample hierarchical Bayesian models using Gibbs sampling.</p>
+<p>Gibbs sampling is a Markov chain Monte Carlo (MCMC) method for sampling a joint probability distribution of multiple random variables.
+Instead of sampling all variables simultaneously, Gibbs sampling samples the variables sequentially. The sampling of each variable is achieved by sampling from the conditional distribution of that variable given (fixed, previously sampled) values of the other variables.</p>
+<p>Gibbs sampling is often an efficient way of sampling from a joint distribution if the conditional distributions are easy to sample from. On the other hand, if the conditional distributions are highly correlated and/or are difficult to sample from, then Gibbs sampling can be very inefficient. For these reasons, Gibbs sampling is often a double-edged sword that needs to be used in the right context.</p>
+<section id="table-of-contents">
+<h2><font color=#CD853F> Table of contents </font><a class="headerlink" href="#table-of-contents" title="Link to this heading">#</a></h2>
+<ol class="arabic simple" start="0">
+<li><p><a class="reference internal" href="#Learning-objectives"><span class="xref myst">Learning objectives</span></a></p></li>
+<li><p><a class="reference internal" href="#basics"><span class="xref myst">The basics of Gibbs sampling</span></a></p></li>
+<li><p><a class="reference internal" href="#inverse"><span class="xref myst">Gibbs for inverse problems</span></a></p></li>
+<li><p><a class="reference internal" href="#exploring-other-priors"><span class="xref myst">Exploring other priors</span></a></p></li>
+<li><p><a class="reference internal" href="#BayesianProblem"><span class="xref myst">Connection to BayesianProblem class</span></a></p></li>
+</ol>
+</section>
+<section id="learning-objectives">
+<h2><font color=CD853F> 0. Learning objectives </font> <a name="Learning-objectives"></a><a class="headerlink" href="#learning-objectives" title="Link to this heading">#</a></h2>
+<p>Going through this notebook you will see how to:</p>
+<ul class="simple">
+<li><p>Describe the basic idea of Gibbs sampling.</p></li>
+<li><p>Define a hierarchical Bayesian model using CUQIpy.</p></li>
+<li><p>Define a Gibbs sampling scheme in CUQIpy.</p></li>
+<li><p>Run the Gibbs sampler and analyze the results.</p></li>
+</ul>
+<div class="cell tag_hide-cell docutils container">
+<details class="hide above-input">
+<summary aria-label="Toggle hidden content">
+<span class="collapsed">Show code cell content</span>
+<span class="expanded">Hide code cell content</span>
+</summary>
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+<span class="kn">import</span> <span class="nn">cuqi</span>
+<span class="kn">from</span> <span class="nn">cuqi.testproblem</span> <span class="kn">import</span> <span class="n">Deconvolution1D</span>
+<span class="kn">from</span> <span class="nn">cuqi.distribution</span> <span class="kn">import</span> <span class="n">Gaussian</span><span class="p">,</span> <span class="n">Gamma</span><span class="p">,</span> <span class="n">JointDistribution</span><span class="p">,</span> <span class="n">GMRF</span><span class="p">,</span> <span class="n">LMRF</span>
+<span class="kn">from</span> <span class="nn">cuqi.sampler</span> <span class="kn">import</span> <span class="n">Gibbs</span><span class="p">,</span> <span class="n">LinearRTO</span><span class="p">,</span> <span class="n">Conjugate</span><span class="p">,</span> <span class="n">UGLA</span><span class="p">,</span> <span class="n">ConjugateApprox</span>
+<span class="kn">from</span> <span class="nn">cuqi.problem</span> <span class="kn">import</span> <span class="n">BayesianProblem</span>
+<span class="kn">from</span> <span class="nn">cuqi.model</span> <span class="kn">import</span> <span class="n">LinearModel</span>
+</pre></div>
+</div>
+</div>
+</details>
+</div>
+</section>
+</section>
+<section class="tex2jax_ignore mathjax_ignore" id="the-basics-of-gibbs-sampling">
+<h1><font color=CD853F>  1. The basics of Gibbs sampling </font> <a class="anchor" id="basics"></a><a class="headerlink" href="#the-basics-of-gibbs-sampling" title="Link to this heading">#</a></h1>
+<p>To begin, let us consider a very simple Bayesian problem with two random variables, <span class="math notranslate nohighlight">\(d\)</span> and <span class="math notranslate nohighlight">\(x\)</span>.</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{align*}
+d &amp;\sim \mathrm{Gamma}(1, 1)\\
+x &amp;\sim \mathrm{Gaussian}(0, d^{-1}).
+\end{align*}
+\end{split}\]</div>
+<p>As we have already seen in the previous notebooks, we can define the distributions in CUQIpy as follows:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">d</span> <span class="o">=</span> <span class="n">Gamma</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">Gaussian</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">cov</span><span class="o">=</span><span class="k">lambda</span> <span class="n">d</span><span class="p">:</span> <span class="mi">1</span><span class="o">/</span><span class="n">d</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Our goal is to sample from the joint distribution <span class="math notranslate nohighlight">\(p(d, x)\)</span>. We can think of this as our target distribution.</p>
+<p><strong>Note</strong> In this contrived example, we can actually sample from the joint distribution directly. However, we will use this example to illustrate the basic idea of Gibbs sampling.</p>
+<p>We define the joint distribution in CUQIpy as follows:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">target</span> <span class="o">=</span> <span class="n">JointDistribution</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">d</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>JointDistribution(
+    Equation: 
+	p(x,d) = p(x|d)p(d)
+    Densities: 
+	x ~ CUQI Gaussian. Conditioning variables [&#39;d&#39;].
+	d ~ CUQI Gamma.
+)
+</pre></div>
+</div>
+</div>
+</div>
+<p>One idea for sampling <span class="math notranslate nohighlight">\(p(d,x)\)</span> is to define the parameter <span class="math notranslate nohighlight">\(\boldsymbol{\theta} = [d; x]\)</span> and sample from distribution <span class="math notranslate nohighlight">\(p(\boldsymbol{\theta})\)</span> at the same time. However, this is only possible for simple models, where the joint distribution is easy to sample from.</p>
+<p>Gibbs sampling is an alternative approach, where we iteratively sample each variable from its conditional distribution, given the values of all other variables in the distribution. For this task with <span class="math notranslate nohighlight">\(p(d,x)\)</span>, we would sample from <span class="math notranslate nohighlight">\(p(d|x)\)</span> and <span class="math notranslate nohighlight">\(p(x|d)\)</span> iteratively. We can summarize this procedure as repeating the following steps:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{align*}
+\text{1. draw } d^{(i+1)} &amp;\sim p(d \mid x^{(i)})\\
+\text{2. draw } x^{(i+1)} &amp;\sim p(x \mid d^{(i+1)})
+\end{align*}
+\end{split}\]</div>
+<p>where <span class="math notranslate nohighlight">\(x^{(i)}\)</span> and <span class="math notranslate nohighlight">\(d^{(i)}\)</span> are the values of <span class="math notranslate nohighlight">\(x\)</span> and <span class="math notranslate nohighlight">\(d\)</span> at iteration <span class="math notranslate nohighlight">\(i\)</span>. It can be shown that samples drawn from the above scheme will be distributed according to <span class="math notranslate nohighlight">\(p(d, x)\)</span>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># We define a &quot;direct&quot; sampler. This is a sampler that samples from the target distribution directly.</span>
+<span class="c1"># This is likely coming in a future version of CUQIpy. For now its here only for the example.</span>
+<span class="k">class</span> <span class="nc">Direct</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Direct sampler. This uses the sample method of the target distribution. </span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    target : Distribution</span>
+<span class="sd">        The target distribution to sample from.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">target</span> <span class="o">=</span> <span class="n">target</span>
+    
+    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Take a single step of the sampler. &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<section id="defining-a-sampling-strategy">
+<h2><font color=CD853F>  1.1 Defining a sampling strategy </font><a class="headerlink" href="#defining-a-sampling-strategy" title="Link to this heading">#</a></h2>
+<p>When the conditional distributions are easy to sample from, Gibbs sampling can be very efficient. In the example above, we aim to sample from the following conditional distributions:</p>
+<ol class="arabic simple">
+<li><p>Sample <span class="math notranslate nohighlight">\(x^{(i+1)}\)</span> from <span class="math notranslate nohighlight">\(p(x \mid d^{(i)})\)</span>,</p></li>
+<li><p>Sample <span class="math notranslate nohighlight">\(d^{(i+1)}\)</span> from <span class="math notranslate nohighlight">\(p(d \mid x^{(i+1)})\propto L(d\mid x^{(i+1)})p(d)\)</span>,</p></li>
+</ol>
+<p>where <span class="math notranslate nohighlight">\(L(d\mid x):=p(x\mid d)\)</span> is the likelihood function with respect to <span class="math notranslate nohighlight">\(d\)</span>.</p>
+<p><strong>For step 1:</strong> Note that we already know that <span class="math notranslate nohighlight">\(p(x\mid d)=\mathrm{Gaussian}(0, d^{-1})\)</span>. Hence, we can directly sample from <span class="math notranslate nohighlight">\(x \mid  d\)</span> by sampling from <span class="math notranslate nohighlight">\(\mathrm{Gaussian}(0, d^{-1})\)</span>.</p>
+<p><strong>For step 2:</strong> For <span class="math notranslate nohighlight">\(p(d\mid x)\)</span> we could use any MCMC sampler to sample with. However, note that the Gaussian and Gamma distributions are conjugate, so we can recognize <span class="math notranslate nohighlight">\(p(d\mid x)\)</span> as a Gamma distribution:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{align*}
+p(d\mid x) &amp;\propto L(d\mid x)p(d)\\
+&amp;= \exp\left(-\frac{d}{2}x^2\right)\frac{\beta^\alpha}{\Gamma(\alpha)}d^{\alpha-1}\exp(-\beta d)\\
+&amp;= \mathrm{Gamma}(\alpha+1/2, \beta+\frac{1}{2}x^2)
+\end{align*}
+\end{split}\]</div>
+<p>where <span class="math notranslate nohighlight">\(\alpha=1\)</span> and <span class="math notranslate nohighlight">\(\beta=1\)</span> are the original parameters of the Gamma distribution for <span class="math notranslate nohighlight">\(d\)</span>.</p>
+<p>Instead of manually deriving the Gamma distribution for the conjugate posterior, CUQIpy provides a <code class="docutils literal notranslate"><span class="pre">Conjugate</span></code> sampler, which can be used to automatically sample from any (supported) conjugate distributions. Similarly we can use the <code class="docutils literal notranslate"><span class="pre">Direct</span></code> sampler to sample from the Gaussian distribution.</p>
+<p><em>The interface and design of the <code class="docutils literal notranslate"><span class="pre">Conjugate</span></code> and <code class="docutils literal notranslate"><span class="pre">Direct</span></code> samplers is still under development and may change in the future.</em></p>
+<p>In summary, we define a Gibbs sampling scheme in CUQIpy as follows:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Define the sampling strategy</span>
+<span class="n">sampling_strategy</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;x&#39;</span> <span class="p">:</span> <span class="n">Direct</span><span class="p">,</span>
+    <span class="s1">&#39;d&#39;</span> <span class="p">:</span> <span class="n">Conjugate</span><span class="p">,</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>We can then define the Gibbs sampler and sample from the joint distribution as follows:</p>
+<div class="cell tag_scroll-output docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Gibbs sampler</span>
+<span class="n">sampler</span> <span class="o">=</span> <span class="n">Gibbs</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">sampling_strategy</span><span class="p">)</span>
+
+<span class="c1"># Sample</span>
+<span class="n">samples</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="mi">1000</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warmup 10 / 1000
+Warmup 20 / 1000
+Warmup 30 / 1000
+Warmup 40 / 1000
+Warmup 50 / 1000
+Warmup 60 / 1000
+Warmup 70 / 1000
+Warmup 80 / 1000
+Warmup 90 / 1000
+Warmup 100 / 1000
+Warmup 110 / 1000
+Warmup 120 / 1000
+Warmup 130 / 1000
+Warmup 140 / 1000
+Warmup 150 / 1000
+Warmup 160 / 1000
+Warmup 170 / 1000
+Warmup 180 / 1000
+Warmup 190 / 1000
+Warmup 200 / 1000
+Warmup 210 / 1000
+Warmup 220 / 1000
+Warmup 230 / 1000
+Warmup 240 / 1000
+Warmup 250 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warmup 260 / 1000
+Warmup 270 / 1000
+Warmup 280 / 1000
+Warmup 290 / 1000
+Warmup 300 / 1000
+Warmup 310 / 1000
+Warmup 320 / 1000
+Warmup 330 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warmup 340 / 1000
+Warmup 350 / 1000
+Warmup 360 / 1000
+Warmup 370 / 1000
+Warmup 380 / 1000
+Warmup 390 / 1000
+Warmup 400 / 1000
+Warmup 410 / 1000
+Warmup 420 / 1000
+Warmup 430 / 1000
+Warmup 440 / 1000
+Warmup 450 / 1000
+Warmup 460 / 1000
+Warmup 470 / 1000
+Warmup 480 / 1000
+Warmup 490 / 1000
+Warmup 500 / 1000
+Warmup 510 / 1000
+Warmup 520 / 1000
+Warmup 530 / 1000
+Warmup 540 / 1000
+Warmup 550 / 1000
+Warmup 560 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warmup 570 / 1000
+Warmup 580 / 1000
+Warmup 590 / 1000
+Warmup 600 / 1000
+Warmup 610 / 1000
+Warmup 620 / 1000
+Warmup 630 / 1000
+Warmup 640 / 1000
+Warmup 650 / 1000
+Warmup 660 / 1000
+Warmup 670 / 1000
+Warmup 680 / 1000
+Warmup 690 / 1000
+Warmup 700 / 1000
+Warmup 710 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warmup 720 / 1000
+Warmup 730 / 1000
+Warmup 740 / 1000
+Warmup 750 / 1000
+Warmup 760 / 1000
+Warmup 770 / 1000
+Warmup 780 / 1000
+Warmup 790 / 1000
+Warmup 800 / 1000
+Warmup 810 / 1000
+Warmup 820 / 1000
+Warmup 830 / 1000
+Warmup 840 / 1000
+Warmup 850 / 1000
+Warmup 860 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warmup 870 / 1000
+Warmup 880 / 1000
+Warmup 890 / 1000
+Warmup 900 / 1000
+Warmup 910 / 1000
+Warmup 920 / 1000
+Warmup 930 / 1000
+Warmup 940 / 1000
+Warmup 950 / 1000
+Warmup 960 / 1000
+Warmup 970 / 1000
+Warmup 980 / 1000
+Warmup 990 / 1000
+Warmup 1000 / 1000
+Warmup 1000 / 1000
+
+Sample 10 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 20 / 1000
+Sample 30 / 1000
+Sample 40 / 1000
+Sample 50 / 1000
+Sample 60 / 1000
+Sample 70 / 1000
+Sample 80 / 1000
+Sample 90 / 1000
+Sample 100 / 1000
+Sample 110 / 1000
+Sample 120 / 1000
+Sample 130 / 1000
+Sample 140 / 1000
+Sample 150 / 1000
+Sample 160 / 1000
+Sample 170 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 180 / 1000
+Sample 190 / 1000
+Sample 200 / 1000
+Sample 210 / 1000
+Sample 220 / 1000
+Sample 230 / 1000
+Sample 240 / 1000
+Sample 250 / 1000
+Sample 260 / 1000
+Sample 270 / 1000
+Sample 280 / 1000
+Sample 290 / 1000
+Sample 300 / 1000
+Sample 310 / 1000
+Sample 320 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 330 / 1000
+Sample 340 / 1000
+Sample 350 / 1000
+Sample 360 / 1000
+Sample 370 / 1000
+Sample 380 / 1000
+Sample 390 / 1000
+Sample 400 / 1000
+Sample 410 / 1000
+Sample 420 / 1000
+Sample 430 / 1000
+Sample 440 / 1000
+Sample 450 / 1000
+Sample 460 / 1000
+Sample 470 / 1000
+Sample 480 / 1000
+Sample 490 / 1000
+Sample 500 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 510 / 1000
+Sample 520 / 1000
+Sample 530 / 1000
+Sample 540 / 1000
+Sample 550 / 1000
+Sample 560 / 1000
+Sample 570 / 1000
+Sample 580 / 1000
+Sample 590 / 1000
+Sample 600 / 1000
+Sample 610 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 620 / 1000
+Sample 630 / 1000
+Sample 640 / 1000
+Sample 650 / 1000
+Sample 660 / 1000
+Sample 670 / 1000
+Sample 680 / 1000
+Sample 690 / 1000
+Sample 700 / 1000
+Sample 710 / 1000
+Sample 720 / 1000
+Sample 730 / 1000
+Sample 740 / 1000
+Sample 750 / 1000
+Sample 760 / 1000
+Sample 770 / 1000
+Sample 780 / 1000
+Sample 790 / 1000
+Sample 800 / 1000
+Sample 810 / 1000
+Sample 820 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 830 / 1000
+Sample 840 / 1000
+Sample 850 / 1000
+Sample 860 / 1000
+Sample 870 / 1000
+Sample 880 / 1000
+Sample 890 / 1000
+Sample 900 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 910 / 1000
+Sample 920 / 1000
+Sample 930 / 1000
+Sample 940 / 1000
+Sample 950 / 1000
+Sample 960 / 1000
+Sample 970 / 1000
+Sample 980 / 1000
+Sample 990 / 1000
+Sample 1000 / 1000
+Sample 1000 / 1000
+</pre></div>
+</div>
+</div>
+</div>
+<p>And we can visualize e.g. the trace plots as follows:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">samples</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">plot_trace</span><span class="p">()</span>
+<span class="n">samples</span><span class="p">[</span><span class="s2">&quot;d&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">plot_trace</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([[&lt;Axes: title={&#39;center&#39;: &#39;d&#39;}&gt;, &lt;Axes: title={&#39;center&#39;: &#39;d&#39;}&gt;]],
+      dtype=object)
+</pre></div>
+</div>
+<img alt="../_images/2d829257be6664644111ba1be99561aafbaae2d3912746262eeff3227f6c3859.png" src="../_images/2d829257be6664644111ba1be99561aafbaae2d3912746262eeff3227f6c3859.png" />
+<img alt="../_images/902d40c37ecb306afc2bbacc630dc1d7dcd3f795e69b72563cf76fa9b2c3efbd.png" src="../_images/902d40c37ecb306afc2bbacc630dc1d7dcd3f795e69b72563cf76fa9b2c3efbd.png" />
+</div>
+</div>
+</section>
+</section>
+<section class="tex2jax_ignore mathjax_ignore" id="gibbs-for-inverse-problems">
+<h1><font color=CD853F>  2. Gibbs for inverse problems </font> <a class="anchor" id="inverse"></a><a class="headerlink" href="#gibbs-for-inverse-problems" title="Link to this heading">#</a></h1>
+<p>The above example was a simple example to illustrate the basic idea of Gibbs sampling. However, often for these simple examples there exist more efficient sampling methods. In the following we instead focus on inverse problems where Gibbs sampling will prove to be useful, because efficient samplers are not readily available.”</p>
+<section id="deterministic-forward-model-and-data">
+<h2><font color=CD853F>  2.1 Deterministic forward model and data </font><a class="headerlink" href="#deterministic-forward-model-and-data" title="Link to this heading">#</a></h2>
+<p>Consider a Bayesian inverse problem</p>
+<div class="math notranslate nohighlight">
+\[
+\mathbf{y}=\mathbf{A}\mathbf{x},
+\]</div>
+<p>where <span class="math notranslate nohighlight">\(\mathbf{A}: \mathbb{R}^n \to \mathbb{R}^m\)</span> is the forward model of the inverse problem and <span class="math notranslate nohighlight">\(\mathbf{y}\)</span> and <span class="math notranslate nohighlight">\(\mathbf{x}\)</span> are random variables for the data and unknown parameter, respectively.</p>
+<p>In this case, we assume that the forward model is a convolution operator. We can load this example from the testproblem library of CUQIpy and visualize the true solution (sharp signal) and data (convolved signal).</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Model and data</span>
+<span class="n">A</span><span class="p">,</span> <span class="n">y_data</span><span class="p">,</span> <span class="n">probinfo</span> <span class="o">=</span> <span class="n">Deconvolution1D</span><span class="p">(</span><span class="n">phantom</span><span class="o">=</span><span class="s1">&#39;sinc&#39;</span><span class="p">,</span> <span class="n">noise_std</span><span class="o">=</span><span class="mf">0.005</span><span class="p">,</span> <span class="n">PSF_param</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span><span class="o">.</span><span class="n">get_components</span><span class="p">()</span>
+
+<span class="c1"># Get dimension of signal</span>
+<span class="n">n</span> <span class="o">=</span> <span class="n">A</span><span class="o">.</span><span class="n">domain_dim</span>
+
+<span class="c1"># Plot exact solution and observed data</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">121</span><span class="p">)</span>
+<span class="n">probinfo</span><span class="o">.</span><span class="n">exactSolution</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Exact solution&#39;</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">122</span><span class="p">)</span>
+<span class="n">y_data</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Observed data&quot;</span><span class="p">)</span>
+
+<span class="c1"># Print problem information</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">probinfo</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>ProblemInfo with the following set attributes:
+[&#39;infoString&#39;, &#39;exactSolution&#39;, &#39;exactData&#39;]
+ infoString: Noise type: Additive Gaussian with std: 0.005
+</pre></div>
+</div>
+<img alt="../_images/eb8b7284945d38763b026471ac548ef6d6bcf4df540e6616063c4997c36a03ee.png" src="../_images/eb8b7284945d38763b026471ac548ef6d6bcf4df540e6616063c4997c36a03ee.png" />
+</div>
+</div>
+</section>
+<section id="hierarchical-bayesian-model">
+<h2><font color=CD853F>  2.2 Hierarchical Bayesian model </font><a class="headerlink" href="#hierarchical-bayesian-model" title="Link to this heading">#</a></h2>
+<p>We are now going to define a hierarchical Bayesian model for the inverse problem.</p>
+<p>First, we are going to model the prior distribution of the parameter <span class="math notranslate nohighlight">\(\mathbf{x}\)</span> as a Gaussian Markov random field (GMRF), i.e.</p>
+<div class="math notranslate nohighlight">
+\[
+\begin{align*}
+\mathbf{x} \mid d &amp;\sim \mathrm{GMRF}(\mathbf{0}, d).
+\end{align*}
+\]</div>
+<p>This is a built-in distribution in CUQIpy, which models the difference between neighboring elements as a Gaussian, see <a class="reference external" href="https://cuqi-dtu.github.io/CUQIpy/api/_autosummary/cuqi.distribution/cuqi.distribution.GMRF.html#cuqi.distribution.GMRF">GMRF</a> for more details.</p>
+<p>We do not know a good choice of precision parameter <span class="math notranslate nohighlight">\(d\)</span> for this prior, so we make use of <code class="docutils literal notranslate"><span class="pre">lambda</span></code> (anonymous) functions to make <span class="math notranslate nohighlight">\(d\)</span> a conditioning variable of the distribution. The distribution is defined in CUQIpy as follows.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Define prior</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">GMRF</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="p">),</span> <span class="k">lambda</span> <span class="n">d</span><span class="p">:</span> <span class="n">d</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CUQI GMRF. Conditioning variables [&#39;d&#39;].
+</pre></div>
+</div>
+</div>
+</div>
+<section id="exercise">
+<h3><font color=#8B4513> ★ Exercise </font><a class="headerlink" href="#exercise" title="Link to this heading">#</a></h3>
+<p>Try computing some samples from the GMRF distribution and visualize them. You can use the <code class="docutils literal notranslate"><span class="pre">sample</span></code> method of the <code class="docutils literal notranslate"><span class="pre">GMRF</span></code> distribution. You can also visualize the samples using the <code class="docutils literal notranslate"><span class="pre">plot</span></code> method of the obtained samples.</p>
+<p>Hint: Since <span class="math notranslate nohighlight">\(d\)</span> is a conditioning variable, you need to specify the value of <span class="math notranslate nohighlight">\(d\)</span> when sampling.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Your code here</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>The observed data is corrupted by additive Gaussian noise, so for random variable <span class="math notranslate nohighlight">\(\mathbf{y}\)</span> we have</p>
+<div class="math notranslate nohighlight">
+\[\mathbf{y} \mid \mathbf{x}, s \sim \mathrm{Gaussian}(\mathbf{A} \mathbf{x}, s^{-1}\mathbf{I}_m),\]</div>
+<p>where for this example, we pretend also not to know the noise precision <span class="math notranslate nohighlight">\(s\)</span>.</p>
+<p>Similar to the prior distribution, we can define this distribution as follows.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Data distribution (likelihood)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">Gaussian</span><span class="p">(</span><span class="n">A</span><span class="nd">@x</span><span class="p">,</span> <span class="n">cov</span><span class="o">=</span><span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="mi">1</span><span class="o">/</span><span class="n">s</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CUQI Gaussian. Conditioning variables [&#39;x&#39;, &#39;s&#39;].
+</pre></div>
+</div>
+</div>
+</div>
+<p>To model the two <em>hyperparameters</em> <span class="math notranslate nohighlight">\(d\)</span> and <span class="math notranslate nohighlight">\(s\)</span>, we can use a weakly informative <code class="docutils literal notranslate"><span class="pre">Gamma</span></code> distribution, i.e. a distribution with a wide range of possible values.</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{align*}
+        d &amp;\sim \mathrm{Gamma}(1, 10^{-4}) \\
+        s &amp;\sim \mathrm{Gamma}(1, 10^{-4})
+\end{align*}
+\end{split}\]</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">d</span> <span class="o">=</span> <span class="n">Gamma</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mf">1e-4</span><span class="p">)</span>
+<span class="n">s</span> <span class="o">=</span> <span class="n">Gamma</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mf">1e-4</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CUQI Gamma.
+CUQI Gamma.
+</pre></div>
+</div>
+</div>
+</div>
+<p>To see that the Gamma hyperprior is weakly informative, we can visualize the pdf of the Gamma distribution. Notice that the pdf is mostly flat for the range of values from <span class="math notranslate nohighlight">\(0\)</span> to <span class="math notranslate nohighlight">\(10^4\)</span>. This means that the Gamma distribution is fairly uninformative for this range of values and assign equal probability to all values in this range.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">grid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">1e-4</span><span class="p">,</span> <span class="mf">1e+4</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="p">[</span><span class="n">d</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">val</span><span class="p">)</span> <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">grid</span><span class="p">])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="o">*</span><span class="mf">1e-4</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;PDF of Gamma(1, 1e-4)&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/612a8a3c7254f92df6aba3a47298f67cb979726a95283992ac29280669aa3cb0.png" src="../_images/612a8a3c7254f92df6aba3a47298f67cb979726a95283992ac29280669aa3cb0.png" />
+</div>
+</div>
+<p>In total, we can summarize the hierarchical Bayesian problem as follows (without explicitly writing the conditioning variables):</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{align*}
+        d &amp;\sim \mathrm{Gamma}(1, 10^{-4}) \\
+        s &amp;\sim \mathrm{Gamma}(1, 10^{-4}) \\
+        \mathbf{x} &amp;\sim \mathrm{GMRF}(\mathbf{0}, d) \\
+        \mathbf{y} &amp;\sim \mathrm{Gaussian}(\mathbf{A} \mathbf{x}, s^{-1} \mathbf{I}_m)
+\end{align*}
+\end{split}\]</div>
+<p>which in CUQIpy matches line-by-line:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">d</span> <span class="o">=</span> <span class="n">Gamma</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mf">1e-4</span><span class="p">)</span>
+<span class="n">s</span> <span class="o">=</span> <span class="n">Gamma</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mf">1e-4</span><span class="p">)</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">GMRF</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="p">),</span> <span class="k">lambda</span> <span class="n">d</span><span class="p">:</span> <span class="n">d</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">Gaussian</span><span class="p">(</span><span class="n">A</span><span class="nd">@x</span><span class="p">,</span> <span class="n">cov</span><span class="o">=</span><span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="mi">1</span><span class="o">/</span><span class="n">s</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="posterior-distribution">
+<h2><font color=CD853F>  Posterior distribution </font><a class="headerlink" href="#posterior-distribution" title="Link to this heading">#</a></h2>
+<p>We now define the posterior distribution by first creating the joint distribution <span class="math notranslate nohighlight">\(p(\mathbf{y}, \mathbf{x}, d, s)\)</span> and then conditioning on the observed data <span class="math notranslate nohighlight">\(\mathbf{y}_\mathrm{data}\)</span> to obtain the posterior which can be derived in density form as</p>
+<div class="math notranslate nohighlight">
+\[
+\begin{align*}
+p(\mathbf{x}, d, s \mid \mathbf{y}_\mathrm{data}) = L(\mathbf{x}, s \mid \mathbf{y}_\mathrm{data}) p(\mathbf{x} \mid d) p(d) p(s).
+\end{align*}
+\]</div>
+<p>This in done in CUQIpy as follows</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create joint distribution</span>
+<span class="n">joint</span> <span class="o">=</span> <span class="n">JointDistribution</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">s</span><span class="p">)</span>
+
+<span class="c1"># Define posterior by conditioning on the data</span>
+<span class="n">posterior</span> <span class="o">=</span> <span class="n">joint</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="n">y_data</span><span class="p">)</span> <span class="c1"># Automatically applies Bayes rule</span>
+
+<span class="c1"># View the posterior</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">posterior</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>JointDistribution(
+    Equation: 
+	p(x,d,s|y) ∝ L(s,x|y)p(x|d)p(d)p(s)
+    Densities: 
+	y ~ CUQI Gaussian Likelihood function. Parameters [&#39;x&#39;, &#39;s&#39;].
+	x ~ CUQI GMRF. Conditioning variables [&#39;d&#39;].
+	d ~ CUQI Gamma.
+	s ~ CUQI Gamma.
+)
+</pre></div>
+</div>
+</div>
+</div>
+<p>Notice that after conditioning on the data, the distribution associated with <span class="math notranslate nohighlight">\(\mathbf{y}\)</span> became a likelihood function and that the posterior is now a joint distribution of the variables <span class="math notranslate nohighlight">\(\mathbf{x}\)</span>, <span class="math notranslate nohighlight">\(d\)</span> and <span class="math notranslate nohighlight">\(s\)</span>. It matches the mathematical expression above.</p>
+<section id="id1">
+<h3><font color=#8B4513> Exercise </font><a class="headerlink" href="#id1" title="Link to this heading">#</a></h3>
+<ol class="arabic simple">
+<li><p>Try evaluating the un-normalized log probability density (logd) of the posterior distribution <span class="math notranslate nohighlight">\(p(\mathbf{x}, d, s \mid \mathbf{y}_\mathrm{data})\)</span> at some points <span class="math notranslate nohighlight">\(\mathbf{x}^*\in \mathbb{R}^n\)</span>, <span class="math notranslate nohighlight">\(d^*\in \mathbb{R}_+\)</span> and <span class="math notranslate nohighlight">\(s^*\in \mathbb{R}_+\)</span>. Hint: The <code class="docutils literal notranslate"><span class="pre">logd</span></code> method of the <code class="docutils literal notranslate"><span class="pre">Joint</span></code> distribution takes comma-separated keyword arguments for the conditioning variables. For example, <code class="docutils literal notranslate"><span class="pre">logd(x=xstar,</span> <span class="pre">d=dstar,</span> <span class="pre">s=sstar)</span></code>.</p></li>
+<li><p>You can also try <em>conditioning</em> the posterior distribution on some of the variables, e.g. <code class="docutils literal notranslate"><span class="pre">posterior(x=xstar,</span> <span class="pre">d=dstar)</span></code>. This should compute the marginal distribution of <span class="math notranslate nohighlight">\(s\)</span> given <span class="math notranslate nohighlight">\(\mathbf{x}^*\)</span> and <span class="math notranslate nohighlight">\(d^*\)</span>, i.e. <span class="math notranslate nohighlight">\(p(s \mid \mathbf{y}_\mathrm{data}, \mathbf{x}^*, d^*)\)</span>.</p></li>
+<li><p>Experiment with sampling from a similar BIP that does not include hyperparameters <span class="math notranslate nohighlight">\(d\)</span> and <span class="math notranslate nohighlight">\(s\)</span> (use the values <span class="math notranslate nohighlight">\(d=1\)</span> and <span class="math notranslate nohighlight">\(s=10000\)</span> to determine the precision of the prior and the likelihood). You can create the BIP as follows. Hint: use the <code class="docutils literal notranslate"><span class="pre">UQ</span></code> method of the <code class="docutils literal notranslate"><span class="pre">BayesianProblem</span></code> to sample from the posterior distribution.</p></li>
+</ol>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">x2</span> <span class="o">=</span> <span class="n">GMRF</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="p">),</span><span class="n">prec</span><span class="o">=</span><span class="mi">1</span> <span class="p">)</span>
+<span class="n">y2</span> <span class="o">=</span> <span class="n">Gaussian</span><span class="p">(</span><span class="n">A</span><span class="nd">@x2</span><span class="p">,</span> <span class="n">prec</span><span class="o">=</span><span class="mi">10000</span><span class="p">)</span>
+<span class="n">BP2</span> <span class="o">=</span> <span class="n">BayesianProblem</span><span class="p">(</span><span class="n">x2</span><span class="p">,</span> <span class="n">y2</span><span class="p">)</span>
+<span class="n">BP2</span><span class="o">.</span><span class="n">set_data</span><span class="p">(</span><span class="n">y2</span><span class="o">=</span><span class="n">y_data</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Your code here</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="gibbs-sampler">
+<h2><font color=CD853F>  2.3 Gibbs Sampler </font><a class="headerlink" href="#gibbs-sampler" title="Link to this heading">#</a></h2>
+<p>The hierarchical Bayesian problem above has some important properties that we
+can exploit to make the sampling more efficient.</p>
+<p>First, note that for the pair of a Gaussian distribution with a Gamma distribution
+for the precision is a conjugate pair (as we also saw earlier). This means that the
+posterior distribution with respect to the parameter for the precision is also a
+Gamma distribution. This means that we can efficiently sample from <span class="math notranslate nohighlight">\(d\)</span> and <span class="math notranslate nohighlight">\(s\)</span>
+conditional on the other variables by exploiting conjugacy.</p>
+<p>Second, note that the prior distribution of <span class="math notranslate nohighlight">\(\mathbf{x}\)</span> is
+a Gaussian Markov random field (GMRF) and that the distribution for
+<span class="math notranslate nohighlight">\(\mathbf{y}\)</span> is also Gaussian with a Linear operator acting
+on <span class="math notranslate nohighlight">\(\mathbf{x}\)</span> as the mean variable. This means that we can
+efficiently sample from <span class="math notranslate nohighlight">\(\mathbf{x}\)</span> conditional on the other
+variables using the <code class="docutils literal notranslate"><span class="pre">LinearRTO</span></code> sampler.</p>
+<p>Taking these two facts into account, we can define a Gibbs sampler
+that uses the <code class="docutils literal notranslate"><span class="pre">Conjugate</span></code> sampler for <span class="math notranslate nohighlight">\(d\)</span> and <span class="math notranslate nohighlight">\(s\)</span> and
+the <code class="docutils literal notranslate"><span class="pre">LinearRTO</span></code> sampler for <span class="math notranslate nohighlight">\(\mathbf{x}\)</span>.</p>
+<p>This is done in CUQIpy as follows:</p>
+<div class="cell tag_scroll-output docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Define sampling strategy</span>
+<span class="n">sampling_strategy</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;x&#39;</span><span class="p">:</span> <span class="n">LinearRTO</span><span class="p">,</span>
+    <span class="s1">&#39;d&#39;</span><span class="p">:</span> <span class="n">Conjugate</span><span class="p">,</span>
+    <span class="s1">&#39;s&#39;</span><span class="p">:</span> <span class="n">Conjugate</span>
+<span class="p">}</span>
+
+<span class="c1"># Define Gibbs sampler</span>
+<span class="n">sampler</span> <span class="o">=</span> <span class="n">Gibbs</span><span class="p">(</span><span class="n">posterior</span><span class="p">,</span> <span class="n">sampling_strategy</span><span class="p">)</span>
+
+<span class="c1"># Run sampler</span>
+<span class="n">samples</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">Ns</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">Nb</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warmup 2 / 200
+Warmup 4 / 200
+Warmup 6 / 200
+Warmup 8 / 200
+Warmup 10 / 200
+Warmup 12 / 200
+Warmup 14 / 200
+Warmup 16 / 200
+Warmup 18 / 200
+Warmup 20 / 200
+Warmup 22 / 200
+Warmup 24 / 200
+Warmup 26 / 200
+Warmup 28 / 200
+Warmup 30 / 200
+Warmup 32 / 200
+Warmup 34 / 200
+Warmup 36 / 200
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warmup 38 / 200
+Warmup 40 / 200
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warmup 42 / 200
+Warmup 44 / 200
+Warmup 46 / 200
+Warmup 48 / 200
+Warmup 50 / 200
+Warmup 52 / 200
+Warmup 54 / 200
+Warmup 56 / 200
+Warmup 58 / 200
+Warmup 60 / 200
+Warmup 62 / 200
+Warmup 64 / 200
+Warmup 66 / 200
+Warmup 68 / 200
+Warmup 70 / 200
+Warmup 72 / 200
+Warmup 74 / 200
+Warmup 76 / 200
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warmup 78 / 200
+Warmup 80 / 200
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warmup 82 / 200
+Warmup 84 / 200
+Warmup 86 / 200
+Warmup 88 / 200
+Warmup 90 / 200
+Warmup 92 / 200
+Warmup 94 / 200
+Warmup 96 / 200
+Warmup 98 / 200
+Warmup 100 / 200
+Warmup 102 / 200
+Warmup 104 / 200
+Warmup 106 / 200
+Warmup 108 / 200
+Warmup 110 / 200
+Warmup 112 / 200
+Warmup 114 / 200
+Warmup 116 / 200
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warmup 118 / 200
+Warmup 120 / 200
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warmup 122 / 200
+Warmup 124 / 200
+Warmup 126 / 200
+Warmup 128 / 200
+Warmup 130 / 200
+Warmup 132 / 200
+Warmup 134 / 200
+Warmup 136 / 200
+Warmup 138 / 200
+Warmup 140 / 200
+Warmup 142 / 200
+Warmup 144 / 200
+Warmup 146 / 200
+Warmup 148 / 200
+Warmup 150 / 200
+Warmup 152 / 200
+Warmup 154 / 200
+Warmup 156 / 200
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warmup 158 / 200
+Warmup 160 / 200
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warmup 162 / 200
+Warmup 164 / 200
+Warmup 166 / 200
+Warmup 168 / 200
+Warmup 170 / 200
+Warmup 172 / 200
+Warmup 174 / 200
+Warmup 176 / 200
+Warmup 178 / 200
+Warmup 180 / 200
+Warmup 182 / 200
+Warmup 184 / 200
+Warmup 186 / 200
+Warmup 188 / 200
+Warmup 190 / 200
+Warmup 192 / 200
+Warmup 194 / 200
+Warmup 196 / 200
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warmup 198 / 200
+Warmup 200 / 200
+Warmup 200 / 200
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 10 / 1000
+Sample 20 / 1000
+Sample 30 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 40 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 50 / 1000
+Sample 60 / 1000
+Sample 70 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 80 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 90 / 1000
+Sample 100 / 1000
+Sample 110 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 120 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 130 / 1000
+Sample 140 / 1000
+Sample 150 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 160 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 170 / 1000
+Sample 180 / 1000
+Sample 190 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 200 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 210 / 1000
+Sample 220 / 1000
+Sample 230 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 240 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 250 / 1000
+Sample 260 / 1000
+Sample 270 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 280 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 290 / 1000
+Sample 300 / 1000
+Sample 310 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 320 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 330 / 1000
+Sample 340 / 1000
+Sample 350 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 360 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 370 / 1000
+Sample 380 / 1000
+Sample 390 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 400 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 410 / 1000
+Sample 420 / 1000
+Sample 430 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 440 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 450 / 1000
+Sample 460 / 1000
+Sample 470 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 480 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 490 / 1000
+Sample 500 / 1000
+Sample 510 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 520 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 530 / 1000
+Sample 540 / 1000
+Sample 550 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 560 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 570 / 1000
+Sample 580 / 1000
+Sample 590 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 600 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 610 / 1000
+Sample 620 / 1000
+Sample 630 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 640 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 650 / 1000
+Sample 660 / 1000
+Sample 670 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 680 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 690 / 1000
+Sample 700 / 1000
+Sample 710 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 720 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 730 / 1000
+Sample 740 / 1000
+Sample 750 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 760 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 770 / 1000
+Sample 780 / 1000
+Sample 790 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 800 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 810 / 1000
+Sample 820 / 1000
+Sample 830 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 840 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 850 / 1000
+Sample 860 / 1000
+Sample 870 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 880 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 890 / 1000
+Sample 900 / 1000
+Sample 910 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 920 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 930 / 1000
+Sample 940 / 1000
+Sample 950 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 960 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 970 / 1000
+Sample 980 / 1000
+Sample 990 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 1000 / 1000
+Sample 1000 / 1000
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="analyze-results">
+<h2><font color=CD853F>  2.4 Analyze results </font><a class="headerlink" href="#analyze-results" title="Link to this heading">#</a></h2>
+<p>After sampling we can inspect the results. The samples are stored
+as a dictionary with the variable names as keys. Samples for each
+variable is stored as a CUQIpy Samples object which contains the
+many convenience methods for diagnostics and plotting of MCMC samples.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Plot credible intervals for x</span>
+<span class="n">samples</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">plot_ci</span><span class="p">(</span><span class="n">exact</span><span class="o">=</span><span class="n">probinfo</span><span class="o">.</span><span class="n">exactSolution</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&lt;matplotlib.lines.Line2D at 0x7f5157bdae30&gt;,
+ &lt;matplotlib.lines.Line2D at 0x7f5157bd95a0&gt;,
+ &lt;matplotlib.collections.PolyCollection at 0x7f5157bda5f0&gt;]
+</pre></div>
+</div>
+<img alt="../_images/9972a7c0904f53978c20f883439513db00548a5986278e6ee1f8c295fc6d12e9.png" src="../_images/9972a7c0904f53978c20f883439513db00548a5986278e6ee1f8c295fc6d12e9.png" />
+</div>
+</div>
+<p>Trace plot for d</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">samples</span><span class="p">[</span><span class="s1">&#39;d&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">plot_trace</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([[&lt;Axes: title={&#39;center&#39;: &#39;d&#39;}&gt;, &lt;Axes: title={&#39;center&#39;: &#39;d&#39;}&gt;]],
+      dtype=object)
+</pre></div>
+</div>
+<img alt="../_images/9ea358f3e5134c3b23f5910ab395a80a04735bf6658b48c169480a1ae2c8d36e.png" src="../_images/9ea358f3e5134c3b23f5910ab395a80a04735bf6658b48c169480a1ae2c8d36e.png" />
+</div>
+</div>
+<p>Trace plot for s</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">samples</span><span class="p">[</span><span class="s1">&#39;s&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">plot_trace</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span><span class="mi">2</span><span class="p">),</span> <span class="n">exact</span><span class="o">=</span><span class="mi">1</span><span class="o">/</span><span class="mf">0.005</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([[&lt;Axes: title={&#39;center&#39;: &#39;s&#39;}&gt;, &lt;Axes: title={&#39;center&#39;: &#39;s&#39;}&gt;]],
+      dtype=object)
+</pre></div>
+</div>
+<img alt="../_images/57a952772a4e47e95db5b83279c3fcc25f36d8657049331729eded2abec81562.png" src="../_images/57a952772a4e47e95db5b83279c3fcc25f36d8657049331729eded2abec81562.png" />
+</div>
+</div>
+<p>Notice that the true noise standard deviation was <span class="math notranslate nohighlight">\(0.005\)</span> which translates to a precision of <span class="math notranslate nohighlight">\(s=40000\)</span>. The trace plot for <span class="math notranslate nohighlight">\(s\)</span> shows that the sampler has converged close to the true value.</p>
+</section>
+</section>
+<section class="tex2jax_ignore mathjax_ignore" id="exploring-other-priors">
+<h1><font color=CD853F>  3 Exploring other priors </font> <a class="anchor" id="exploring-other-priors"></a><a class="headerlink" href="#exploring-other-priors" title="Link to this heading">#</a></h1>
+<p>Suppose the true solution was not modelled well by a GMRF prior. This would for example be the case for a piece-wise constant “square” signal. We can quickly try that experiment by generating new data from the test problem with a <code class="docutils literal notranslate"><span class="pre">square</span></code> phantom.</p>
+<p>For illustration we repeat all the code steps from above in a single cell.</p>
+<div class="cell tag_scroll-output docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Deterministic forward model + data</span>
+<span class="n">A</span><span class="p">,</span> <span class="n">y_data</span><span class="p">,</span> <span class="n">probinfo</span> <span class="o">=</span> <span class="n">Deconvolution1D</span><span class="p">(</span><span class="n">phantom</span><span class="o">=</span><span class="s1">&#39;square&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">get_components</span><span class="p">()</span>
+
+<span class="c1"># Bayesian model</span>
+<span class="n">d</span> <span class="o">=</span> <span class="n">Gamma</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mf">1e-4</span><span class="p">)</span>
+<span class="n">s</span> <span class="o">=</span> <span class="n">Gamma</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mf">1e-4</span><span class="p">)</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">GMRF</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="p">),</span> <span class="k">lambda</span> <span class="n">d</span><span class="p">:</span> <span class="n">d</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">Gaussian</span><span class="p">(</span><span class="n">A</span><span class="nd">@x</span><span class="p">,</span> <span class="n">cov</span><span class="o">=</span><span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="mi">1</span><span class="o">/</span><span class="n">s</span><span class="p">)</span>
+
+<span class="c1"># Joint distribution</span>
+<span class="n">joint</span> <span class="o">=</span> <span class="n">JointDistribution</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">s</span><span class="p">)</span>
+
+<span class="c1"># Posterior</span>
+<span class="n">posterior</span> <span class="o">=</span> <span class="n">joint</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="n">y_data</span><span class="p">)</span>
+
+<span class="c1"># Sampling strategy</span>
+<span class="n">sampling_strategy</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;x&#39;</span><span class="p">:</span> <span class="n">LinearRTO</span><span class="p">,</span>
+    <span class="s1">&#39;d&#39;</span><span class="p">:</span> <span class="n">Conjugate</span><span class="p">,</span>
+    <span class="s1">&#39;s&#39;</span><span class="p">:</span> <span class="n">Conjugate</span>
+<span class="p">}</span>
+
+<span class="c1"># Gibbs sampler</span>
+<span class="n">sampler</span> <span class="o">=</span> <span class="n">Gibbs</span><span class="p">(</span><span class="n">posterior</span><span class="p">,</span> <span class="n">sampling_strategy</span><span class="p">)</span>
+
+<span class="c1"># Run sampler</span>
+<span class="n">samples</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">Ns</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">Nb</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
+
+<span class="c1"># Plot credible intervals for x</span>
+<span class="n">samples</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">plot_ci</span><span class="p">(</span><span class="n">exact</span><span class="o">=</span><span class="n">probinfo</span><span class="o">.</span><span class="n">exactSolution</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warmup 2 / 200
+Warmup 4 / 200
+Warmup 6 / 200
+Warmup 8 / 200
+Warmup 10 / 200
+Warmup 12 / 200
+Warmup 14 / 200
+Warmup 16 / 200
+Warmup 18 / 200
+Warmup 20 / 200
+Warmup 22 / 200
+Warmup 24 / 200
+Warmup 26 / 200
+Warmup 28 / 200
+Warmup 30 / 200
+Warmup 32 / 200
+Warmup 34 / 200
+Warmup 36 / 200
+Warmup 38 / 200
+Warmup 40 / 200
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warmup 42 / 200
+Warmup 44 / 200
+Warmup 46 / 200
+Warmup 48 / 200
+Warmup 50 / 200
+Warmup 52 / 200
+Warmup 54 / 200
+Warmup 56 / 200
+Warmup 58 / 200
+Warmup 60 / 200
+Warmup 62 / 200
+Warmup 64 / 200
+Warmup 66 / 200
+Warmup 68 / 200
+Warmup 70 / 200
+Warmup 72 / 200
+Warmup 74 / 200
+Warmup 76 / 200
+Warmup 78 / 200
+Warmup 80 / 200
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warmup 82 / 200
+Warmup 84 / 200
+Warmup 86 / 200
+Warmup 88 / 200
+Warmup 90 / 200
+Warmup 92 / 200
+Warmup 94 / 200
+Warmup 96 / 200
+Warmup 98 / 200
+Warmup 100 / 200
+Warmup 102 / 200
+Warmup 104 / 200
+Warmup 106 / 200
+Warmup 108 / 200
+Warmup 110 / 200
+Warmup 112 / 200
+Warmup 114 / 200
+Warmup 116 / 200
+Warmup 118 / 200
+Warmup 120 / 200
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warmup 122 / 200
+Warmup 124 / 200
+Warmup 126 / 200
+Warmup 128 / 200
+Warmup 130 / 200
+Warmup 132 / 200
+Warmup 134 / 200
+Warmup 136 / 200
+Warmup 138 / 200
+Warmup 140 / 200
+Warmup 142 / 200
+Warmup 144 / 200
+Warmup 146 / 200
+Warmup 148 / 200
+Warmup 150 / 200
+Warmup 152 / 200
+Warmup 154 / 200
+Warmup 156 / 200
+Warmup 158 / 200
+Warmup 160 / 200
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warmup 162 / 200
+Warmup 164 / 200
+Warmup 166 / 200
+Warmup 168 / 200
+Warmup 170 / 200
+Warmup 172 / 200
+Warmup 174 / 200
+Warmup 176 / 200
+Warmup 178 / 200
+Warmup 180 / 200
+Warmup 182 / 200
+Warmup 184 / 200
+Warmup 186 / 200
+Warmup 188 / 200
+Warmup 190 / 200
+Warmup 192 / 200
+Warmup 194 / 200
+Warmup 196 / 200
+Warmup 198 / 200
+Warmup 200 / 200
+Warmup 200 / 200
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 10 / 1000
+Sample 20 / 1000
+Sample 30 / 1000
+Sample 40 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 50 / 1000
+Sample 60 / 1000
+Sample 70 / 1000
+Sample 80 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 90 / 1000
+Sample 100 / 1000
+Sample 110 / 1000
+Sample 120 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 130 / 1000
+Sample 140 / 1000
+Sample 150 / 1000
+Sample 160 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 170 / 1000
+Sample 180 / 1000
+Sample 190 / 1000
+Sample 200 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 210 / 1000
+Sample 220 / 1000
+Sample 230 / 1000
+Sample 240 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 250 / 1000
+Sample 260 / 1000
+Sample 270 / 1000
+Sample 280 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 290 / 1000
+Sample 300 / 1000
+Sample 310 / 1000
+Sample 320 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 330 / 1000
+Sample 340 / 1000
+Sample 350 / 1000
+Sample 360 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 370 / 1000
+Sample 380 / 1000
+Sample 390 / 1000
+Sample 400 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 410 / 1000
+Sample 420 / 1000
+Sample 430 / 1000
+Sample 440 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 450 / 1000
+Sample 460 / 1000
+Sample 470 / 1000
+Sample 480 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 490 / 1000
+Sample 500 / 1000
+Sample 510 / 1000
+Sample 520 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 530 / 1000
+Sample 540 / 1000
+Sample 550 / 1000
+Sample 560 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 570 / 1000
+Sample 580 / 1000
+Sample 590 / 1000
+Sample 600 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 610 / 1000
+Sample 620 / 1000
+Sample 630 / 1000
+Sample 640 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 650 / 1000
+Sample 660 / 1000
+Sample 670 / 1000
+Sample 680 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 690 / 1000
+Sample 700 / 1000
+Sample 710 / 1000
+Sample 720 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 730 / 1000
+Sample 740 / 1000
+Sample 750 / 1000
+Sample 760 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 770 / 1000
+Sample 780 / 1000
+Sample 790 / 1000
+Sample 800 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 810 / 1000
+Sample 820 / 1000
+Sample 830 / 1000
+Sample 840 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 850 / 1000
+Sample 860 / 1000
+Sample 870 / 1000
+Sample 880 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 890 / 1000
+Sample 900 / 1000
+Sample 910 / 1000
+Sample 920 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 930 / 1000
+Sample 940 / 1000
+Sample 950 / 1000
+Sample 960 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 970 / 1000
+Sample 980 / 1000
+Sample 990 / 1000
+Sample 1000 / 1000
+Sample 1000 / 1000
+</pre></div>
+</div>
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&lt;matplotlib.lines.Line2D at 0x7f5157c13fa0&gt;,
+ &lt;matplotlib.lines.Line2D at 0x7f5159d94610&gt;,
+ &lt;matplotlib.collections.PolyCollection at 0x7f518088f5e0&gt;]
+</pre></div>
+</div>
+<img alt="../_images/e0118cd49fa830d0ca0583978de87461640d0856eb2ea6baaedd785d18c14dca.png" src="../_images/e0118cd49fa830d0ca0583978de87461640d0856eb2ea6baaedd785d18c14dca.png" />
+</div>
+</div>
+<p>Notice that while the sampling still ran, the posterior distribution does not match the characteristics of the square phantom. We can improve this result by switching to a prior that better matches this kind of signal.</p>
+<p>One choice is the <a class="reference external" href="https://cuqi-dtu.github.io/CUQIpy/api/_autosummary/cuqi.distribution/cuqi.distribution.LMRF.html">LMRF</a> prior, which assumes a Laplace distribution for the differences between neighboring elements of <span class="math notranslate nohighlight">\(\mathbf{x}\)</span> instead of a Gaussian. That is we assume</p>
+<div class="math notranslate nohighlight">
+\[
+\begin{align*}
+\mathbf{x} \sim \text{LMRF}(\mathbf{0}, d^{-1}),
+\end{align*}
+\]</div>
+<p>which translates to the assumption that <span class="math notranslate nohighlight">\(x_i-x_{i-1} \sim \mathrm{Laplace}(0, d^{-1})\)</span> for <span class="math notranslate nohighlight">\(i=1, \ldots, n\)</span> (excluding boundaries)</p>
+<p>This prior is implemented in CUQIpy as the <code class="docutils literal notranslate"><span class="pre">LMRF</span></code> distribution.
+To update our model we simply need to replace the <code class="docutils literal notranslate"><span class="pre">GMRF</span></code> distribution
+with the <code class="docutils literal notranslate"><span class="pre">LMRF</span></code> distribution. Note that the Laplace distribution
+is defined via a scale parameter, so we invert the parameter <span class="math notranslate nohighlight">\(d\)</span>.</p>
+<p>This laplace distribution and new posterior can be defined as follows:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Define new distribution for x</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">LMRF</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="p">),</span> <span class="k">lambda</span> <span class="n">d</span><span class="p">:</span> <span class="mi">1</span><span class="o">/</span><span class="n">d</span><span class="p">)</span>
+
+<span class="c1"># Define new joint distribution with piecewise constant prior</span>
+<span class="n">joint_Ld</span> <span class="o">=</span> <span class="n">JointDistribution</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+
+<span class="c1"># Define new posterior by conditioning on the data</span>
+<span class="n">posterior_Ld</span> <span class="o">=</span> <span class="n">joint_Ld</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="n">y_data</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">posterior_Ld</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>JointDistribution(
+    Equation: 
+	p(d,s,x|y) ∝ p(d)p(s)p(x|d)L(s,x|y)
+    Densities: 
+	d ~ CUQI Gamma.
+	s ~ CUQI Gamma.
+	x ~ CUQI LMRF. Conditioning variables [&#39;d&#39;].
+	y ~ CUQI Gaussian Likelihood function. Parameters [&#39;x&#39;, &#39;s&#39;].
+)
+</pre></div>
+</div>
+</div>
+</div>
+<section id="gibbs-sampler-with-laplace-prior">
+<h2><font color=CD853F>  3.1 Gibbs Sampler (with Laplace prior) </font><a class="headerlink" href="#gibbs-sampler-with-laplace-prior" title="Link to this heading">#</a></h2>
+<p>Using the same approach as ealier we can define a Gibbs sampler
+for this new hierarchical model. The only difference is that we
+now need to use a different sampler for <span class="math notranslate nohighlight">\(\mathbf{x}\)</span> because
+the <code class="docutils literal notranslate"><span class="pre">LinearRTO</span></code> sampler only works for Gaussian distributions.</p>
+<p>In this case we use the <a class="reference external" href="https://cuqi-dtu.github.io/CUQIpy/api/_autosummary/cuqi.sampler/cuqi.sampler.UGLA.html">UGLA</a> sampler
+for <span class="math notranslate nohighlight">\(\mathbf{x}\)</span>. We also use an approximate Conjugate
+sampler for <span class="math notranslate nohighlight">\(d\)</span> which approximately samples from the
+posterior distribution of <span class="math notranslate nohighlight">\(d\)</span> conditional on the other
+variables in an efficient manner. For more details see e.g.
+<a class="reference external" href="https://arxiv.org/abs/2104.06919">Uribe et al. (2021)</a>.</p>
+<div class="cell tag_scroll-output docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Define sampling strategy</span>
+<span class="n">sampling_strategy</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;x&#39;</span><span class="p">:</span> <span class="n">UGLA</span><span class="p">,</span>
+    <span class="s1">&#39;d&#39;</span><span class="p">:</span> <span class="n">ConjugateApprox</span><span class="p">,</span>
+    <span class="s1">&#39;s&#39;</span><span class="p">:</span> <span class="n">Conjugate</span>
+<span class="p">}</span>
+
+<span class="c1"># Define Gibbs sampler</span>
+<span class="n">sampler_Ld</span> <span class="o">=</span> <span class="n">Gibbs</span><span class="p">(</span><span class="n">posterior_Ld</span><span class="p">,</span> <span class="n">sampling_strategy</span><span class="p">)</span>
+
+<span class="c1"># Run sampler</span>
+<span class="n">samples_Ld</span> <span class="o">=</span> <span class="n">sampler_Ld</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">Ns</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">Nb</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warmup 2 / 200
+Warmup 4 / 200
+Warmup 6 / 200
+Warmup 8 / 200
+Warmup 10 / 200
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warmup 12 / 200
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warmup 14 / 200
+Warmup 16 / 200
+Warmup 18 / 200
+Warmup 20 / 200
+Warmup 22 / 200
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warmup 24 / 200
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warmup 26 / 200
+Warmup 28 / 200
+Warmup 30 / 200
+Warmup 32 / 200
+Warmup 34 / 200
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warmup 36 / 200
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warmup 38 / 200
+Warmup 40 / 200
+Warmup 42 / 200
+Warmup 44 / 200
+Warmup 46 / 200
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warmup 48 / 200
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warmup 50 / 200
+Warmup 52 / 200
+Warmup 54 / 200
+Warmup 56 / 200
+Warmup 58 / 200
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warmup 60 / 200
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warmup 62 / 200
+Warmup 64 / 200
+Warmup 66 / 200
+Warmup 68 / 200
+Warmup 70 / 200
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warmup 72 / 200
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warmup 74 / 200
+Warmup 76 / 200
+Warmup 78 / 200
+Warmup 80 / 200
+Warmup 82 / 200
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warmup 84 / 200
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warmup 86 / 200
+Warmup 88 / 200
+Warmup 90 / 200
+Warmup 92 / 200
+Warmup 94 / 200
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warmup 96 / 200
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warmup 98 / 200
+Warmup 100 / 200
+Warmup 102 / 200
+Warmup 104 / 200
+Warmup 106 / 200
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warmup 108 / 200
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warmup 110 / 200
+Warmup 112 / 200
+Warmup 114 / 200
+Warmup 116 / 200
+Warmup 118 / 200
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warmup 120 / 200
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warmup 122 / 200
+Warmup 124 / 200
+Warmup 126 / 200
+Warmup 128 / 200
+Warmup 130 / 200
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warmup 132 / 200
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warmup 134 / 200
+Warmup 136 / 200
+Warmup 138 / 200
+Warmup 140 / 200
+Warmup 142 / 200
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warmup 144 / 200
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warmup 146 / 200
+Warmup 148 / 200
+Warmup 150 / 200
+Warmup 152 / 200
+Warmup 154 / 200
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warmup 156 / 200
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warmup 158 / 200
+Warmup 160 / 200
+Warmup 162 / 200
+Warmup 164 / 200
+Warmup 166 / 200
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warmup 168 / 200
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warmup 170 / 200
+Warmup 172 / 200
+Warmup 174 / 200
+Warmup 176 / 200
+Warmup 178 / 200
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warmup 180 / 200
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warmup 182 / 200
+Warmup 184 / 200
+Warmup 186 / 200
+Warmup 188 / 200
+Warmup 190 / 200
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warmup 192 / 200
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warmup 194 / 200
+Warmup 196 / 200
+Warmup 198 / 200
+Warmup 200 / 200
+Warmup 200 / 200
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 10 / 1000
+Sample 20 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 30 / 1000
+Sample 40 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 50 / 1000
+Sample 60 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 70 / 1000
+Sample 80 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 90 / 1000
+Sample 100 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 110 / 1000
+Sample 120 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 130 / 1000
+Sample 140 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 150 / 1000
+Sample 160 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 170 / 1000
+Sample 180 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 190 / 1000
+Sample 200 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 210 / 1000
+Sample 220 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 230 / 1000
+Sample 240 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 250 / 1000
+Sample 260 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 270 / 1000
+Sample 280 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 290 / 1000
+Sample 300 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 310 / 1000
+Sample 320 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 330 / 1000
+Sample 340 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 350 / 1000
+Sample 360 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 370 / 1000
+Sample 380 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 390 / 1000
+Sample 400 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 410 / 1000
+Sample 420 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 430 / 1000
+Sample 440 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 450 / 1000
+Sample 460 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 470 / 1000
+Sample 480 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 490 / 1000
+Sample 500 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 510 / 1000
+Sample 520 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 530 / 1000
+Sample 540 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 550 / 1000
+Sample 560 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 570 / 1000
+Sample 580 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 590 / 1000
+Sample 600 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 610 / 1000
+Sample 620 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 630 / 1000
+Sample 640 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 650 / 1000
+Sample 660 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 670 / 1000
+Sample 680 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 690 / 1000
+Sample 700 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 710 / 1000
+Sample 720 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 730 / 1000
+Sample 740 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 750 / 1000
+Sample 760 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 770 / 1000
+Sample 780 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 790 / 1000
+Sample 800 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 810 / 1000
+Sample 820 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 830 / 1000
+Sample 840 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 850 / 1000
+Sample 860 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 870 / 1000
+Sample 880 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 890 / 1000
+Sample 900 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 910 / 1000
+Sample 920 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 930 / 1000
+Sample 940 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 950 / 1000
+Sample 960 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 970 / 1000
+Sample 980 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 990 / 1000
+Sample 1000 / 1000
+Sample 1000 / 1000
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="id2">
+<h2><font color=CD853F>  3.2 Analyze results </font><a class="headerlink" href="#id2" title="Link to this heading">#</a></h2>
+<p>Again we can inspect the results.
+Here we notice the posterior distribution matches the exact solution better than before.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Plot credible intervals for the signal</span>
+<span class="n">samples_Ld</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">plot_ci</span><span class="p">(</span><span class="n">exact</span><span class="o">=</span><span class="n">probinfo</span><span class="o">.</span><span class="n">exactSolution</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&lt;matplotlib.lines.Line2D at 0x7f5157c3ca30&gt;,
+ &lt;matplotlib.lines.Line2D at 0x7f5157c3e530&gt;,
+ &lt;matplotlib.collections.PolyCollection at 0x7f5157c3c850&gt;]
+</pre></div>
+</div>
+<img alt="../_images/0699b92f1c4ba2ef7a1420bdc16791cfdd2874ea42037defa0415e70198bf04d.png" src="../_images/0699b92f1c4ba2ef7a1420bdc16791cfdd2874ea42037defa0415e70198bf04d.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">samples_Ld</span><span class="p">[</span><span class="s1">&#39;d&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">plot_trace</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([[&lt;Axes: title={&#39;center&#39;: &#39;d&#39;}&gt;, &lt;Axes: title={&#39;center&#39;: &#39;d&#39;}&gt;]],
+      dtype=object)
+</pre></div>
+</div>
+<img alt="../_images/2f8d8b055e778cda6f099b4033b45ef00d0a7f845c6b1c6dc5ab5188a20cb44f.png" src="../_images/2f8d8b055e778cda6f099b4033b45ef00d0a7f845c6b1c6dc5ab5188a20cb44f.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">samples_Ld</span><span class="p">[</span><span class="s1">&#39;s&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">plot_trace</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span><span class="mi">2</span><span class="p">),</span> <span class="n">exact</span><span class="o">=</span><span class="mi">1</span><span class="o">/</span><span class="mf">0.01</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([[&lt;Axes: title={&#39;center&#39;: &#39;s&#39;}&gt;, &lt;Axes: title={&#39;center&#39;: &#39;s&#39;}&gt;]],
+      dtype=object)
+</pre></div>
+</div>
+<img alt="../_images/4a3d800e4b40eecb601380beeeac567144db29341e5309b377c74abe0ad39a42.png" src="../_images/4a3d800e4b40eecb601380beeeac567144db29341e5309b377c74abe0ad39a42.png" />
+</div>
+</div>
+<p>We can also view some posterior samples.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">samples_Ld</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Plotting 5 randomly selected samples
+</pre></div>
+</div>
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&lt;matplotlib.lines.Line2D at 0x7f5154737190&gt;,
+ &lt;matplotlib.lines.Line2D at 0x7f5154737280&gt;,
+ &lt;matplotlib.lines.Line2D at 0x7f5154737370&gt;,
+ &lt;matplotlib.lines.Line2D at 0x7f5154737460&gt;,
+ &lt;matplotlib.lines.Line2D at 0x7f5154737550&gt;]
+</pre></div>
+</div>
+<img alt="../_images/7d0929c7984ac476f2bcf7e9bec1fcbe8fd31196209857e19539af98075eee3e.png" src="../_images/7d0929c7984ac476f2bcf7e9bec1fcbe8fd31196209857e19539af98075eee3e.png" />
+</div>
+</div>
+</section>
+</section>
+<section class="tex2jax_ignore mathjax_ignore" id="connection-to-bayesianproblem-class">
+<h1><font color=CD853F>  4. Connection to BayesianProblem class </font> <a class="anchor" id="BayesianProblem"></a><a class="headerlink" href="#connection-to-bayesianproblem-class" title="Link to this heading">#</a></h1>
+<p>Finally, let us connect back the non-expert interface through the <code class="docutils literal notranslate"><span class="pre">BayesianProblem</span></code> class.</p>
+<p>Instead of explicitly defining the Gibbs sampler, we can also (for supported cases) simply provide the distributions for each of the parameters and the observed data to the <code class="docutils literal notranslate"><span class="pre">BayesianProblem</span></code> class. The class will then automatically construct a Gibbs sampler for the problem. This is done as follows:</p>
+<div class="cell tag_scroll-output docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Provide distributions for parameters and set data</span>
+<span class="n">BP</span> <span class="o">=</span> <span class="n">BayesianProblem</span><span class="p">(</span><span class="n">y</span><span class="p">,</span><span class="n">x</span><span class="p">,</span><span class="n">d</span><span class="p">,</span><span class="n">s</span><span class="p">)</span><span class="o">.</span><span class="n">set_data</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="n">y_data</span><span class="p">)</span>
+
+<span class="c1"># DO UQ and compare with exact solution and noise precision</span>
+<span class="n">BP</span><span class="o">.</span><span class="n">UQ</span><span class="p">(</span><span class="n">exact</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;x&quot;</span><span class="p">:</span><span class="n">probinfo</span><span class="o">.</span><span class="n">exactSolution</span><span class="p">,</span> <span class="s2">&quot;s&quot;</span><span class="p">:</span><span class="mi">1</span><span class="o">/</span><span class="mf">0.01</span><span class="o">**</span><span class="mi">2</span><span class="p">})</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Computing 1000 samples
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!! Automatic sampler selection is experimental. !!!
+!!!    Always validate the computed results.     !!!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+Using Gibbs sampler
+burn-in: 20%
+
+Automatically determined sampling strategy:
+	x: UGLA
+	d: ConjugateApprox
+	s: Conjugate
+
+
+Warmup 2 / 200
+Warmup 4 / 200
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warmup 6 / 200
+Warmup 8 / 200
+Warmup 10 / 200
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warmup 12 / 200
+Warmup 14 / 200
+Warmup 16 / 200
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warmup 18 / 200
+Warmup 20 / 200
+Warmup 22 / 200
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warmup 24 / 200
+Warmup 26 / 200
+Warmup 28 / 200
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warmup 30 / 200
+Warmup 32 / 200
+Warmup 34 / 200
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warmup 36 / 200
+Warmup 38 / 200
+Warmup 40 / 200
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warmup 42 / 200
+Warmup 44 / 200
+Warmup 46 / 200
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warmup 48 / 200
+Warmup 50 / 200
+Warmup 52 / 200
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warmup 54 / 200
+Warmup 56 / 200
+Warmup 58 / 200
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warmup 60 / 200
+Warmup 62 / 200
+Warmup 64 / 200
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warmup 66 / 200
+Warmup 68 / 200
+Warmup 70 / 200
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warmup 72 / 200
+Warmup 74 / 200
+Warmup 76 / 200
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warmup 78 / 200
+Warmup 80 / 200
+Warmup 82 / 200
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warmup 84 / 200
+Warmup 86 / 200
+Warmup 88 / 200
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warmup 90 / 200
+Warmup 92 / 200
+Warmup 94 / 200
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warmup 96 / 200
+Warmup 98 / 200
+Warmup 100 / 200
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warmup 102 / 200
+Warmup 104 / 200
+Warmup 106 / 200
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warmup 108 / 200
+Warmup 110 / 200
+Warmup 112 / 200
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warmup 114 / 200
+Warmup 116 / 200
+Warmup 118 / 200
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warmup 120 / 200
+Warmup 122 / 200
+Warmup 124 / 200
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warmup 126 / 200
+Warmup 128 / 200
+Warmup 130 / 200
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warmup 132 / 200
+Warmup 134 / 200
+Warmup 136 / 200
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warmup 138 / 200
+Warmup 140 / 200
+Warmup 142 / 200
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warmup 144 / 200
+Warmup 146 / 200
+Warmup 148 / 200
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warmup 150 / 200
+Warmup 152 / 200
+Warmup 154 / 200
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warmup 156 / 200
+Warmup 158 / 200
+Warmup 160 / 200
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warmup 162 / 200
+Warmup 164 / 200
+Warmup 166 / 200
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warmup 168 / 200
+Warmup 170 / 200
+Warmup 172 / 200
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warmup 174 / 200
+Warmup 176 / 200
+Warmup 178 / 200
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warmup 180 / 200
+Warmup 182 / 200
+Warmup 184 / 200
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warmup 186 / 200
+Warmup 188 / 200
+Warmup 190 / 200
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warmup 192 / 200
+Warmup 194 / 200
+Warmup 196 / 200
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warmup 198 / 200
+Warmup 200 / 200
+Warmup 200 / 200
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 10 / 1000
+Sample 20 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 30 / 1000
+Sample 40 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 50 / 1000
+Sample 60 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 70 / 1000
+Sample 80 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 90 / 1000
+Sample 100 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 110 / 1000
+Sample 120 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 130 / 1000
+Sample 140 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 150 / 1000
+Sample 160 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 170 / 1000
+Sample 180 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 190 / 1000
+Sample 200 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 210 / 1000
+Sample 220 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 230 / 1000
+Sample 240 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 250 / 1000
+Sample 260 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 270 / 1000
+Sample 280 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 290 / 1000
+Sample 300 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 310 / 1000
+Sample 320 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 330 / 1000
+Sample 340 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 350 / 1000
+Sample 360 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 370 / 1000
+Sample 380 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 390 / 1000
+Sample 400 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 410 / 1000
+Sample 420 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 430 / 1000
+Sample 440 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 450 / 1000
+Sample 460 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 470 / 1000
+Sample 480 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 490 / 1000
+Sample 500 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 510 / 1000
+Sample 520 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 530 / 1000
+Sample 540 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 550 / 1000
+Sample 560 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 570 / 1000
+Sample 580 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 590 / 1000
+Sample 600 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 610 / 1000
+Sample 620 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 630 / 1000
+Sample 640 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 650 / 1000
+Sample 660 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 670 / 1000
+Sample 680 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 690 / 1000
+Sample 700 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 710 / 1000
+Sample 720 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 730 / 1000
+Sample 740 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 750 / 1000
+Sample 760 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 770 / 1000
+Sample 780 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 790 / 1000
+Sample 800 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 810 / 1000
+Sample 820 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 830 / 1000
+Sample 840 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 850 / 1000
+Sample 860 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 870 / 1000
+Sample 880 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 890 / 1000
+Sample 900 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 910 / 1000
+Sample 920 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 930 / 1000
+Sample 940 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 950 / 1000
+Sample 960 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 970 / 1000
+Sample 980 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 990 / 1000
+Sample 1000 / 1000
+Sample 1000 / 1000
+Elapsed time: 22.79139256477356
+Plotting results
+</pre></div>
+</div>
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>{&#39;x&#39;: &lt;cuqi.samples._samples.Samples at 0x7f51548334f0&gt;,
+ &#39;d&#39;: &lt;cuqi.samples._samples.Samples at 0x7f5190f82b90&gt;,
+ &#39;s&#39;: &lt;cuqi.samples._samples.Samples at 0x7f5159d65240&gt;}
+</pre></div>
+</div>
+<img alt="../_images/25492a103441f9a56f9cacfb18a44cc48fe0cba86f2b4782bb31ce4a540449f4.png" src="../_images/25492a103441f9a56f9cacfb18a44cc48fe0cba86f2b4782bb31ce4a540449f4.png" />
+<img alt="../_images/214792a7e2769f22786b33bbe2baefabfd367b44fd8072e79e29f73c1884bb15.png" src="../_images/214792a7e2769f22786b33bbe2baefabfd367b44fd8072e79e29f73c1884bb15.png" />
+<img alt="../_images/2da2985e8b859ab201e3dabd07ead195d57adb10ad0f15ef13d4aee33f764535.png" src="../_images/2da2985e8b859ab201e3dabd07ead195d57adb10ad0f15ef13d4aee33f764535.png" />
+</div>
+</div>
+<section id="id3">
+<h2><font color=#8B4513> ★ Exercise </font><a class="headerlink" href="#id3" title="Link to this heading">#</a></h2>
+<p>Numerical verification of the conjugacy of a Gaussian likelihood a Gaussian prior. Consider the following simple BIP:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Prior</span>
+<span class="n">cov1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mi">1</span><span class="p">]])</span>
+<span class="n">x1</span> <span class="o">=</span> <span class="n">Gaussian</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="n">cov1</span><span class="p">)</span>
+<span class="n">I</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">cov_obs</span> <span class="o">=</span> <span class="mf">0.1</span><span class="o">*</span><span class="n">I</span>
+
+<span class="c1"># Forward model and likelihood</span>
+<span class="n">A</span> <span class="o">=</span> <span class="n">LinearModel</span><span class="p">(</span><span class="n">forward</span><span class="o">=</span><span class="n">I</span><span class="p">)</span>
+<span class="n">x2</span> <span class="o">=</span> <span class="n">Gaussian</span><span class="p">(</span><span class="n">A</span><span class="nd">@x1</span><span class="p">,</span> <span class="n">cov_obs</span><span class="p">)</span>
+
+<span class="c1"># Set the BIP</span>
+<span class="n">BP2</span> <span class="o">=</span> <span class="n">BayesianProblem</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">)</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">])</span>
+<span class="n">BP2</span><span class="o">.</span><span class="n">set_data</span><span class="p">(</span><span class="n">x2</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
+
+<span class="c1"># Solve the BIP</span>
+<span class="n">samples_post</span> <span class="o">=</span> <span class="n">BP2</span><span class="o">.</span><span class="n">sample_posterior</span><span class="p">(</span><span class="mi">10000</span><span class="p">)</span>
+<span class="n">samples_post</span><span class="o">.</span><span class="n">plot_pair</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Create a <code class="docutils literal notranslate"><span class="pre">CUQIpy</span></code> Gaussian distribution <code class="docutils literal notranslate"><span class="pre">x3</span></code> that is equivalent to the posterior distribution of this BIP. Hint: recall Gaussian-Gaussian conjugacy from the lecture notes. Sample <code class="docutils literal notranslate"><span class="pre">x3</span></code> and use the <code class="docutils literal notranslate"><span class="pre">plot_pair</span></code> method to visualize the samples. Compare the results with the samples from the <code class="docutils literal notranslate"><span class="pre">BayesianProblem</span></code> class.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Your code here</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="id4">
+<h2><font color=#8B4513> ★ Exercise </font><a class="headerlink" href="#id4" title="Link to this heading">#</a></h2>
+<p>Try building your own Bayesian problem and sampling from it using the <code class="docutils literal notranslate"><span class="pre">BayesianProblem</span></code> class. You can use the code from the previous sections as a starting point. If the automatic sampler selection fails, you can also try to defining the Gibbs sampler manually.</p>
+<p>You can also try the same Bayesian problem but for <a class="reference external" href="https://cuqi-dtu.github.io/CUQIpy/api/_autosummary/cuqi.testproblem/cuqi.testproblem.Deconvolution2D.html#cuqi.testproblem.Deconvolution2D">2D deconvolution</a></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Your code here</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "CUQI-DTU/CUQI-Book",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./chapter02"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="prior.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Distributions, priors, and basic sampling in CUQIpy</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../chapter03/chapter03.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Chapter 3: Sampling with CUQIpy</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Gibbs sampling</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#table-of-contents"><font color="#CD853F"> Table of contents </font></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#learning-objectives"><font color="CD853F"> 0. Learning objectives </font> <a name="Learning-objectives"></a></a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#the-basics-of-gibbs-sampling"><font color="CD853F">  1. The basics of Gibbs sampling </font> <a class="anchor" id="basics"></a></a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#defining-a-sampling-strategy"><font color="CD853F">  1.1 Defining a sampling strategy </font></a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#gibbs-for-inverse-problems"><font color="CD853F">  2. Gibbs for inverse problems </font> <a class="anchor" id="inverse"></a></a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#deterministic-forward-model-and-data"><font color="CD853F">  2.1 Deterministic forward model and data </font></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#hierarchical-bayesian-model"><font color="CD853F">  2.2 Hierarchical Bayesian model </font></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercise"><font color="#8B4513"> ★ Exercise </font></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#posterior-distribution"><font color="CD853F">  Posterior distribution </font></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1"><font color="#8B4513"> Exercise </font></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gibbs-sampler"><font color="CD853F">  2.3 Gibbs Sampler </font></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#analyze-results"><font color="CD853F">  2.4 Analyze results </font></a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#exploring-other-priors"><font color="CD853F">  3 Exploring other priors </font> <a class="anchor" id="exploring-other-priors"></a></a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gibbs-sampler-with-laplace-prior"><font color="CD853F">  3.1 Gibbs Sampler (with Laplace prior) </font></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2"><font color="CD853F">  3.2 Analyze results </font></a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#connection-to-bayesianproblem-class"><font color="CD853F">  4. Connection to BayesianProblem class </font> <a class="anchor" id="BayesianProblem"></a></a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id3"><font color="#8B4513"> ★ Exercise </font></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id4"><font color="#8B4513"> ★ Exercise </font></a></li>
+</ul>
+</li>
+</ul>
+
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By CUQIpy developer team
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=3ee479438cf8b5e0d341"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=3ee479438cf8b5e0d341"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

@@ -1,0 +1,785 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Overview of CUQIpy &#8212; Uncertainty Quantification in Inverse Problems with CUQIpy</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=3ee479438cf8b5e0d341" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=3ee479438cf8b5e0d341" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=3ee479438cf8b5e0d341" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=3ee479438cf8b5e0d341" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=a3416100" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=87e54e7c" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=3ee479438cf8b5e0d341" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=3ee479438cf8b5e0d341" />
+  <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=3ee479438cf8b5e0d341"></script>
+
+    <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js?v=4a39c7ea"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"tex": {"macros": {"dd": "\\mathrm{d}", "abs": ["\\left\\vert#1\\right\\vert", 1], "ve": ["\\bm{#1}", 1], "mat": ["\\mathbf{#1}", 1], "N": "\\mathbb{N}", "floor": ["\\lfloor#1\\rfloor", 1], "bmat": ["\\left[\\begin{array}"], "emat": ["\\end{array}\\right]"], "bm": ["{\\boldsymbol #1}", 1]}}, "options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'chapter01/introduction_overview_of_cuqipy';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Probably the simplest BIP in the world" href="Intro_example.html" />
+    <link rel="prev" title="Chapter 1: Introduction to Bayesian Inverse Problems (BIP) in CUQIpy" href="chapter01.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+
+<a class="navbar-brand logo" href="../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/logo.png" class="logo__image only-light" alt="Uncertainty Quantification in Inverse Problems with CUQIpy - Home"/>
+    <script>document.write(`<img src="../_static/logo.png" class="logo__image only-dark" alt="Uncertainty Quantification in Inverse Problems with CUQIpy - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../intro.html">
+                    Welcome to the “Uncertainty Quantification in Inverse Problems with CUQIpy” mini-book!
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="chapter01.html">Chapter 1: Introduction to Bayesian Inverse Problems (BIP) in CUQIpy</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Overview of CUQIpy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Intro_example.html">Probably the simplest BIP in the world</a></li>
+<li class="toctree-l2"><a class="reference internal" href="two_forward_problems_new.html">Two forward models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="extra_forward_models.html">Extra material: Forward models, data generation and forward UQ</a></li>
+
+
+
+
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../chapter02/chapter02.html">Chapter 2: Prior and Hierarchical Bayesian Models</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../chapter02/prior.html">Distributions, priors, and basic sampling in CUQIpy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter02/gibbs.html">Gibbs sampling</a></li>
+
+
+
+
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../chapter03/chapter03.html">Chapter 3: Sampling with CUQIpy</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../chapter03/sampling_with_cuqipy_two_target.html">Sampling with CUQIpy: Two target distributions and exploring the posterior using the BayesianProblem class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter03/gradient_based_sampling_with_cuqipy.html">Sampling with CUQIpy: five little stories</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../chapter04/chapter04.html">Chapter 4: Advanced Bayesian Inference in CUQIpy</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../chapter04/project.html">CUQIpy component final project</a></li>
+
+
+
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/CUQI-DTU/CUQI-Book" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/CUQI-DTU/CUQI-Book/issues/new?title=Issue%20on%20page%20%2Fchapter01/introduction_overview_of_cuqipy.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/chapter01/introduction_overview_of_cuqipy.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Overview of CUQIpy</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#table-of-contents">Table of Contents:</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#introduction">Introduction <a class="anchor" id="introduction"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#what-is-cuqipy">What is CUQIpy? <a class="anchor" id="what-is-cuqipy"></a></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#why-cuqipy">Why CUQIpy? <a class="anchor" id="why-cuqipy"></a></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cuqipy-modules">CUQIpy modules <a class="anchor" id="cuqipy-modules"></a></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cuqipy-plugins">CUQIpy plugins <a class="anchor" id="cuqipy-plugins"></a></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cuqipy-design-principles">CUQIpy design principles <a class="anchor" id="cuqipy-design-principles"></a></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cuqipy-team">CUQIpy team <a class="anchor" id="cuqipy-team"></a></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#role-of-cuqipy-in-this-course">Role of CUQIpy in this course <a class="anchor" id="role-of-cuqipy-in-this-course"></a></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#remarks">Remarks <a class="anchor" id="remarks"></a></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#how-to-run-the-code-and-solve-the-coding-exercises-in-this-mini-book">How to run the code and solve the coding exercises in this mini-book? <a class="anchor" id="running-the-code"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#option-1-running-on-your-local-machine">Option 1: Running on your local machine</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#option-2-running-on-learnmore">Option 2: Running on learnmore</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#additional-links">Additional links <a class="anchor" id="additional-links"></a></a></li>
+</ul>
+</li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="overview-of-cuqipy">
+<h1>Overview of CUQIpy<a class="headerlink" href="#overview-of-cuqipy" title="Link to this heading">#</a></h1>
+<section id="table-of-contents">
+<h2>Table of Contents:<a class="headerlink" href="#table-of-contents" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><a class="reference internal" href="#what-is-cuqipy"><span class="xref myst">What is CUQIpy?</span></a></p></li>
+<li><p><a class="reference internal" href="#why-cuqipy"><span class="xref myst">Why CUQIpy?</span></a></p></li>
+<li><p><a class="reference internal" href="#cuqipy-modules"><span class="xref myst">CUQIpy modules</span></a></p></li>
+<li><p><a class="reference internal" href="#cuqipy-plugins"><span class="xref myst">CUQIpy plugins</span></a></p></li>
+<li><p><a class="reference internal" href="#cuqipy-design-principles"><span class="xref myst">CUQIpy design principles</span></a></p></li>
+<li><p><a class="reference internal" href="#cuqipy-team"><span class="xref myst">CUQIpy team</span></a></p></li>
+<li><p><a class="reference internal" href="#role-of-cuqipy-in-this-course"><span class="xref myst">Role of CUQIpy in this course</span></a></p></li>
+<li><p><a class="reference internal" href="#remarks"><span class="xref myst">Remarks</span></a></p></li>
+<li><p><a class="reference internal" href="#running-the-code"><span class="xref myst">How to run the code and solve the coding exercises in this mini-book?</span></a></p></li>
+<li><p><a class="reference internal" href="#additional-links"><span class="xref myst">Additional links</span></a></p></li>
+</ul>
+</section>
+<section id="introduction">
+<h2>Introduction <a class="anchor" id="introduction"></a><a class="headerlink" href="#introduction" title="Link to this heading">#</a></h2>
+<p><strong>note: some of the details mentioned here will make more sense after going through the next notebook titled “Probably the simplest BIP in the world”</strong></p>
+<section id="what-is-cuqipy">
+<h3>What is CUQIpy? <a class="anchor" id="what-is-cuqipy"></a><a class="headerlink" href="#what-is-cuqipy" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>CUQIpy is a Python package.</p></li>
+<li><p>CUQIpy stands for <strong>C</strong>omputational <strong>U</strong>ncertainty <strong>Q</strong>uantification for <strong>I</strong>nverse <strong>P</strong>roblems in <strong>Py</strong>thon.</p></li>
+<li><p>CUQIpy provides a framework for solving inverse problems using Bayesian inference.</p></li>
+<li><p>The framework enables:</p>
+<ul>
+<li><p>Modeling Bayesian inverse problems</p></li>
+<li><p>Solving Bayesian inverse problems using classical and advanced numerical tools</p></li>
+<li><p>Analyzing the solution of Bayesian inverse problems</p></li>
+</ul>
+</li>
+</ul>
+<p><img alt="CUQIpy overview" src="../_images/cuqipy_diagram.png" /></p>
+</section>
+<section id="why-cuqipy">
+<h3>Why CUQIpy? <a class="anchor" id="why-cuqipy"></a><a class="headerlink" href="#why-cuqipy" title="Link to this heading">#</a></h3>
+<p>CUQIpy is built to address the need for:</p>
+<ul class="simple">
+<li><p>A unified framework for solving Bayesian inverse problems across various scientific and engineering applications</p></li>
+<li><p>A platform for modeling, solving and analyzing the solution of Bayesian inverse problems</p></li>
+<li><p>A tool that can be used for both research and teaching</p></li>
+<li><p>A tool that can be used by both beginners and advanced users</p></li>
+<li><p>A tool that combines classical and advanced and scalable numerical methods for solving Bayesian inverse problems</p></li>
+<li><p>A tool that is implemented purely in Python with minimal dependencies and can be easily maintained and integrated with other tools</p></li>
+</ul>
+</section>
+<section id="cuqipy-modules">
+<h3>CUQIpy modules <a class="anchor" id="cuqipy-modules"></a><a class="headerlink" href="#cuqipy-modules" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>CUQIpy consists of many modules for modeling, solving, and analyzing Bayesian inverse problems.</p></li>
+<li><p>These modules mostly correspond to typical steps/components in a Bayesian inverse problem.</p></li>
+<li><p>Each module contains classes and functions that are used to perform specific tasks.</p></li>
+<li><p>click <a class="reference external" href="https://cuqi-dtu.github.io/CUQIpy/api/index.html">here</a> for an overview of the modules available in CUQIpy.</p></li>
+</ul>
+<p><img alt="CUQIpy modules" src="../_images/cuqipy_modules.png" /></p>
+</section>
+<section id="cuqipy-plugins">
+<h3>CUQIpy plugins <a class="anchor" id="cuqipy-plugins"></a><a class="headerlink" href="#cuqipy-plugins" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>In addition to the CUQIpy modules, CUQIpy also has plugins that extend the functionality of the framework.</p></li>
+<li><p>These plugins allow integration of third-party software and tools with CUQIpy.</p></li>
+<li><p>click <a class="reference external" href="https://cuqi-dtu.github.io/CUQIpy/#cuqipy-plugins">here</a> to see the list of plugins available in CUQIpy.</p></li>
+</ul>
+<p><img alt="CUQIpy plugins" src="../_images/cuqipy_modules_plugin.png" /></p>
+</section>
+<section id="cuqipy-design-principles">
+<h3>CUQIpy design principles <a class="anchor" id="cuqipy-design-principles"></a><a class="headerlink" href="#cuqipy-design-principles" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>Provide simple and intuitive interface for users</p></li>
+<li><p>Design for flexibility, extensibility, modularity, and maintainability</p></li>
+<li><p>Accommodate both beginners and advanced users. e.g.,</p>
+<ul>
+<li><p>Provide a set of test problems to use for experimentation and prototyping</p></li>
+<li><p>Automatic sampler selection for a range of problems</p></li>
+<li><p>Enable advanced customization of the problem setup and solution</p></li>
+</ul>
+</li>
+<li><p>Aligning the modeling code with the mathematical formulation of the problem, e.g.,</p></li>
+</ul>
+<p>Bayesian model:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{align*}
+d &amp;\sim \text{Gamma}(1, 10^{-4})\\
+s &amp;\sim \text{Gamma}(1, 10^{-4})\\
+x &amp;\sim \text{LMRF}(d^{-1})\\
+y &amp;\sim \text{Gaussian}(\mathbf{A}\mathbf{x}, s^{-1}\mathbf{I})\\
+p(d,s,x,y) &amp;= p(d)p(s)p(x|d)p(y|x,s)
+\end{align*}
+\end{split}\]</div>
+<p>where <span class="math notranslate nohighlight">\(d^{-1}\)</span> and <span class="math notranslate nohighlight">\(s\)</span> are the precision parameters of the prior (the LMRF) and the data distribution (the Gaussian), respectively, <span class="math notranslate nohighlight">\(x\)</span> is the model parameter, and <span class="math notranslate nohighlight">\(y\)</span> is the data. <span class="math notranslate nohighlight">\(\mathbf{A}\)</span> is the forward operator.</p>
+<p>Bayesian model in CUQIpy:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">d</span> <span class="o">=</span> <span class="n">Gamma</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mf">1e-4</span><span class="p">)</span>
+<span class="n">s</span> <span class="o">=</span> <span class="n">Gamma</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mf">1e-4</span><span class="p">)</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">LMRF</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="n">d</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">Gaussian</span><span class="p">(</span><span class="n">A</span><span class="nd">@x</span><span class="p">,</span> <span class="mi">1</span><span class="o">/</span><span class="n">s</span><span class="p">)</span>
+<span class="n">joint</span> <span class="o">=</span> <span class="n">JointDistribution</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>See setting up a Bayesian model in CUQIpy in 4 steps <a class="reference external" href="https://cuqi-dtu.github.io/CUQIpy/">here</a>.</p>
+</section>
+<section id="cuqipy-team">
+<h3>CUQIpy team <a class="anchor" id="cuqipy-team"></a><a class="headerlink" href="#cuqipy-team" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><a class="reference external" href="https://orbit.dtu.dk/en/persons/jakob-sauer-j%C3%B8rgensen-2">Jakob Sauer Jørgensen</a></p></li>
+<li><p><a class="reference external" href="https://orbit.dtu.dk/en/persons/nicolai-andre-brogaard-riis">Nicolai André Brogaard Riis</a></p></li>
+<li><p><a class="reference external" href="https://orbit.dtu.dk/en/persons/amal-mohammed-a-alghamdi">Amal Mohammed A Alghamdi</a></p></li>
+<li><p><a class="reference external" href="https://www.dtu.dk/english/person/chao-zhang?id=207508&amp;amp;entity=profile">Chao Zhang (Charlie)</a></p></li>
+</ul>
+</section>
+<section id="role-of-cuqipy-in-this-course">
+<h3>Role of CUQIpy in this course <a class="anchor" id="role-of-cuqipy-in-this-course"></a><a class="headerlink" href="#role-of-cuqipy-in-this-course" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>The course “02975: Introduction to uncertainty quantification for inverse problems” covers various concepts in uncertainty quantification in inverse problems including:</p>
+<ul>
+<li><p>Theory</p></li>
+<li><p>Modeling</p></li>
+<li><p>Numerical methods</p></li>
+<li><p>Analysis</p></li>
+<li><p>Coding</p></li>
+</ul>
+</li>
+<li><p>This course is not specificly for learning CUQIpy, however, CUQIpy is used as a tool for demonstration, prototyping, and exploring ideas</p></li>
+<li><p>Although CUQIpy provides many methods for solving Bayesian inverse problems, the students will be asked in various assignments to implement some of the methods themselves to understand the underlying principles.</p></li>
+<li><p>The CUQIpy component of the course is covered in about 14 hours of lectures, exercises and a guest lecture by Jakob Sauer Jørgensen.</p></li>
+</ul>
+</section>
+<section id="remarks">
+<h3>Remarks <a class="anchor" id="remarks"></a><a class="headerlink" href="#remarks" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>This is first time we offer the CUQIpy component of the course.</p></li>
+<li><p>We are excited about this component and hope you will find it useful.</p></li>
+<li><p>I am here to facilitate your learning of this component.</p></li>
+<li><p>Feel free to ask questions anytime.</p></li>
+<li><p>Feel free to provide feedback anytime and help us improve.</p></li>
+<li><p>There will be a lot of hands-on exercises and examples to help you understand the concepts.</p></li>
+<li><p>You are encouraged to work in pairs or groups of 3 to discuss and solve the exercises.</p></li>
+<li><p>Disclaimer: keep in mind that notation may vary among different course components.</p></li>
+<li><p>Throughout we will introduce many tools in CUQIpy and discuss</p>
+<ul>
+<li><p>how to use them</p></li>
+<li><p>for what purpose</p></li>
+<li><p>and identifying the right tool</p></li>
+</ul>
+</li>
+<li><p>Throughout all the course components, including CUQIpy, you will end up with more tools in your BIP toolbox!
+<img alt="toolbox" src="../_images/toolbox3.jpeg" /></p></li>
+</ul>
+</section>
+<section id="how-to-run-the-code-and-solve-the-coding-exercises-in-this-mini-book">
+<h3>How to run the code and solve the coding exercises in this mini-book? <a class="anchor" id="running-the-code"></a><a class="headerlink" href="#how-to-run-the-code-and-solve-the-coding-exercises-in-this-mini-book" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>For now, it is not possible to run the code interactively in this online mini-book (plans to enable this in the future).</p></li>
+<li><p>We suggest the following options:</p>
+<ul>
+<li><p>Running on your local machine (preferred)</p></li>
+<li><p>Running on learnmore (if you have access)</p></li>
+</ul>
+</li>
+</ul>
+<section id="option-1-running-on-your-local-machine">
+<h4>Option 1: Running on your local machine<a class="headerlink" href="#option-1-running-on-your-local-machine" title="Link to this heading">#</a></h4>
+<ul class="simple">
+<li><p>You can download each notebook from the top right download button and run it on your local machine.</p></li>
+<li><p>Alternatively, you can clone the course repository and run the notebooks on your local machine. In a terminal, run the following command inside the directory where you want to clone the repository:</p></li>
+</ul>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/CUQI-DTU/CUQI-Book.git
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>To run the notebook, you will need to install CUQIpy and other dependencies, including Jupyter notebook, numpy, matplotlib, etc.</p></li>
+<li><p>The instructions for installing CUQIpy can be found <a class="reference external" href="https://cuqi-dtu.github.io/CUQIpy/user/getting_started.html">here</a>.</p></li>
+</ul>
+</section>
+<section id="option-2-running-on-learnmore">
+<h4>Option 2: Running on learnmore<a class="headerlink" href="#option-2-running-on-learnmore" title="Link to this heading">#</a></h4>
+<ul class="simple">
+<li><p>If you have access to learnmore, you can run the notebooks there.</p></li>
+<li><p>Login to <a class="reference external" href="https://learnmore2.compute.dtu.dk">learnmore</a></p></li>
+<li><p>Open the terminal (through the terminal icon at the bottom)</p></li>
+<li><p>Create a directory for the course and navigate to it, for example:</p></li>
+</ul>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>mkdir<span class="w"> </span>uqcourse2024
+<span class="nb">cd</span><span class="w"> </span>uqcourse2024
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>Clone the course repository of the book inside the directory as explained above.</p></li>
+<li><p>Use the file browser on the left to navigate to the course directory and open the notebooks.</p></li>
+<li><p>To run the notebook, you need to select a kernel, two kernels are recommended for now (since they both have the latest version of CUQIpy):</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">cuqipy-fenics</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cuqipy-CIL23.1.0</span></code>.</p></li>
+</ul>
+</li>
+<li><p>Now you are ready to run the notebook, tip: use shift+(enter/return) to run a cell.</p></li>
+</ul>
+</section>
+</section>
+<section id="additional-links">
+<h3>Additional links <a class="anchor" id="additional-links"></a><a class="headerlink" href="#additional-links" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>Some of the exercises answers will be available in this hackmd page: <a class="reference external" href="https://tinyurl.com/uqcourse2024">https://tinyurl.com/uqcourse2024</a>.</p></li>
+</ul>
+</section>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "CUQI-DTU/CUQI-Book",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./chapter01"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="chapter01.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Chapter 1: Introduction to Bayesian Inverse Problems (BIP) in CUQIpy</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="Intro_example.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Probably the simplest BIP in the world</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#table-of-contents">Table of Contents:</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#introduction">Introduction <a class="anchor" id="introduction"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#what-is-cuqipy">What is CUQIpy? <a class="anchor" id="what-is-cuqipy"></a></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#why-cuqipy">Why CUQIpy? <a class="anchor" id="why-cuqipy"></a></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cuqipy-modules">CUQIpy modules <a class="anchor" id="cuqipy-modules"></a></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cuqipy-plugins">CUQIpy plugins <a class="anchor" id="cuqipy-plugins"></a></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cuqipy-design-principles">CUQIpy design principles <a class="anchor" id="cuqipy-design-principles"></a></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cuqipy-team">CUQIpy team <a class="anchor" id="cuqipy-team"></a></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#role-of-cuqipy-in-this-course">Role of CUQIpy in this course <a class="anchor" id="role-of-cuqipy-in-this-course"></a></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#remarks">Remarks <a class="anchor" id="remarks"></a></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#how-to-run-the-code-and-solve-the-coding-exercises-in-this-mini-book">How to run the code and solve the coding exercises in this mini-book? <a class="anchor" id="running-the-code"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#option-1-running-on-your-local-machine">Option 1: Running on your local machine</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#option-2-running-on-learnmore">Option 2: Running on learnmore</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#additional-links">Additional links <a class="anchor" id="additional-links"></a></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By CUQIpy developer team
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=3ee479438cf8b5e0d341"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=3ee479438cf8b5e0d341"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

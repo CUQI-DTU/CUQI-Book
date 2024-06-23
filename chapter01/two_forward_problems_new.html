@@ -1,0 +1,994 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Two forward models &#8212; Uncertainty Quantification in Inverse Problems with CUQIpy</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=3ee479438cf8b5e0d341" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=3ee479438cf8b5e0d341" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=3ee479438cf8b5e0d341" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=3ee479438cf8b5e0d341" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=a3416100" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=87e54e7c" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=3ee479438cf8b5e0d341" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=3ee479438cf8b5e0d341" />
+  <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=3ee479438cf8b5e0d341"></script>
+
+    <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js?v=4a39c7ea"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"tex": {"macros": {"dd": "\\mathrm{d}", "abs": ["\\left\\vert#1\\right\\vert", 1], "ve": ["\\bm{#1}", 1], "mat": ["\\mathbf{#1}", 1], "N": "\\mathbb{N}", "floor": ["\\lfloor#1\\rfloor", 1], "bmat": ["\\left[\\begin{array}"], "emat": ["\\end{array}\\right]"], "bm": ["{\\boldsymbol #1}", 1]}}, "options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'chapter01/two_forward_problems_new';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Extra material: Forward models, data generation and forward UQ" href="extra_forward_models.html" />
+    <link rel="prev" title="Probably the simplest BIP in the world" href="Intro_example.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+
+<a class="navbar-brand logo" href="../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/logo.png" class="logo__image only-light" alt="Uncertainty Quantification in Inverse Problems with CUQIpy - Home"/>
+    <script>document.write(`<img src="../_static/logo.png" class="logo__image only-dark" alt="Uncertainty Quantification in Inverse Problems with CUQIpy - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../intro.html">
+                    Welcome to the “Uncertainty Quantification in Inverse Problems with CUQIpy” mini-book!
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="chapter01.html">Chapter 1: Introduction to Bayesian Inverse Problems (BIP) in CUQIpy</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="introduction_overview_of_cuqipy.html">Overview of CUQIpy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Intro_example.html">Probably the simplest BIP in the world</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Two forward models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="extra_forward_models.html">Extra material: Forward models, data generation and forward UQ</a></li>
+
+
+
+
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../chapter02/chapter02.html">Chapter 2: Prior and Hierarchical Bayesian Models</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../chapter02/prior.html">Distributions, priors, and basic sampling in CUQIpy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter02/gibbs.html">Gibbs sampling</a></li>
+
+
+
+
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../chapter03/chapter03.html">Chapter 3: Sampling with CUQIpy</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../chapter03/sampling_with_cuqipy_two_target.html">Sampling with CUQIpy: Two target distributions and exploring the posterior using the BayesianProblem class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter03/gradient_based_sampling_with_cuqipy.html">Sampling with CUQIpy: five little stories</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../chapter04/chapter04.html">Chapter 4: Advanced Bayesian Inference in CUQIpy</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../chapter04/project.html">CUQIpy component final project</a></li>
+
+
+
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-launch-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Launch interactive content">
+    <i class="fas fa-rocket"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://colab.research.google.com/github/CUQI-DTU/CUQI-Book/blob/master/chapter01/two_forward_problems_new.ipynb" target="_blank"
+   class="btn btn-sm dropdown-item"
+   title="Launch on Colab"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  
+    <img alt="Colab logo" src="../_static/images/logo_colab.png">
+  </span>
+<span class="btn__text-container">Colab</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="initThebeSBT()"
+  class="btn btn-sm btn-launch-thebe dropdown-item"
+  title="Launch Thebe"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-play"></i>
+  </span>
+<span class="btn__text-container">Live Code</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/CUQI-DTU/CUQI-Book" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/CUQI-DTU/CUQI-Book/issues/new?title=Issue%20on%20page%20%2Fchapter01/two_forward_problems_new.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/chapter01/two_forward_problems_new.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Two forward models</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#contents-of-this-notebook"><font color="#CD853F"> Contents of this notebook: </font></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#learning-objectives"><font color="#CD853F"> Learning objectives: </font> <a name="r-learning-objectives"></a></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#forward-model-1d-poisson"><font color="#CD853F"> Forward model: 1D Poisson </font> <a name="r-forward-model-1d-poisson"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercise"><font color="#8B4513"> Exercise: </font></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#forward-model-1d-convolution"><font color="#CD853F"> Forward model: 1D convolution </font> <a name="r-forward-model-1d-convolution"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1"><font color="#8B4513"> Exercise: </font></a></li>
+</ul>
+</li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <div hidden>
+<p><span class="math notranslate nohighlight">\(\gdef\dd{\mathrm{d}}\)</span></p>
+</div>
+<div hidden>
+<p><span class="math notranslate nohighlight">\(\gdef\abs#1{\left\vert#1\right\vert}\)</span></p>
+</div>
+<div hidden>
+<p><span class="math notranslate nohighlight">\(\gdef\ve#1{\bm{#1}}\)</span></p>
+</div>
+<div hidden>
+<p><span class="math notranslate nohighlight">\(\gdef\mat#1{\mathbf{#1}}\)</span></p>
+</div>
+<div hidden>
+Authors: Felipe Uribe and Amal Alghamdi
+</div><section class="tex2jax_ignore mathjax_ignore" id="two-forward-models">
+<h1>Two forward models<a class="headerlink" href="#two-forward-models" title="Link to this heading">#</a></h1>
+<p>We introduce here two forward models: 1D Poisson and 1D convolution. We will use these forward models in the next chapter (also during the second week of the course) to apply and demonstrate various concepts in Bayesian inversion.</p>
+<section id="contents-of-this-notebook">
+<h2><font color=#CD853F> Contents of this notebook: </font><a class="headerlink" href="#contents-of-this-notebook" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><a class="reference internal" href="#r-learning-objectives"><span class="xref myst">Learning objectives</span></a></p></li>
+<li><p><a class="reference internal" href="#r-forward-model-1d-poisson"><span class="xref myst">Forward model: 1D Poisson</span></a></p></li>
+<li><p><a class="reference internal" href="#r-forward-model-1d-convolution"><span class="xref myst">Forward model: 1D convolution</span></a></p></li>
+</ul>
+</section>
+<section id="learning-objectives">
+<h2><font color=#CD853F> Learning objectives: </font> <a name="r-learning-objectives"></a><a class="headerlink" href="#learning-objectives" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>Create (or load pre-existing) linear and non-linear forward models in CUQIpy and use them</p></li>
+<li><p>Create and plot input for the forward models and compute and plot the corresponding output</p></li>
+<li><p>Mathematically define two forward models: 1D Poisson and 1D Convolution and use them in CUQIpy</p></li>
+</ul>
+<div class="cell tag_hide-cell docutils container">
+<details class="hide above-input">
+<summary aria-label="Toggle hidden content">
+<span class="collapsed">Show code cell content</span>
+<span class="expanded">Hide code cell content</span>
+</summary>
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">cuqi.testproblem</span> <span class="kn">import</span> <span class="n">Poisson1D</span><span class="p">,</span> <span class="n">Deconvolution1D</span><span class="p">,</span> <span class="n">Heat1D</span>
+<span class="kn">from</span> <span class="nn">cuqi.distribution</span> <span class="kn">import</span> <span class="n">Gaussian</span>
+<span class="kn">from</span> <span class="nn">cuqi.array</span> <span class="kn">import</span> <span class="n">CUQIarray</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+</pre></div>
+</div>
+</div>
+</details>
+</div>
+</section>
+<section id="forward-model-1d-poisson">
+<h2><font color=#CD853F> Forward model: 1D Poisson </font> <a name="r-forward-model-1d-poisson"></a><a class="headerlink" href="#forward-model-1d-poisson" title="Link to this heading">#</a></h2>
+<p>Consider a heat conductive rod of length <span class="math notranslate nohighlight">\(L = \pi\)</span> with a varying conductivity (the conductivity of the rod changes from point to point). We fix the temperature at the end-points of the rod and apply a heat source distributed along the length of the rod. We wait until the rod reaches an equilibrium temperature distribution. The equilibrium temperature of the rod is modelled using the second order steady-state PDE as</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\left\{
+\begin{aligned}
+&amp; \dfrac{\dd}{\dd \xi}\left(u(\xi) \dfrac{\dd y(\xi)}{\dd \xi}\right) = -f(\xi), \quad &amp; \xi\in (0,L) \\
+&amp; y(0) = y(L) = 0.
+\end{aligned}
+\right.
+\end{split}\]</div>
+<p>Here, <span class="math notranslate nohighlight">\(y\)</span> represents the temperature distribution along the rod, <span class="math notranslate nohighlight">\(u(\xi) \)</span> is the unknown conductivity of the rod and <span class="math notranslate nohighlight">\(f(\xi)\)</span> is a deterministic heat source given by</p>
+<div class="math notranslate nohighlight">
+\[
+\begin{aligned}
+	f(\xi) = 10\exp( -\frac{ (\xi - L/2)^2} {0.02} ).
+\end{aligned}
+\]</div>
+<p>To ensure that the conductivity of the rod is non-negative, we parameterize <span class="math notranslate nohighlight">\(u\)</span> by a random variable <span class="math notranslate nohighlight">\(x\)</span> as follows:</p>
+<div class="math notranslate nohighlight">
+\[
+ \begin{aligned}
+ u( \cdot  ) = \exp( x( \cdot  ) )
+ \end{aligned}
+\]</div>
+<p>where <span class="math notranslate nohighlight">\(x\)</span> is not necessarily positive.</p>
+<p>Let us load the forward model that maps the random variable <span class="math notranslate nohighlight">\(x\)</span> to the temperature distribution <span class="math notranslate nohighlight">\(y\)</span> in CUQIpy. We will use the following parameters:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">dim</span></code> : number of discretization points for the rod</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">L</span></code> : length of the rod</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">f</span></code> : a function that represents the heat source</p></li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dim</span> <span class="o">=</span> <span class="mi">128</span>
+<span class="n">L</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span>
+<span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">xi</span><span class="p">:</span> <span class="mi">10</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="n">xi</span><span class="o">-</span><span class="n">L</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="mf">0.02</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Then we can load the 1D Poisson forward model as follows:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">A</span> <span class="o">=</span> <span class="n">Poisson1D</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="n">dim</span><span class="p">,</span> <span class="n">endpoint</span><span class="o">=</span><span class="n">L</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="n">f</span><span class="p">)</span><span class="o">.</span><span class="n">model</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>We print the forward model to see its details.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">A</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CUQI PDEModel: Continuous1D(128,) -&gt; Continuous1D(127,).
+    Forward parameters: [&#39;x&#39;].
+    PDE: SteadyStateLinearPDE.
+</pre></div>
+</div>
+</div>
+</div>
+<p>We can look at the domain and range geometries of the forward model.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">A</span><span class="o">.</span><span class="n">domain_geometry</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">A</span><span class="o">.</span><span class="n">range_geometry</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Continuous1D(128,)
+Continuous1D(127,)
+</pre></div>
+</div>
+</div>
+</div>
+<p>These geometries are of type <code class="docutils literal notranslate"><span class="pre">Continuous1D</span></code> which represents a 1D continuous signal/field defined on a grid. We can view the grid:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">A</span><span class="o">.</span><span class="n">domain_geometry</span><span class="o">.</span><span class="n">grid</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[0.         0.02473695 0.0494739  0.07421085 0.0989478  0.12368475
+ 0.1484217  0.17315865 0.1978956  0.22263255 0.2473695  0.27210645
+ 0.2968434  0.32158035 0.3463173  0.37105425 0.3957912  0.42052815
+ 0.4452651  0.47000205 0.494739   0.51947595 0.5442129  0.56894985
+ 0.5936868  0.61842375 0.6431607  0.66789765 0.6926346  0.71737155
+ 0.7421085  0.76684545 0.7915824  0.81631935 0.8410563  0.86579325
+ 0.8905302  0.91526715 0.9400041  0.96474105 0.989478   1.01421495
+ 1.0389519  1.06368885 1.0884258  1.11316275 1.1378997  1.16263665
+ 1.1873736  1.21211055 1.2368475  1.26158445 1.2863214  1.31105835
+ 1.3357953  1.36053225 1.3852692  1.41000615 1.4347431  1.45948005
+ 1.484217   1.50895395 1.5336909  1.55842785 1.5831648  1.60790175
+ 1.6326387  1.65737565 1.6821126  1.70684955 1.7315865  1.75632345
+ 1.7810604  1.80579735 1.8305343  1.85527125 1.8800082  1.90474515
+ 1.9294821  1.95421905 1.978956   2.00369295 2.0284299  2.05316685
+ 2.0779038  2.10264075 2.1273777  2.15211465 2.1768516  2.20158855
+ 2.2263255  2.25106245 2.2757994  2.30053635 2.3252733  2.35001025
+ 2.3747472  2.39948415 2.4242211  2.44895805 2.473695   2.49843195
+ 2.5231689  2.54790585 2.5726428  2.59737975 2.6221167  2.64685365
+ 2.6715906  2.69632755 2.7210645  2.74580145 2.7705384  2.79527535
+ 2.8200123  2.84474925 2.8694862  2.89422315 2.9189601  2.94369705
+ 2.968434   2.99317095 3.0179079  3.04264485 3.0673818  3.09211875
+ 3.1168557  3.14159265]
+</pre></div>
+</div>
+</div>
+</div>
+<p>Additionally, the properties <code class="docutils literal notranslate"><span class="pre">domain_dim</span></code> and <code class="docutils literal notranslate"><span class="pre">range_dim</span></code> of the forward model represent the dimension of the input and output of the forward model, respectively.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">A</span><span class="o">.</span><span class="n">domain_dim</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">A</span><span class="o">.</span><span class="n">range_dim</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>128
+127
+</pre></div>
+</div>
+</div>
+</div>
+<p>Let us create an array representing a constant conductivity over the grid nodes</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">some_x_array</span> <span class="o">=</span> <span class="mi">20</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">A</span><span class="o">.</span><span class="n">domain_dim</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>We can wrap the array in a <code class="docutils literal notranslate"><span class="pre">CUQIarray</span></code> object which is the main data structure in CUQIpy for variables (e.g. arrays and fields)</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">some_x</span> <span class="o">=</span> <span class="n">CUQIarray</span><span class="p">(</span><span class="n">some_x_array</span><span class="p">,</span> <span class="n">geometry</span><span class="o">=</span><span class="n">A</span><span class="o">.</span><span class="n">domain_geometry</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Note that we pass <code class="docutils literal notranslate"><span class="pre">geometry=A.domain_geometry</span></code> to equip the <code class="docutils literal notranslate"><span class="pre">CUQIarray</span></code> object with the same geometry as the domain of the forward model, which is has information about what the values of the array represent (e.g. function values on a grid for this case).</p>
+<p>We can plot the conductivity array using the <code class="docutils literal notranslate"><span class="pre">plot</span></code> method of the <code class="docutils literal notranslate"><span class="pre">CUQIarray</span></code> object</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">some_x</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&lt;matplotlib.lines.Line2D at 0x7f9bd8fec7c0&gt;]
+</pre></div>
+</div>
+<img alt="../_images/57ef8bf231229b85988b66e7140eefc9fde511af4a09415b635ca14489b25ee2.png" src="../_images/57ef8bf231229b85988b66e7140eefc9fde511af4a09415b635ca14489b25ee2.png" />
+</div>
+</div>
+<p>We can also evaluate the forward model at the conductivity array and plot the solution:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">some_y</span> <span class="o">=</span> <span class="n">A</span><span class="p">(</span><span class="n">some_x</span><span class="p">)</span>
+<span class="n">some_y</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&lt;matplotlib.lines.Line2D at 0x7f9bd8e76350&gt;]
+</pre></div>
+</div>
+<img alt="../_images/e147b8b8a2ea3adc4bde97339faf73f84590f424fb0302451c516ef135c7baf0.png" src="../_images/e147b8b8a2ea3adc4bde97339faf73f84590f424fb0302451c516ef135c7baf0.png" />
+</div>
+</div>
+<section id="exercise">
+<h3><font color=#8B4513> Exercise: </font><a class="headerlink" href="#exercise" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>Is this true for you: <strong>“I can, mathematically, write a definition of a 1D Poisson forward model that maps the conductivity field to the temperature distribution field”</strong>? If not, what questions do you have?</p></li>
+<li><p>Trying a different conductivity profile:</p>
+<ul>
+<li><p>Create another constant conductivity profile <code class="docutils literal notranslate"><span class="pre">another_x</span></code> of value 20 as a <code class="docutils literal notranslate"><span class="pre">CUQIarray</span></code> object.</p></li>
+<li><p>Evaluate the forward model at the new conductivity profile and store the result in a variable <code class="docutils literal notranslate"><span class="pre">another_y</span></code>. Plot the solution.</p></li>
+<li><p>In one plot, compare the solutions <code class="docutils literal notranslate"><span class="pre">some_y</span></code> and <code class="docutils literal notranslate"><span class="pre">another_y</span></code> using the <code class="docutils literal notranslate"><span class="pre">plot</span></code> method of the <code class="docutils literal notranslate"><span class="pre">CUQIarray</span></code> object. What do you observe? and why?</p></li>
+</ul>
+</li>
+<li><p>Experimenting with setting up the <code class="docutils literal notranslate"><span class="pre">map</span></code> in <code class="docutils literal notranslate"><span class="pre">Poisson1D</span></code>:</p>
+<ul>
+<li><p>Execute <code class="docutils literal notranslate"><span class="pre">help(Poisson1D)</span></code></p></li>
+<li><p>Note the <code class="docutils literal notranslate"><span class="pre">map</span></code> parameter of <code class="docutils literal notranslate"><span class="pre">Poisson1D</span></code>. We can use this parameter to transform the conductivity field before solving the PDE. Create the forward model again, name it <code class="docutils literal notranslate"><span class="pre">A_map</span></code>, with setting up <code class="docutils literal notranslate"><span class="pre">map</span></code> to be <code class="docutils literal notranslate"><span class="pre">lambda</span> <span class="pre">x:</span> <span class="pre">np.exp(x)</span></code> to ensure that the conductivity is always positive.</p></li>
+<li><p>Inspect the domain and range geometries of the new forward model <code class="docutils literal notranslate"><span class="pre">A_map</span></code> what is different this time, and why?</p></li>
+<li><p>Create a CUQIarray object <code class="docutils literal notranslate"><span class="pre">x_with_map</span></code> with a constant conductivity profile of value 0 and evaluate the forward model at <code class="docutils literal notranslate"><span class="pre">x_with_map</span></code> and store it in variable <code class="docutils literal notranslate"><span class="pre">y_with_map</span></code>. Make sure to use the right geometry for <code class="docutils literal notranslate"><span class="pre">x_with_map</span></code>.</p></li>
+<li><p>Plot <code class="docutils literal notranslate"><span class="pre">x_with_map</span></code> using <code class="docutils literal notranslate"><span class="pre">x_with_map.plot()</span></code>, What do you observe?</p></li>
+<li><p>Plot the solution <code class="docutils literal notranslate"><span class="pre">y_with_map</span></code> and <code class="docutils literal notranslate"><span class="pre">some_y</span></code> in the same plot. What do you observe? and why?</p></li>
+</ul>
+</li>
+<li><p>Experimenting with setting up the <code class="docutils literal notranslate"><span class="pre">field_type</span></code> in <code class="docutils literal notranslate"><span class="pre">Poisson1D</span></code>:</p>
+<ul>
+<li><p>Note the <code class="docutils literal notranslate"><span class="pre">field_type</span></code> parameter of <code class="docutils literal notranslate"><span class="pre">Poisson1D</span></code>. We can use this parameter to change the parameterization of the conductivity field. Create the forward model again, name it <code class="docutils literal notranslate"><span class="pre">A_step</span></code>, with setting both the <code class="docutils literal notranslate"><span class="pre">map</span></code> as in the previous exercise and the <code class="docutils literal notranslate"><span class="pre">field_type</span></code> to be <code class="docutils literal notranslate"><span class="pre">&quot;Step&quot;</span></code> to generate a step parameterization of the conductivity field.</p></li>
+<li><p>What is the domain and range geometries of the new forward model <code class="docutils literal notranslate"><span class="pre">A_step</span></code>?</p></li>
+<li><p>Create <code class="docutils literal notranslate"><span class="pre">x_step</span></code> to be <code class="docutils literal notranslate"><span class="pre">x_step</span> <span class="pre">=</span> <span class="pre">CUQIarray(np.arange(A_step.domain_dim)*0.1,</span> <span class="pre">geometry=A_step.domain_geometry)</span></code>.</p></li>
+<li><p>Plot <code class="docutils literal notranslate"><span class="pre">x_step</span></code> using <code class="docutils literal notranslate"><span class="pre">x_step.plot()</span></code>.</p></li>
+<li><p>What does the dimension <code class="docutils literal notranslate"><span class="pre">A_step.domain_dim</span></code> represent? and is it equal to the size of the domain geometry grid?</p></li>
+<li><p>Evaluate the forward model at <code class="docutils literal notranslate"><span class="pre">x_step</span></code> and store it in variable <code class="docutils literal notranslate"><span class="pre">y_step</span></code>. Plot the solution.</p></li>
+</ul>
+</li>
+<li><p>Is this true for you: <strong>“I can load the pre-existing Poisson 1D forward model in CUQIpy and evaluate it on some input and visualize the input and output”</strong>? If not, what questions do you have?</p></li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># your code here</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="forward-model-1d-convolution">
+<h2><font color=#CD853F> Forward model: 1D convolution </font> <a name="r-forward-model-1d-convolution"></a><a class="headerlink" href="#forward-model-1d-convolution" title="Link to this heading">#</a></h2>
+<p>The mathematical model for convolution of a random signal on a one-dimensional spatial domain <span class="math notranslate nohighlight">\(D\)</span>, can be written as a stochastic Fredholm integral equation of the first kind:</p>
+<div class="math notranslate nohighlight">
+\[
+\begin{aligned}
+y(\xi) = \int_{D} k(\xi,\xi')x(\xi')\,\dd \xi' 
+\end{aligned}
+\]</div>
+<p>where <span class="math notranslate nohighlight">\(y(\xi)\)</span> denotes the convolved signal and we assume a Gaussian convolution kernel. In practice, a finite-dimensional representation of the integral equation is employed. After discretizing the signal domain into <span class="math notranslate nohighlight">\(N\)</span> components, the convolution model can be expressed as a system of linear algebraic equations <span class="math notranslate nohighlight">\(\ve{y}=\mat{K}\ve{x}\)</span>.</p>
+<p>Let us load the forward model that maps the random variable <span class="math notranslate nohighlight">\(\ve{x}\)</span> to the convolved signal <span class="math notranslate nohighlight">\(\ve{y}\)</span> in CUQIpy. We will use the following parameters to specify the forward model:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">dim</span></code> : is the number of discretization points for the signal, <span class="math notranslate nohighlight">\(N\)</span></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">PSF</span></code> : a function that represents the point spread function, i.e., the convolution kernel</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">PSF_size</span></code> : the size of the PSF (less or equal to <code class="docutils literal notranslate"><span class="pre">dim</span></code>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">PSF_param</span></code> : A parameter of the PSF, the larger the size the more the blur applied to the signal</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">BC</span></code> : boundary conditions for the convolution</p></li>
+</ul>
+<p>We set the parameters as follows:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dim</span> <span class="o">=</span> <span class="mi">201</span>
+<span class="n">PSF</span> <span class="o">=</span> <span class="s1">&#39;gauss&#39;</span> <span class="c1"># Gaussian PSF</span>
+<span class="n">PSF_size</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">dim</span><span class="o">/</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">PSF_param</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">dim</span><span class="o">/</span><span class="mi">20</span><span class="p">)</span>
+<span class="n">BC</span><span class="o">=</span><span class="s1">&#39;reflect&#39;</span> <span class="c1"># Boundary condition</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Then we can load the 1D convolution forward model as follows (note that we refer to the forward model as a convolution model which we obtain from the <code class="docutils literal notranslate"><span class="pre">Deconvolution1D</span></code> test problem, the latter represents the BIP of deconvolving the signal):</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">A_deconv</span> <span class="o">=</span> <span class="n">Deconvolution1D</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="n">dim</span><span class="p">,</span> <span class="n">PSF</span><span class="o">=</span><span class="n">PSF</span><span class="p">,</span> <span class="n">PSF_size</span><span class="o">=</span><span class="n">PSF_size</span><span class="p">,</span> <span class="n">PSF_param</span><span class="o">=</span><span class="n">PSF_param</span><span class="p">,</span> <span class="n">BC</span><span class="o">=</span><span class="n">BC</span><span class="p">)</span><span class="o">.</span><span class="n">model</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Let us create a function representing a signal that we want to convolve.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">signal_function</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">xi</span><span class="p">:</span> <span class="p">(</span><span class="n">xi</span><span class="o">&gt;</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">dim</span><span class="o">*</span><span class="mi">4</span><span class="o">/</span><span class="mi">10</span><span class="p">))</span><span class="o">*</span><span class="p">(</span><span class="n">xi</span><span class="o">&lt;</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">dim</span><span class="o">*</span><span class="mi">6</span><span class="o">/</span><span class="mi">10</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>We evaluate the function <code class="docutils literal notranslate"><span class="pre">signal_function</span></code> at the discretization grid points and wrap it in a <code class="docutils literal notranslate"><span class="pre">CUQIarray</span></code> object.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">signal_array</span> <span class="o">=</span> <span class="n">signal_function</span><span class="p">(</span><span class="n">A_deconv</span><span class="o">.</span><span class="n">domain_geometry</span><span class="o">.</span><span class="n">grid</span><span class="p">)</span>
+<span class="n">signal</span> <span class="o">=</span> <span class="n">CUQIarray</span><span class="p">(</span><span class="n">signal_array</span><span class="p">,</span> <span class="n">geometry</span><span class="o">=</span><span class="n">A_deconv</span><span class="o">.</span><span class="n">domain_geometry</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Let us plot the signal</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">signal</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&lt;matplotlib.lines.Line2D at 0x7f9ba76d3790&gt;]
+</pre></div>
+</div>
+<img alt="../_images/c266fb396ad6194dfb329d08a1a81f63a803f1925f89ba8e82e169fed667ff22.png" src="../_images/c266fb396ad6194dfb329d08a1a81f63a803f1925f89ba8e82e169fed667ff22.png" />
+</div>
+</div>
+<p>Now, we evaluate the forward model at the signal and plot the solution:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">A_deconv</span><span class="p">(</span><span class="n">signal</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&lt;matplotlib.lines.Line2D at 0x7f9ba775ee60&gt;]
+</pre></div>
+</div>
+<img alt="../_images/5132a2455aa718bfef45ec505bf3e90895650050b3d0f75aac92412a04b04cf1.png" src="../_images/5132a2455aa718bfef45ec505bf3e90895650050b3d0f75aac92412a04b04cf1.png" />
+</div>
+</div>
+<p>We see that the signal is blurred due to applying the convolution operation (the forward model).</p>
+<section id="id1">
+<h3><font color=#8B4513> Exercise: </font><a class="headerlink" href="#id1" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>Type <code class="docutils literal notranslate"><span class="pre">help(Deconvolution1D)</span></code> to see the documentation of this test problem.</p></li>
+<li><p>Experimenting with the convolution strength:</p>
+<ul>
+<li><p>Create another convolution model <code class="docutils literal notranslate"><span class="pre">B</span></code> with the same parameters as <code class="docutils literal notranslate"><span class="pre">A_deconv</span></code> but with a different <code class="docutils literal notranslate"><span class="pre">PSF_param</span></code> value, use <code class="docutils literal notranslate"><span class="pre">PSF_param=PSF_param/2</span></code>. Evaluate the forward model <code class="docutils literal notranslate"><span class="pre">B</span></code> at the signal and plot the solution along with <code class="docutils literal notranslate"><span class="pre">A_deconv(signal)</span></code> in the same plot. What do you observe?</p></li>
+</ul>
+</li>
+<li><p>Experimenting with setting up the <code class="docutils literal notranslate"><span class="pre">PSF</span></code>:</p>
+<ul>
+<li><p>Create a new convolution model <code class="docutils literal notranslate"><span class="pre">C</span></code> with the same parameters as <code class="docutils literal notranslate"><span class="pre">A_deconv</span></code> but with a different <code class="docutils literal notranslate"><span class="pre">PSF</span></code>, use <code class="docutils literal notranslate"><span class="pre">PSF=np.ones(m)/m</span></code>. Evaluate the forward model <code class="docutils literal notranslate"><span class="pre">C</span></code> at the signal and plot the solution along with <code class="docutils literal notranslate"><span class="pre">A_deconv(signal)</span></code> in the same plot (try for different values of m: 5, 10, 20). What do you observe?</p></li>
+</ul>
+</li>
+<li><p>Experimenting with setting up the <code class="docutils literal notranslate"><span class="pre">BC</span></code>:</p>
+<ul>
+<li><p>Create a new convolution model <code class="docutils literal notranslate"><span class="pre">D</span></code> with the same parameters as <code class="docutils literal notranslate"><span class="pre">A_deconv</span></code> but with a different <code class="docutils literal notranslate"><span class="pre">BC</span></code>, use <code class="docutils literal notranslate"><span class="pre">BC=&quot;periodic&quot;</span></code>. Evaluate the forward model <code class="docutils literal notranslate"><span class="pre">D</span></code> at the signal and plot the solution along with <code class="docutils literal notranslate"><span class="pre">A_deconv(signal)</span></code> in the same plot. What do you observe?</p></li>
+<li><p>Now create another signal <code class="docutils literal notranslate"><span class="pre">another_signal</span></code> as <code class="docutils literal notranslate"><span class="pre">another_signal</span> <span class="pre">=</span> <span class="pre">signal</span> <span class="pre">+</span> <span class="pre">0.1*np.exp((D.domain_geometry.grid</span> <span class="pre">-</span> <span class="pre">np.round(dim*7/8))/10)</span></code>. Plot the new signal. Evaluate the forward models <code class="docutils literal notranslate"><span class="pre">A_deconv</span></code>, and <code class="docutils literal notranslate"><span class="pre">D</span></code> at the new signal and plot the solutions in the same plot. What do you observe?</p></li>
+</ul>
+</li>
+</ul>
+<ul class="simple">
+<li><p>Is this true for you: <strong>“I can load the pre-existing convolution 1D forward model in CUQIpy, experiment with its parameter setup, evaluate it on some input, and visualize the input and output”</strong>? If not, what questions do you have?</p></li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># your code here</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "CUQI-DTU/CUQI-Book",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./chapter01"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="Intro_example.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Probably the simplest BIP in the world</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="extra_forward_models.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Extra material: Forward models, data generation and forward UQ</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#contents-of-this-notebook"><font color="#CD853F"> Contents of this notebook: </font></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#learning-objectives"><font color="#CD853F"> Learning objectives: </font> <a name="r-learning-objectives"></a></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#forward-model-1d-poisson"><font color="#CD853F"> Forward model: 1D Poisson </font> <a name="r-forward-model-1d-poisson"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercise"><font color="#8B4513"> Exercise: </font></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#forward-model-1d-convolution"><font color="#CD853F"> Forward model: 1D convolution </font> <a name="r-forward-model-1d-convolution"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1"><font color="#8B4513"> Exercise: </font></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By CUQIpy developer team
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=3ee479438cf8b5e0d341"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=3ee479438cf8b5e0d341"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

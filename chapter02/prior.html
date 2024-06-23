@@ -1,0 +1,1783 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Distributions, priors, and basic sampling in CUQIpy &#8212; Uncertainty Quantification in Inverse Problems with CUQIpy</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=3ee479438cf8b5e0d341" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=3ee479438cf8b5e0d341" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=3ee479438cf8b5e0d341" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=3ee479438cf8b5e0d341" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=a3416100" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=87e54e7c" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=3ee479438cf8b5e0d341" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=3ee479438cf8b5e0d341" />
+  <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=3ee479438cf8b5e0d341"></script>
+
+    <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js?v=4a39c7ea"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"tex": {"macros": {"dd": "\\mathrm{d}", "abs": ["\\left\\vert#1\\right\\vert", 1], "ve": ["\\bm{#1}", 1], "mat": ["\\mathbf{#1}", 1], "N": "\\mathbb{N}", "floor": ["\\lfloor#1\\rfloor", 1], "bmat": ["\\left[\\begin{array}"], "emat": ["\\end{array}\\right]"], "bm": ["{\\boldsymbol #1}", 1]}}, "options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'chapter02/prior';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Gibbs sampling" href="gibbs.html" />
+    <link rel="prev" title="Chapter 2: Prior and Hierarchical Bayesian Models" href="chapter02.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+
+<a class="navbar-brand logo" href="../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/logo.png" class="logo__image only-light" alt="Uncertainty Quantification in Inverse Problems with CUQIpy - Home"/>
+    <script>document.write(`<img src="../_static/logo.png" class="logo__image only-dark" alt="Uncertainty Quantification in Inverse Problems with CUQIpy - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../intro.html">
+                    Welcome to the “Uncertainty Quantification in Inverse Problems with CUQIpy” mini-book!
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../chapter01/chapter01.html">Chapter 1: Introduction to Bayesian Inverse Problems (BIP) in CUQIpy</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../chapter01/introduction_overview_of_cuqipy.html">Overview of CUQIpy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter01/Intro_example.html">Probably the simplest BIP in the world</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter01/two_forward_problems_new.html">Two forward models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter01/extra_forward_models.html">Extra material: Forward models, data generation and forward UQ</a></li>
+
+
+
+
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="chapter02.html">Chapter 2: Prior and Hierarchical Bayesian Models</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Distributions, priors, and basic sampling in CUQIpy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gibbs.html">Gibbs sampling</a></li>
+
+
+
+
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../chapter03/chapter03.html">Chapter 3: Sampling with CUQIpy</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../chapter03/sampling_with_cuqipy_two_target.html">Sampling with CUQIpy: Two target distributions and exploring the posterior using the BayesianProblem class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter03/gradient_based_sampling_with_cuqipy.html">Sampling with CUQIpy: five little stories</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../chapter04/chapter04.html">Chapter 4: Advanced Bayesian Inference in CUQIpy</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../chapter04/project.html">CUQIpy component final project</a></li>
+
+
+
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-launch-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Launch interactive content">
+    <i class="fas fa-rocket"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://colab.research.google.com/github/CUQI-DTU/CUQI-Book/blob/master/chapter02/prior.ipynb" target="_blank"
+   class="btn btn-sm dropdown-item"
+   title="Launch on Colab"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  
+    <img alt="Colab logo" src="../_static/images/logo_colab.png">
+  </span>
+<span class="btn__text-container">Colab</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="initThebeSBT()"
+  class="btn btn-sm btn-launch-thebe dropdown-item"
+  title="Launch Thebe"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-play"></i>
+  </span>
+<span class="btn__text-container">Live Code</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/CUQI-DTU/CUQI-Book" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/CUQI-DTU/CUQI-Book/issues/new?title=Issue%20on%20page%20%2Fchapter02/prior.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/chapter02/prior.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Distributions, priors, and basic sampling in CUQIpy</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#contents-of-this-notebook"><font color="#CD853F"> Contents of this notebook: </font></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#learning-objectives"><font color="#CD853F"> Learning objectives: </font> <a name="r-learning-objectives"></a></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#distributions-in-cuqipy"><font color="#CD853F"> Distributions in CUQIpy  </font> <a class="anchor" id="r-Distributions-in-CUQIpy"></a></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#multivariate-gaussian-distribution"><font color="#CD853F"> Multivariate Gaussian distribution </font> <a class="anchor" id="r-Multivariate-Gaussian-distribution"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercise"><font color="#8B4513">Exercise:</font></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#computing-the-entropy-of-a-distribution-numerically"><font color="#8B4513">Computing the entropy of a distribution, numerically:</font></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1"><font color="#8B4513">Exercise:</font></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#geometry-object-representation-parametrization-and-mapping"><font color="#CD853F"> Geometry object: representation, parametrization and mapping </font> <a class="anchor" id="r-Geometry"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#geometry-are-used-to-specify-variable-representation"><font color="#8B4513"> Geometry are used to specify variable representation </font></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#geometry-are-used-to-parameterize-the-variables"><font color="#8B4513"> Geometry are used to parameterize the variables </font></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#geometry-are-used-to-map-the-variables"><font color="#8B4513"> ★ Geometry are used to map the variables </font></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elaboration-specifying-a-geometry-object-for-cuqiarray-objects"><font color="#8B4513"> ★ Elaboration: Specifying a Geometry object for CUQIarray objects:</font></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#markov-random-fields-in-cuqipy"><font color="#CD853F"> Markov random fields in CUQIpy </font> <a class="anchor" id="r-Markov-Random-Field"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id4"><font color="#8B4513">Exercise:</font></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#other-markov-random-fields-in-cuqipy"><font color="#8B4513">Other Markov random fields in CUQIpy:</font></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#elaboration-on-conditional-distributions"><font color="#CD853F"> ★ Elaboration on conditional distributions </font> <a class="anchor" id="r-Conditional-distributions"></a></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#user-defined-distributions"><font color="#CD853F"> ★ User-defined distributions  </font> <a class="anchor" id="r-User-defined-distributions"></a></a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="distributions-priors-and-basic-sampling-in-cuqipy">
+<h1>Distributions, priors, and basic sampling in CUQIpy<a class="headerlink" href="#distributions-priors-and-basic-sampling-in-cuqipy" title="Link to this heading">#</a></h1>
+<p><strong>note</strong>: ★ Indicates an optional section.</p>
+<section id="contents-of-this-notebook">
+<h2><font color=#CD853F> Contents of this notebook: </font><a class="headerlink" href="#contents-of-this-notebook" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><a class="reference internal" href="#r-learning-objectives"><span class="xref myst">Learning objectives</span></a></p></li>
+<li><p><a class="reference internal" href="#r-Distributions-in-CUQIpy"><span class="xref myst">Distributions in CUQIpy</span></a></p></li>
+<li><p><a class="reference internal" href="#r-Multivariate-Gaussian-distribution"><span class="xref myst">Multivariate Gaussian distribution</span></a></p></li>
+<li><p><a class="reference internal" href="#r-Geometry"><span class="xref myst">Geometry object: representation, parametrization and mapping</span></a></p></li>
+<li><p><a class="reference internal" href="#r-Markov-Random-Field"><span class="xref myst">Markov random fields in CUQIpy</span></a></p></li>
+<li><p><a class="reference internal" href="#r-Conditional-distributions"><span class="xref myst">★ Elaboration on conditional distributions</span></a></p></li>
+<li><p><a class="reference internal" href="#r-User-defined-distributions"><span class="xref myst">★ User-defined distributions</span></a></p></li>
+</ul>
+</section>
+<section id="learning-objectives">
+<h2><font color=#CD853F> Learning objectives: </font> <a name="r-learning-objectives"></a><a class="headerlink" href="#learning-objectives" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>Create uni-variate and multivariate distributions in CUQIpy of different types, sample them and analyze the samples.</p></li>
+<li><p>Define Gaussian Markov random field (GMRF) mathematically and compare i.i.d multivariate Gaussian distribution with <code class="docutils literal notranslate"><span class="pre">GMRF</span></code> in CUQIpy.</p></li>
+<li><p>Use the <code class="docutils literal notranslate"><span class="pre">Geometry</span></code> object to parametrize the unknowns represented by the the prior distribution.</p></li>
+<li><p>★ Create conditional distributions in CUQIpy, condition them and sample from them.</p></li>
+<li><p>★ Create a user-defined distribution from a logpdf function.</p></li>
+</ul>
+<p><strong>References:</strong></p>
+<ul class="simple">
+<li><p>[1] <em>Bardsley, Johnathan. 2018. Computational Uncertainty Quantification for Inverse Problems. SIAM, Society for Industrial and Applied Mathematics.</em></p></li>
+</ul>
+<div class="cell tag_hide-cell docutils container">
+<details class="hide above-input">
+<summary aria-label="Toggle hidden content">
+<span class="collapsed">Show code cell content</span>
+<span class="expanded">Hide code cell content</span>
+</summary>
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Import the necessary libraries</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">cuqi</span>
+<span class="kn">from</span> <span class="nn">cuqi.distribution</span> <span class="kn">import</span> <span class="n">Gaussian</span><span class="p">,</span> <span class="n">GMRF</span><span class="p">,</span> <span class="n">Uniform</span><span class="p">,</span> <span class="n">Normal</span>
+<span class="kn">from</span> <span class="nn">cuqi.samples</span> <span class="kn">import</span> <span class="n">Samples</span>
+<span class="kn">from</span> <span class="nn">cuqi.geometry</span> <span class="kn">import</span> <span class="n">Continuous1D</span><span class="p">,</span> <span class="n">Image2D</span><span class="p">,</span> <span class="n">StepExpansion</span><span class="p">,</span> <span class="n">KLExpansion</span><span class="p">,</span>\
+    <span class="n">Discrete</span><span class="p">,</span> <span class="n">MappedGeometry</span>
+</pre></div>
+</div>
+</div>
+</details>
+</div>
+</section>
+<section id="distributions-in-cuqipy">
+<h2><font color=#CD853F> Distributions in CUQIpy  </font> <a class="anchor" id="r-Distributions-in-CUQIpy"></a><a class="headerlink" href="#distributions-in-cuqipy" title="Link to this heading">#</a></h2>
+<p>Here we present various distributions and parameterizations in CUQIpy. These distributions can be used as priors in the Bayesian framework.</p>
+<p>In the previous chapter, we saw a couple of univariate and bivariate <code class="docutils literal notranslate"><span class="pre">Gaussain</span></code> distributions. Let us now look at more general multivariate distributions. CUQIpy currently implements a number of multivariate distributions in the <code class="docutils literal notranslate"><span class="pre">cuqi.distribution</span></code> module:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">dist</span> <span class="k">for</span> <span class="n">dist</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="n">cuqi</span><span class="o">.</span><span class="n">distribution</span><span class="p">)</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">dist</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)]</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;Beta&#39;,
+ &#39;CMRF&#39;,
+ &#39;Cauchy&#39;,
+ &#39;Distribution&#39;,
+ &#39;DistributionGallery&#39;,
+ &#39;GMRF&#39;,
+ &#39;Gamma&#39;,
+ &#39;Gaussian&#39;,
+ &#39;InverseGamma&#39;,
+ &#39;JointDistribution&#39;,
+ &#39;JointGaussianSqrtPrec&#39;,
+ &#39;LMRF&#39;,
+ &#39;Laplace&#39;,
+ &#39;Lognormal&#39;,
+ &#39;MultipleLikelihoodPosterior&#39;,
+ &#39;Normal&#39;,
+ &#39;Posterior&#39;,
+ &#39;Uniform&#39;,
+ &#39;UserDefinedDistribution&#39;]
+</pre></div>
+</div>
+</div>
+</div>
+<p>and more can easily be added when needed.</p>
+</section>
+<section id="multivariate-gaussian-distribution">
+<h2><font color=#CD853F> Multivariate Gaussian distribution </font> <a class="anchor" id="r-Multivariate-Gaussian-distribution"></a><a class="headerlink" href="#multivariate-gaussian-distribution" title="Link to this heading">#</a></h2>
+<p>To demonstrate, we specify here a 4-element random variable <code class="docutils literal notranslate"><span class="pre">y</span></code> following a Gaussian distribution with independent elements:</p>
+<div class="math notranslate nohighlight">
+\[\mathbf{y} \sim \mathrm{Gaussian}(\mu,\mathrm{diag}(\sigma^2)) \quad \text{for} \quad \mu = [5, 3, 1, 0]^T \quad \text{and} \quad \sigma = [1,2,3, 0.5]\]</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">true_mu</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+<span class="n">true_sigma</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">])</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">cuqi</span><span class="o">.</span><span class="n">distribution</span><span class="o">.</span><span class="n">Gaussian</span><span class="p">(</span><span class="n">mean</span><span class="o">=</span><span class="n">true_mu</span><span class="p">,</span> <span class="n">cov</span><span class="o">=</span><span class="n">true_sigma</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>We can take a look at the distribution by printing it and some of its properties.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">y</span><span class="o">.</span><span class="n">dim</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">y</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CUQI Gaussian.
+4
+y
+</pre></div>
+</div>
+</div>
+</div>
+<p><strong>Note about the distribution name:</strong></p>
+<ul class="simple">
+<li><p>The distribution name is inferred automatically from the assignment statement <code class="docutils literal notranslate"><span class="pre">y</span> <span class="pre">=</span> <span class="pre">cuqi.distribution.Gaussian(mean=true_mu,</span> <span class="pre">cov=true_sigma**2)</span></code>.</p></li>
+<li><p>Since the distribution was assigned to the variable <code class="docutils literal notranslate"><span class="pre">y</span></code>, by default, the distribution name will be <code class="docutils literal notranslate"><span class="pre">y</span></code>.</p></li>
+<li><p>One can specify a different name by explicitly passing the <code class="docutils literal notranslate"><span class="pre">name</span></code> argument, e.g. <code class="docutils literal notranslate"><span class="pre">y</span> <span class="pre">=</span> <span class="pre">cuqi.distribution.Gaussian(mean=true_mu,</span> <span class="pre">cov=true_sigma**2,</span> <span class="pre">name='y1')</span></code>.</p></li>
+</ul>
+<p>We can query other information about this distribution such as its mean:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">y</span><span class="o">.</span><span class="n">mean</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[5 3 1 0]
+</pre></div>
+</div>
+</div>
+</div>
+<p>and its diagonal covariance matrix (represented as a 1D array of the diagonal values):</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">y</span><span class="o">.</span><span class="n">cov</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[1.   4.   9.   0.25]
+</pre></div>
+</div>
+</div>
+</div>
+<p>We generate a single sample which produces a 4-element <code class="docutils literal notranslate"><span class="pre">CUQIarray</span></code>:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">y</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CUQIarray: NumPy array wrapped with geometry.
+---------------------------------------------
+
+Geometry:
+ _DefaultGeometry1D(4,)
+
+Parameters:
+ True
+
+Array:
+CUQIarray([ 6.45244146,  6.17395526,  0.7120315 , -0.13997209])
+</pre></div>
+</div>
+</div>
+</div>
+<p>If we ask for more than one sample, say 1000, we get a <code class="docutils literal notranslate"><span class="pre">Samples</span></code> object with 1000 columns each holding a 4-element sample.</p>
+<p><strong>note about the <code class="docutils literal notranslate"><span class="pre">Samples</span></code> object:</strong> The <code class="docutils literal notranslate"><span class="pre">Samples</span></code> object is essentially an array in which each column contains one sample. The object is further equipped with a number of methods for computing samples statistics, diagnostics and plotting.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">y_samples</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">y_samples</span><span class="p">)</span>
+<span class="n">y_samples</span><span class="o">.</span><span class="n">shape</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;cuqi.samples._samples.Samples object at 0x7f49dffd8850&gt;
+</pre></div>
+</div>
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(4, 1000)
+</pre></div>
+</div>
+</div>
+</div>
+<p>We can look at all the plotting methods available for the <code class="docutils literal notranslate"><span class="pre">Samples</span></code> object:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># A list of all plotting methods</span>
+<span class="p">[</span><span class="n">method</span> <span class="k">for</span> <span class="n">method</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="n">y_samples</span><span class="p">)</span> <span class="k">if</span> <span class="n">method</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;plot&#39;</span><span class="p">)]</span> 
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;plot&#39;,
+ &#39;plot_autocorrelation&#39;,
+ &#39;plot_chain&#39;,
+ &#39;plot_ci&#39;,
+ &#39;plot_ci_width&#39;,
+ &#39;plot_mean&#39;,
+ &#39;plot_median&#39;,
+ &#39;plot_pair&#39;,
+ &#39;plot_std&#39;,
+ &#39;plot_trace&#39;,
+ &#39;plot_variance&#39;,
+ &#39;plot_violin&#39;]
+</pre></div>
+</div>
+</div>
+</div>
+<p>We can plot chains of, for example, 2 of the 4 variable samples, here we pick element 2 and 0:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">y_samples</span><span class="o">.</span><span class="n">plot_chain</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&lt;matplotlib.lines.Line2D at 0x7f4a14bf4760&gt;,
+ &lt;matplotlib.lines.Line2D at 0x7f4a14bf4850&gt;]
+</pre></div>
+</div>
+<img alt="../_images/034279d3b53190a5509706e00e145180864841934b907c8c63741a81bd986db7.png" src="../_images/034279d3b53190a5509706e00e145180864841934b907c8c63741a81bd986db7.png" />
+</div>
+</div>
+<p>As well as plot a few individual 4-element samples:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">y_samples</span><span class="o">.</span><span class="n">plot</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Plotting 5 randomly selected samples
+</pre></div>
+</div>
+<img alt="../_images/685dbee88e6e632242d85e7d1d1277d36eb759b3843c931a799a61e7bd77f29d.png" src="../_images/685dbee88e6e632242d85e7d1d1277d36eb759b3843c931a799a61e7bd77f29d.png" />
+</div>
+</div>
+<p>By default 5 random samples are plotted, but we can also specify indices of specific samples we wish to plot, like every 100th sample:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">y_samples</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">300</span><span class="p">,</span> <span class="mi">400</span><span class="p">,</span> <span class="mi">500</span><span class="p">,</span> <span class="mi">600</span><span class="p">,</span> <span class="mi">700</span><span class="p">,</span> <span class="mi">800</span><span class="p">,</span> <span class="mi">900</span><span class="p">]);</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/8b6d0968653c646f5ddb25ddd1a572cb7bad22d81a62fb083f583e26dde64f0a.png" src="../_images/8b6d0968653c646f5ddb25ddd1a572cb7bad22d81a62fb083f583e26dde64f0a.png" />
+</div>
+</div>
+<p>We can also plot the sample mean and compare with the true mean of the distribution:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">y_samples</span><span class="o">.</span><span class="n">plot_mean</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;Sample mean&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">y</span><span class="o">.</span><span class="n">mean</span><span class="p">,</span> <span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Distribution mean&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x7f49d1fdad40&gt;
+</pre></div>
+</div>
+<img alt="../_images/abcfe7bdd96450a51cf87f7b6cc48aa30d04eb1ac83d6f08f946e6598ec4b58b.png" src="../_images/abcfe7bdd96450a51cf87f7b6cc48aa30d04eb1ac83d6f08f946e6598ec4b58b.png" />
+</div>
+</div>
+<section id="exercise">
+<h3><font color=#8B4513>Exercise:</font><a class="headerlink" href="#exercise" title="Link to this heading">#</a></h3>
+<ol class="arabic simple">
+<li><p>Plot mean with 90% credibility interval, hint: <code class="docutils literal notranslate"><span class="pre">help(y_samples.plot_ci)</span></code>.</p></li>
+<li><p>Include in the credibility interval plot a comparison with the true mean using the <code class="docutils literal notranslate"><span class="pre">exact</span></code> keyword argument of <code class="docutils literal notranslate"><span class="pre">plot_ci</span></code>.</p></li>
+<li><p>★ Experiment with other plotting methods available for the <code class="docutils literal notranslate"><span class="pre">Samples</span></code> object.</p></li>
+</ol>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># your code here</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="computing-the-entropy-of-a-distribution-numerically">
+<h3><font color=#8B4513>Computing the entropy of a distribution, numerically:</font><a class="headerlink" href="#computing-the-entropy-of-a-distribution-numerically" title="Link to this heading">#</a></h3>
+<p>You have studied the maximum entropy concept of choosing non-informative priors during the <a class="reference external" href="https://learn.inside.dtu.dk/d2l/le/lessons/210042/topics/808891">lectures</a> this week. Here, we will compute the entropy of a distribution numerically. Let us define a Gaussian distribution <code class="docutils literal notranslate"><span class="pre">x_ent</span></code>:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">x_ent</span> <span class="o">=</span> <span class="n">Gaussian</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Let us define a <code class="docutils literal notranslate"><span class="pre">lambda</span></code> function for the entropy integrand:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">entropy_integrand</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">dist</span><span class="p">,</span> <span class="n">val</span><span class="p">:</span> <span class="n">dist</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">val</span><span class="p">)</span><span class="o">*</span><span class="n">dist</span><span class="o">.</span><span class="n">logd</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>To compute the entropy, we can use scipy’s <code class="docutils literal notranslate"><span class="pre">quad</span></code> function to integrate the entropy integrand over the support of the distribution:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">scipy.integrate</span> <span class="k">as</span> <span class="nn">sp_integrate</span>
+<span class="n">x_ent_entropy</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="o">*</span><span class="n">sp_integrate</span><span class="o">.</span><span class="n">quad</span><span class="p">(</span><span class="k">lambda</span> <span class="n">val</span><span class="p">:</span> <span class="n">entropy_integrand</span><span class="p">(</span><span class="n">x_ent</span><span class="p">,</span> <span class="n">val</span><span class="p">),</span>
+                                     <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">x_ent_entropy</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>1.4189385332046731
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="id1">
+<h3><font color=#8B4513>Exercise:</font><a class="headerlink" href="#id1" title="Link to this heading">#</a></h3>
+<ol class="arabic simple">
+<li><p>Compute the entropy of the distribution <code class="docutils literal notranslate"><span class="pre">y_ent</span> <span class="pre">=</span> <span class="pre">Gaussian(1,</span> <span class="pre">0.1)</span></code> using the same method as above, what is the effect of changing the variance of the distribution on the entropy?</p></li>
+<li><p>Similarly, compute the entropy of the distribution <code class="docutils literal notranslate"><span class="pre">z_ent</span> <span class="pre">=</span> <span class="pre">Uniform(-3,</span> <span class="pre">3)</span></code> and compare with the entropy of the two Gaussian distributions. Hint: use -3 and 3 as the limits of the integration.</p></li>
+<li><p>Which of all the distributions has the highest entropy?</p></li>
+</ol>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># your code here</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="geometry-object-representation-parametrization-and-mapping">
+<h2><font color=#CD853F> Geometry object: representation, parametrization and mapping </font> <a class="anchor" id="r-Geometry"></a><a class="headerlink" href="#geometry-object-representation-parametrization-and-mapping" title="Link to this heading">#</a></h2>
+<p>A single sample from a distribution (in vector form) can be interpreted in various ways. It can be, for example, a vector of function values at 1D or 2D grid points, an image, a vector of expansion coefficients, or a collection of variables, e.g. the temperature measurement at four cities: A, B, C, and D.</p>
+<p>In CUQIpy, the <a class="reference external" href="https://cuqi-dtu.github.io/CUQIpy/api/_autosummary/cuqi.geometry.html"><code class="docutils literal notranslate"><span class="pre">cuqi.geometry</span></code></a> module provides classes for different representations of a vector, e.g <code class="docutils literal notranslate"><span class="pre">Continuous1D</span></code>, <code class="docutils literal notranslate"><span class="pre">Continuous2D</span></code>, <code class="docutils literal notranslate"><span class="pre">Image2D</span></code>, and <code class="docutils literal notranslate"><span class="pre">Discrete</span></code>.</p>
+<p>Here we explore geometry assignment for <code class="docutils literal notranslate"><span class="pre">Distributions</span></code>, <code class="docutils literal notranslate"><span class="pre">Samples</span></code> and <code class="docutils literal notranslate"><span class="pre">CUQIarray</span></code>.</p>
+<section id="geometry-are-used-to-specify-variable-representation">
+<h3><font color=#8B4513> Geometry are used to specify variable representation </font><a class="headerlink" href="#geometry-are-used-to-specify-variable-representation" title="Link to this heading">#</a></h3>
+<p>First let us, again, create 1000 samples from the 4-element distribution <span class="math notranslate nohighlight">\(y\)</span> we created earlier:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">y_samples</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>If no geometry is provided by the user, when creating a <code class="docutils literal notranslate"><span class="pre">Distribution</span></code> for example, CUQIpy will assign <code class="docutils literal notranslate"><span class="pre">_DefaultGeometry1D</span></code> (trivial geometry) to the distribution and the <code class="docutils literal notranslate"><span class="pre">Samples</span></code> produced from it.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">y</span><span class="o">.</span><span class="n">geometry</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">y_samples</span><span class="o">.</span><span class="n">geometry</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>_DefaultGeometry1D(4,)
+_DefaultGeometry1D(4,)
+</pre></div>
+</div>
+</div>
+</div>
+<p>As we saw, samples are plotted with line plot by default, which is due to how the <code class="docutils literal notranslate"><span class="pre">_DefaultGeometry1D</span></code> interprets the samples.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">y_samples</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="mi">100</span><span class="p">,</span><span class="mi">200</span><span class="p">,</span><span class="mi">300</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&lt;matplotlib.lines.Line2D at 0x7f49d1f66b60&gt;,
+ &lt;matplotlib.lines.Line2D at 0x7f49d1f66a70&gt;,
+ &lt;matplotlib.lines.Line2D at 0x7f49d1f64b50&gt;]
+</pre></div>
+</div>
+<img alt="../_images/0f1e20ea6fd469f8ca1775a23bcdafc7608a4c0ba1084505b25a588f14b3ea63.png" src="../_images/0f1e20ea6fd469f8ca1775a23bcdafc7608a4c0ba1084505b25a588f14b3ea63.png" />
+</div>
+</div>
+<p>We may equip the distribution with a different geometry, either when creating it, or afterwards. Let us for example assign an <code class="docutils literal notranslate"><span class="pre">Image2D</span></code> geometry to the distribution <code class="docutils literal notranslate"><span class="pre">y</span></code>. First we create the <code class="docutils literal notranslate"><span class="pre">Image2D</span></code> geometry and we assume the shape of the image is <span class="math notranslate nohighlight">\(2\times2\)</span>:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">geom_image</span> <span class="o">=</span> <span class="n">Image2D</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">geom_image</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Image2D(4,)
+</pre></div>
+</div>
+</div>
+</div>
+<p>We can check the number of parameters (parameter dimension) of the geometry:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">geom_image</span><span class="o">.</span><span class="n">par_dim</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>4
+</pre></div>
+</div>
+</div>
+</div>
+<p>We can also check the shape of its representation (size of the image in this case) using the property <code class="docutils literal notranslate"><span class="pre">fun_shape</span></code>:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">geom_image</span><span class="o">.</span><span class="n">fun_shape</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(2, 2)
+</pre></div>
+</div>
+</div>
+</div>
+<p>Now we equip the distribution <code class="docutils literal notranslate"><span class="pre">y</span></code> with this <code class="docutils literal notranslate"><span class="pre">Image2D</span></code> geometry.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">y</span><span class="o">.</span><span class="n">geometry</span> <span class="o">=</span> <span class="n">geom_image</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Check the geometry of <code class="docutils literal notranslate"><span class="pre">y</span></code>:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">y</span><span class="o">.</span><span class="n">geometry</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Image2D(4,)
+</pre></div>
+</div>
+</div>
+</div>
+<p>With this distribution set up, we are ready to generate some samples</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># call method to sample</span>
+<span class="n">y_samples</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="mi">50</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>We can check that we have produced 50 samples, each of size 4:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">y_samples</span><span class="o">.</span><span class="n">shape</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(4, 50)
+</pre></div>
+</div>
+</div>
+</div>
+<p>We plot a couple of samples:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">y_samples</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>   
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Plotting 5 randomly selected samples
+</pre></div>
+</div>
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&lt;matplotlib.image.AxesImage at 0x7f49d1e63af0&gt;,
+ &lt;matplotlib.image.AxesImage at 0x7f49d1ea2c50&gt;,
+ &lt;matplotlib.image.AxesImage at 0x7f49d1ee7c10&gt;,
+ &lt;matplotlib.image.AxesImage at 0x7f49d1d179d0&gt;,
+ &lt;matplotlib.image.AxesImage at 0x7f49d1d4e350&gt;]
+</pre></div>
+</div>
+<img alt="../_images/8422117517f7e872840f02ef7ec4d2ac08e60845c99eb526a295001cac0cb9fe.png" src="../_images/8422117517f7e872840f02ef7ec4d2ac08e60845c99eb526a295001cac0cb9fe.png" />
+</div>
+</div>
+<p>What if the 4 parameters in samples have a different meaning? For example, the four parameters might represent labelled quantities such as temperature measurement at four cities A, B, C, D. In this case, we can use a <code class="docutils literal notranslate"><span class="pre">Discrete</span></code> geometry:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">geom_discrete</span> <span class="o">=</span> <span class="n">Discrete</span><span class="p">([</span><span class="s1">&#39;Temperature A&#39;</span><span class="p">,</span> <span class="s1">&#39;Temperature B&#39;</span><span class="p">,</span> <span class="s1">&#39;Temperature C&#39;</span><span class="p">,</span> <span class="s1">&#39;Temperature D&#39;</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">geom_discrete</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Discrete(4,)
+</pre></div>
+</div>
+</div>
+</div>
+<p>We can update the distribution’s geometry and generate some new samples:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">y</span><span class="o">.</span><span class="n">geometry</span> <span class="o">=</span> <span class="n">geom_discrete</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">y_samples</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>The samples will now know about their new <code class="docutils literal notranslate"><span class="pre">Discrete</span></code> geometry and the plotting style will be changed:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">y_samples</span><span class="o">.</span><span class="n">plot</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Plotting 5 randomly selected samples
+</pre></div>
+</div>
+<img alt="../_images/805fbb1f61275fca1aa7d4fe849f86006b4fb4099acb2e11c9c409ff4cf4f00c.png" src="../_images/805fbb1f61275fca1aa7d4fe849f86006b4fb4099acb2e11c9c409ff4cf4f00c.png" />
+</div>
+</div>
+<p>The credibility interval plot style is also updated to show errorbars for the <code class="docutils literal notranslate"><span class="pre">Discrete</span></code> geometry:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">y_samples</span><span class="o">.</span><span class="n">plot_ci</span><span class="p">(</span><span class="mi">95</span><span class="p">,</span> <span class="n">exact</span><span class="o">=</span><span class="n">true_mu</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&lt;matplotlib.lines.Line2D at 0x7f49d1c05c90&gt;,
+ &lt;matplotlib.lines.Line2D at 0x7f49d1c04370&gt;,
+ &lt;ErrorbarContainer object of 3 artists&gt;]
+</pre></div>
+</div>
+<img alt="../_images/2dde5fcd15497a67f36c0274a1389a31b51e5f674008a659d20ee2752a9711c1.png" src="../_images/2dde5fcd15497a67f36c0274a1389a31b51e5f674008a659d20ee2752a9711c1.png" />
+</div>
+</div>
+<p>And similarly, in the chain plot, the legend reflects the particular labels:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">y_samples</span><span class="o">.</span><span class="n">plot_chain</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&lt;matplotlib.lines.Line2D at 0x7f49d1c61db0&gt;,
+ &lt;matplotlib.lines.Line2D at 0x7f49d1c61ea0&gt;]
+</pre></div>
+</div>
+<img alt="../_images/0dd225afe313d627e82b329fba30833909ef4131947df27ad60a90f1916abc99.png" src="../_images/0dd225afe313d627e82b329fba30833909ef4131947df27ad60a90f1916abc99.png" />
+</div>
+</div>
+</section>
+<section id="geometry-are-used-to-parameterize-the-variables">
+<h3><font color=#8B4513> Geometry are used to parameterize the variables </font><a class="headerlink" href="#geometry-are-used-to-parameterize-the-variables" title="Link to this heading">#</a></h3>
+<p>In CUQIpy we have geometries that represents a particular parameterization of the variables (e.g. <code class="docutils literal notranslate"><span class="pre">StepExpansion</span></code>, <code class="docutils literal notranslate"><span class="pre">KLExpansion</span></code>, etc)
+For example, in the <code class="docutils literal notranslate"><span class="pre">StepExpansion</span></code> geometry, the parameters represent expansion coefficients for equidistance-step basis functions. You can read more about <code class="docutils literal notranslate"><span class="pre">StepExpansion</span></code> by typing <code class="docutils literal notranslate"><span class="pre">help(cuqi.geometry.StepExpansion)</span></code> in a the code cell below or by looking at the <a class="reference external" href="https://cuqi-dtu.github.io/CUQIpy/api/_autosummary/cuqi.geometry/cuqi.geometry.StepExpansion.html">documentation of <code class="docutils literal notranslate"><span class="pre">StepExpansion</span></code></a></p>
+<p>Let us create a <code class="docutils literal notranslate"><span class="pre">StepExpansion</span></code> geometry, we first need to create a grid on which the step functions are defined, let us assume the grid is defined on the interval <span class="math notranslate nohighlight">\([0,1]\)</span>:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">grid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Then we create the <code class="docutils literal notranslate"><span class="pre">StepExpansion</span></code> geometry with 4 steps and assign it to the distribution <code class="docutils literal notranslate"><span class="pre">y</span></code>:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">geom_step_expantion</span> <span class="o">=</span> <span class="n">StepExpansion</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">n_steps</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+<span class="n">y</span><span class="o">.</span><span class="n">geometry</span> <span class="o">=</span> <span class="n">geom_step_expantion</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">y</span><span class="o">.</span><span class="n">geometry</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>StepExpansion(4,)
+</pre></div>
+</div>
+</div>
+</div>
+<p>Let us samples the distribution <code class="docutils literal notranslate"><span class="pre">y</span></code> and plot the samples:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">y_step_samples</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
+<span class="n">y_step_samples</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Plotting 5 randomly selected samples
+</pre></div>
+</div>
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&lt;matplotlib.lines.Line2D at 0x7f49d1cdb880&gt;,
+ &lt;matplotlib.lines.Line2D at 0x7f49d1cdb970&gt;,
+ &lt;matplotlib.lines.Line2D at 0x7f49d1cdba60&gt;,
+ &lt;matplotlib.lines.Line2D at 0x7f49d1cdbb50&gt;,
+ &lt;matplotlib.lines.Line2D at 0x7f49d1cdbc40&gt;]
+</pre></div>
+</div>
+<img alt="../_images/b4bcc69ada91ff0c6f1bbe37699a4dfb904a13cb1fc6346456271ee2de904e53.png" src="../_images/b4bcc69ada91ff0c6f1bbe37699a4dfb904a13cb1fc6346456271ee2de904e53.png" />
+</div>
+</div>
+<p>Note that the samples are now represented as expansion coefficients of the step functions.</p>
+<p>Examples of using <code class="docutils literal notranslate"><span class="pre">StepExpansion</span></code> and <code class="docutils literal notranslate"><span class="pre">KLExpansion</span></code> geometries in the context of a PDE parameterization for a heat 1D BIP can be found <a class="reference external" href="https://github.com/CUQI-DTU/Paper-CUQIpy-2-PDE/blob/main/heat_1D/heat_1D_part1.ipynb">here</a>, and <a class="reference external" href="https://github.com/CUQI-DTU/Paper-CUQIpy-2-PDE/blob/main/heat_1D/heat_1D_part2.ipynb">here</a> <span id="id2">[<a class="reference internal" href="../intro.html#id5" title="Amal M A Alghamdi, Nicolai A B Riis, Babak M Afkham, Felipe Uribe, Silja L Christensen, Per Christian Hansen, and Jakob S Jørgensen. Cuqipy: ii. computational uncertainty quantification for pde-based inverse problems in python. Inverse Problems, 40(4):045010, mar 2024. URL: https://dx.doi.org/10.1088/1361-6420/ad22e8, doi:10.1088/1361-6420/ad22e8.">ARA+24</a>]</span>, respectively.</p>
+</section>
+<section id="geometry-are-used-to-map-the-variables">
+<h3><font color=#8B4513> ★ Geometry are used to map the variables </font><a class="headerlink" href="#geometry-are-used-to-map-the-variables" title="Link to this heading">#</a></h3>
+<p>In <code class="docutils literal notranslate"><span class="pre">CUQIpy</span></code>, we provide the <code class="docutils literal notranslate"><span class="pre">MappedGeometry</span></code> object which equips geometries with a mapping function that are applied to the variables, this mapping can also be viewed as parametrization. An example of a commonly used mapping in inverse problems is <span class="math notranslate nohighlight">\(e^x\)</span> for unknown parameters <span class="math notranslate nohighlight">\(x\)</span> to ensure positivity regardless of the value of <span class="math notranslate nohighlight">\(x\)</span>.</p>
+<p>Let us use the <code class="docutils literal notranslate"><span class="pre">MappedGeometry</span></code> to map the <code class="docutils literal notranslate"><span class="pre">StepExpansion</span></code> geometry we created earlier with the exponential function:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">geom_step_expantion_mapped</span> <span class="o">=</span> <span class="n">MappedGeometry</span><span class="p">(</span><span class="n">geom_step_expantion</span><span class="p">,</span> <span class="nb">map</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Let us again, assign the <code class="docutils literal notranslate"><span class="pre">MappedGeometry</span></code> to the distribution <code class="docutils literal notranslate"><span class="pre">y</span></code> and generate samples and plot them:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">y</span><span class="o">.</span><span class="n">geometry</span> <span class="o">=</span> <span class="n">geom_step_expantion_mapped</span>
+<span class="n">y_mapped_step_samples</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
+<span class="n">y_mapped_step_samples</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Plotting 5 randomly selected samples
+</pre></div>
+</div>
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&lt;matplotlib.lines.Line2D at 0x7f49d1b5b670&gt;,
+ &lt;matplotlib.lines.Line2D at 0x7f49d1b5b760&gt;,
+ &lt;matplotlib.lines.Line2D at 0x7f49d1c050f0&gt;,
+ &lt;matplotlib.lines.Line2D at 0x7f49d1cb64a0&gt;,
+ &lt;matplotlib.lines.Line2D at 0x7f49d1b5b910&gt;]
+</pre></div>
+</div>
+<img alt="../_images/c97f7d1c731cd4f4dc5229d83e5bbc7a82d00733db08a64f5fb8d1419baab1f3.png" src="../_images/c97f7d1c731cd4f4dc5229d83e5bbc7a82d00733db08a64f5fb8d1419baab1f3.png" />
+</div>
+</div>
+<p>Note that the samples are still representing the expansion coefficients of the step functions, but the mapping function <span class="math notranslate nohighlight">\(e^x\)</span> has been applied to the samples. All samples are now non-negative.</p>
+</section>
+<section id="elaboration-specifying-a-geometry-object-for-cuqiarray-objects">
+<h3><font color=#8B4513> ★ Elaboration: Specifying a Geometry object for CUQIarray objects:</font><a class="headerlink" href="#elaboration-specifying-a-geometry-object-for-cuqiarray-objects" title="Link to this heading">#</a></h3>
+<p>Geometries can also be specified for <code class="docutils literal notranslate"><span class="pre">CUQIarray</span></code>, the basic array structure in CUQIpy. Let us create a <code class="docutils literal notranslate"><span class="pre">CUQIarray</span></code> object with four parameters as follows:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">q</span> <span class="o">=</span> <span class="n">cuqi</span><span class="o">.</span><span class="n">array</span><span class="o">.</span><span class="n">CUQIarray</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>We look at the geometry property</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">q</span><span class="o">.</span><span class="n">geometry</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>_DefaultGeometry1D(4,)
+</pre></div>
+</div>
+</div>
+</div>
+<p>And then let us plot our variable <code class="docutils literal notranslate"><span class="pre">q</span></code>:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">q</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&lt;matplotlib.lines.Line2D at 0x7f49d1bd2c80&gt;]
+</pre></div>
+</div>
+<img alt="../_images/6ecaf107dd524ce54cffd11e395cea65ed347d9bffa1e63e628f8897f8570317.png" src="../_images/6ecaf107dd524ce54cffd11e395cea65ed347d9bffa1e63e628f8897f8570317.png" />
+</div>
+</div>
+<p>We now choose a different interpretation for the variable <code class="docutils literal notranslate"><span class="pre">q</span></code> by changing its geometry to, for example, the <code class="docutils literal notranslate"><span class="pre">Image2D</span></code> geometry we created, and then we plot:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">q</span><span class="o">.</span><span class="n">geometry</span> <span class="o">=</span> <span class="n">geom_image</span>
+<span class="n">q</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&lt;matplotlib.image.AxesImage at 0x7f49d1a299f0&gt;]
+</pre></div>
+</div>
+<img alt="../_images/c3e3d50970018fe2e31086e19b51701009a62894fea330a3de6b1216f111ead2.png" src="../_images/c3e3d50970018fe2e31086e19b51701009a62894fea330a3de6b1216f111ead2.png" />
+</div>
+</div>
+<p>Finally we set the <code class="docutils literal notranslate"><span class="pre">Discrete</span></code> geometry we created as the geometry for <code class="docutils literal notranslate"><span class="pre">q</span></code> and plot:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">q</span><span class="o">.</span><span class="n">geometry</span> <span class="o">=</span> <span class="n">geom_discrete</span>
+<span class="n">q</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&lt;matplotlib.lines.Line2D at 0x7f49d1e3f460&gt;]
+</pre></div>
+</div>
+<img alt="../_images/554dd84a04b991f571d5e8835053f01ee19d5bcff008da457325441ab1f3f6ff.png" src="../_images/554dd84a04b991f571d5e8835053f01ee19d5bcff008da457325441ab1f3f6ff.png" />
+</div>
+</div>
+</section>
+</section>
+<section id="markov-random-fields-in-cuqipy">
+<h2><font color=#CD853F> Markov random fields in CUQIpy </font> <a class="anchor" id="r-Markov-Random-Field"></a><a class="headerlink" href="#markov-random-fields-in-cuqipy" title="Link to this heading">#</a></h2>
+<p>In some cases, we may want to generate samples that represent a field with some spatial correlation and smoothness properties.</p>
+<p>One <code class="docutils literal notranslate"><span class="pre">CUQIpy</span></code> distribution object that can be achieved for this purpose is the Gaussian Markov random field (GMRF) distribution. This distribution assumes a Gaussian distribution on the differences between neighboring elements of <span class="math notranslate nohighlight">\(\mathbf{x}\)</span>, i.e. in 1D:</p>
+<p>\begin{align*}
+x_i - x_{i-1} \sim \mathrm{Gaussian}(0, d^{-1}), \quad i=1, \ldots, n,
+\end{align*}</p>
+<p>where we purposely leave out the details on the boundary conditions for this notebook.</p>
+<p>To simplify the notation, we denote by <em>GMRF</em> the distribution that induces this property on a vector <span class="math notranslate nohighlight">\(\mathbf{x}\)</span> defined by its mean and precision <span class="math notranslate nohighlight">\(d\)</span>. That is, the above can be written as</p>
+<p>\begin{align*}
+\mathbf{x} &amp;\sim \mathrm{GMRF}(\mathbf{0}, d),
+\end{align*}</p>
+<p>with some choice of the precision say <span class="math notranslate nohighlight">\(d=50\)</span>. For more details on GMRF see the first CUQIpy paper <span id="id3">[<a class="reference internal" href="../intro.html#id4" title="Nicolai A B Riis, Amal M A Alghamdi, Felipe Uribe, Silja L Christensen, Babak M Afkham, Per Christian Hansen, and Jakob S Jørgensen. Cuqipy: i. computational uncertainty quantification for inverse problems in python. Inverse Problems, 40(4):045009, mar 2024. URL: https://dx.doi.org/10.1088/1361-6420/ad22e7, doi:10.1088/1361-6420/ad22e7.">RAU+24</a>]</span>.</p>
+<p>The GMRF distribution is implemented in CUQIpy as <a class="reference external" href="https://cuqi-dtu.github.io/CUQIpy/api/_autosummary/cuqi.distribution/cuqi.distribution.GMRF.html#cuqi.distribution.GMRF">GMRF class</a> and can be used as follows:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Define prior precision</span>
+<span class="n">d</span> <span class="o">=</span> <span class="mi">50</span>
+<span class="n">n</span> <span class="o">=</span> <span class="mi">200</span>
+<span class="c1"># Define GMRF prior (zero boundary conditions are the default)</span>
+<span class="n">x_GMRF</span> <span class="o">=</span> <span class="n">GMRF</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="p">),</span> <span class="n">d</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<section id="id4">
+<h3><font color=#8B4513>Exercise:</font><a class="headerlink" href="#id4" title="Link to this heading">#</a></h3>
+<ol class="arabic simple">
+<li><p>Can you generate and plot a realization (sample) of <code class="docutils literal notranslate"><span class="pre">x_GMRF</span></code>? Does the realization show spatial correlation?</p></li>
+<li><p>Create a Gaussian distribution <code class="docutils literal notranslate"><span class="pre">x_Gaussian</span></code> with mean <code class="docutils literal notranslate"><span class="pre">np.zeros(n)</span></code> and precision <code class="docutils literal notranslate"><span class="pre">50</span></code>, and compare a sample from the GMRF distribution with the Gaussian distribution by plotting them on the same plot. What do you observe?</p></li>
+<li><p>★ Generate 100000 samples of <code class="docutils literal notranslate"><span class="pre">x_GMRF</span></code> and store them in variable <code class="docutils literal notranslate"><span class="pre">x_GMRF_samples</span></code>. Verify the following about the distribution of the differences. Focus only on verifying the difference between elements 30 and 31 as a representative example.</p>
+<ul class="simple">
+<li><p>The mean of the difference between elements 30 and 31 is close to 0.</p></li>
+<li><p>The variance of the difference between elements 30 and 31 is close to <span class="math notranslate nohighlight">\(1/50\)</span>.</p></li>
+<li><p>Hint: Use this line to create a <code class="docutils literal notranslate"><span class="pre">Samples</span></code> object of the differences <code class="docutils literal notranslate"><span class="pre">diff_30_31_samples</span> <span class="pre">=</span> <span class="pre">Samples((x_GMRF_samples.samples[31]</span> <span class="pre">-</span> <span class="pre">x_GMRF_samples.samples[30]).reshape(1,</span> <span class="pre">-1))</span></code>.</p></li>
+</ul>
+</li>
+</ol>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># your code here</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="other-markov-random-fields-in-cuqipy">
+<h3><font color=#8B4513>Other Markov random fields in CUQIpy:</font><a class="headerlink" href="#other-markov-random-fields-in-cuqipy" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>Cauchy Markov Random Field (CMRF): <a class="reference external" href="https://cuqi-dtu.github.io/CUQIpy/api/_autosummary/cuqi.distribution/cuqi.distribution.CMRF.html#cuqi.distribution.CMRF">CMRF class</a></p></li>
+<li><p>Laplace Markov Random Field (LMRF): <a class="reference external" href="https://cuqi-dtu.github.io/CUQIpy/api/_autosummary/cuqi.distribution/cuqi.distribution.LMRF.html#cuqi.distribution.LMRF">LMRF class</a></p></li>
+</ul>
+<p><code class="docutils literal notranslate"><span class="pre">CMRF</span></code> and <code class="docutils literal notranslate"><span class="pre">LMRF</span></code> are similar to <code class="docutils literal notranslate"><span class="pre">GMRF</span></code> but with different distributions on the differences between neighboring elements in the signal, where <code class="docutils literal notranslate"><span class="pre">CMRF</span></code> assumes a Cauchy distribution and <code class="docutils literal notranslate"><span class="pre">LMRF</span></code> assumes a Laplace distribution. <code class="docutils literal notranslate"><span class="pre">LMRF</span></code> and <code class="docutils literal notranslate"><span class="pre">CMRF</span></code> are particularly useful in cases in which the signal to be inferred has sharp edges (jumps).</p>
+<p>This <a class="reference external" href="https://github.com/CUQI-DTU/Paper-CUQIpy-1-Core/blob/main/deconvolution1D/paper1_deconv1D_square.ipynb">1D deconvolution example</a> from <span id="id5">[<a class="reference internal" href="../intro.html#id4" title="Nicolai A B Riis, Amal M A Alghamdi, Felipe Uribe, Silja L Christensen, Babak M Afkham, Per Christian Hansen, and Jakob S Jørgensen. Cuqipy: i. computational uncertainty quantification for inverse problems in python. Inverse Problems, 40(4):045009, mar 2024. URL: https://dx.doi.org/10.1088/1361-6420/ad22e7, doi:10.1088/1361-6420/ad22e7.">RAU+24</a>]</span>  illustrates and compares using the three Markov random fields in a 1D  problem.</p>
+</section>
+</section>
+<section id="elaboration-on-conditional-distributions">
+<h2><font color=#CD853F> ★ Elaboration on conditional distributions </font> <a class="anchor" id="r-Conditional-distributions"></a><a class="headerlink" href="#elaboration-on-conditional-distributions" title="Link to this heading">#</a></h2>
+<p>CUQIpy also support conditional probability distributions, which are probability distributions that are defined conditionally on the value of one or more other random variables. We saw in chapter 1, an example of conditional distribution: the data distribution <code class="docutils literal notranslate"><span class="pre">b</span></code> conditioned on input <code class="docutils literal notranslate"><span class="pre">x</span></code>.</p>
+<p>In CUQIpy defining conditional distributions is simple. Assume we are interested in defining the Normal distribution conditioned on a random variable representing the standard deviation, e.g.</p>
+<div class="math notranslate nohighlight">
+\[ z \mid \mathrm{std} \sim \mathrm{Normal}(0,\mathrm{std}^2) \]</div>
+<p>This can simply be achieved by <em>omitting</em> the keyword argument for the standard deviation, when defining the distribution, as shown in the following code</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">z</span> <span class="o">=</span> <span class="n">cuqi</span><span class="o">.</span><span class="n">distribution</span><span class="o">.</span><span class="n">Normal</span><span class="p">(</span><span class="n">mean</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Printing it will tell us that the variable <code class="docutils literal notranslate"><span class="pre">std</span></code> has not been specified, i.e., it is a <em>conditioning variable</em>:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CUQI Normal. Conditioning variables [&#39;std&#39;].
+</pre></div>
+</div>
+</div>
+</div>
+<p>Because <span class="math notranslate nohighlight">\(z\)</span> is a conditional distribution, we cannot evaluate the logpdf or sample it directly without specifying the value of the conditioning variable (the standard deviation in this case). Hence this code will fail to run:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># This code will give an error so we wrap it in a try/except block and print the error</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">z</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
+<span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Cannot sample from conditional distribution. Missing conditioning variables: [&#39;std&#39;]
+</pre></div>
+</div>
+</div>
+</div>
+<p>To specify the conditioning variable we use the “call” syntax, i.e., <code class="docutils literal notranslate"><span class="pre">z(std=2)</span></code> to set the value of the standard deviation in the conditional distribution as shown below.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">z</span><span class="p">(</span><span class="n">std</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CUQIarray: NumPy array wrapped with geometry.
+---------------------------------------------
+
+Geometry:
+ _DefaultGeometry1D(1,)
+
+Parameters:
+ True
+
+Array:
+CUQIarray(-2.06021574)
+</pre></div>
+</div>
+</div>
+</div>
+<p>In fact, conditioning creates a new <em>unconditional</em> distribution. Here printing reveals that it does not have any conditioning variables:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">z_given_std</span> <span class="o">=</span> <span class="n">z</span><span class="p">(</span><span class="n">std</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">z_given_std</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CUQI Normal.
+</pre></div>
+</div>
+</div>
+</div>
+<p>We expect we can then sample it directly, which is confirmed:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">z_given_std</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CUQIarray: NumPy array wrapped with geometry.
+---------------------------------------------
+
+Geometry:
+ _DefaultGeometry1D(1,)
+
+Parameters:
+ True
+
+Array:
+CUQIarray(-1.49904989)
+</pre></div>
+</div>
+</div>
+</div>
+<p>In general one may need more flexibility than simply conditioning directly on the attributes of the distribution. Let us assume we want to define a distribution that is conditional on the variance - denoted <span class="math notranslate nohighlight">\(d\)</span> - rather than the standard deviation of the normal distribution, i.e.</p>
+<div class="math notranslate nohighlight">
+\[ w \mid d \sim \mathrm{Normal}(0,d). \]</div>
+<p>In CUQIpy this can be achieved through <em>lambda</em> functions. A lambda function is the Python equivalent of a MATLAB anonymous function, i.e. a function defined in a single line with the following syntax for an example function the simply sums two input arguments:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">myfun</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">v1</span><span class="p">,</span> <span class="n">v2</span><span class="p">:</span> <span class="n">v1</span><span class="o">+</span><span class="n">v2</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">myfun</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="mi">7</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>12
+</pre></div>
+</div>
+</div>
+</div>
+<p>We can pass a lambda function directly as an argument to a CUQIpy distribution, e.g.,</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">w</span> <span class="o">=</span> <span class="n">cuqi</span><span class="o">.</span><span class="n">distribution</span><span class="o">.</span><span class="n">Normal</span><span class="p">(</span><span class="n">mean</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">std</span><span class="o">=</span><span class="k">lambda</span> <span class="n">d</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">d</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CUQI Normal. Conditioning variables [&#39;d&#39;].
+</pre></div>
+</div>
+</div>
+</div>
+<p>where we see that <code class="docutils literal notranslate"><span class="pre">d</span></code> is now the conditioning variable instead of <code class="docutils literal notranslate"><span class="pre">std</span></code> as before.</p>
+<p>We can then pass a value for <code class="docutils literal notranslate"><span class="pre">d</span></code> to condition on, which allows us to sample from the now fully specified distribution:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">w</span><span class="p">(</span><span class="n">d</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CUQIarray: NumPy array wrapped with geometry.
+---------------------------------------------
+
+Geometry:
+ _DefaultGeometry1D(1,)
+
+Parameters:
+ True
+
+Array:
+CUQIarray(1.73409807)
+</pre></div>
+</div>
+</div>
+</div>
+<p>What actually happens behind the scenes is that writing <code class="docutils literal notranslate"><span class="pre">w(d=2)</span></code> defined a new CUQIpy distribution, where the standard deviation is set by evaluating the lambda function. This can be seen by storing the new distribution as follows.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">w_given_d</span> <span class="o">=</span> <span class="n">w</span><span class="p">(</span><span class="n">d</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">w_given_d</span><span class="o">.</span><span class="n">std</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>1.4142135623730951
+</pre></div>
+</div>
+</div>
+</div>
+<p>This framework allows for a lot of flexibility in defining conditional distributions. For example we can define lambda functions for all attributes (here the mean and the standard deviation):</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#Functions for mean and std with various (shared) inputs</span>
+<span class="n">mean</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">sigma</span><span class="p">,</span> <span class="n">gamma</span><span class="p">:</span> <span class="n">sigma</span><span class="o">+</span><span class="n">gamma</span>
+<span class="n">std</span>  <span class="o">=</span> <span class="k">lambda</span> <span class="n">delta</span><span class="p">,</span> <span class="n">gamma</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">delta</span><span class="o">+</span><span class="n">gamma</span><span class="p">)</span>
+
+<span class="n">u</span> <span class="o">=</span> <span class="n">cuqi</span><span class="o">.</span><span class="n">distribution</span><span class="o">.</span><span class="n">Normal</span><span class="p">(</span><span class="n">mean</span><span class="p">,</span> <span class="n">std</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">u</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CUQI Normal. Conditioning variables [&#39;sigma&#39;, &#39;gamma&#39;, &#39;delta&#39;].
+</pre></div>
+</div>
+</div>
+</div>
+<p>The three variable names <code class="docutils literal notranslate"><span class="pre">sigma</span></code>, <code class="docutils literal notranslate"><span class="pre">gamma</span></code> and <code class="docutils literal notranslate"><span class="pre">delta</span></code> used to define the two lambda functions for the mean and standard deviation are now the conditioning variables of the conditional distribution <code class="docutils literal notranslate"><span class="pre">u</span></code>.</p>
+<p>By providing values for all three variables we obtain a fully specified distribution</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">u_given_all</span> <span class="o">=</span> <span class="n">u</span><span class="p">(</span><span class="n">sigma</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=-</span><span class="mi">2</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">u_given_all</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CUQI Normal.
+</pre></div>
+</div>
+</div>
+</div>
+<p>that we can sample:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">u_given_all</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CUQIarray: NumPy array wrapped with geometry.
+---------------------------------------------
+
+Geometry:
+ _DefaultGeometry1D(1,)
+
+Parameters:
+ True
+
+Array:
+CUQIarray(1.10222321)
+</pre></div>
+</div>
+</div>
+</div>
+<p>Conditional distributions play a major role when specifying Bayesian inverse problems in CUQIpy and in particular those problems that include Bayesian hierarchical models where some random variables depend on other random variables. We revisit this later in this mini-book.</p>
+</section>
+<section id="user-defined-distributions">
+<h2><font color=#CD853F> ★ User-defined distributions  </font> <a class="anchor" id="r-User-defined-distributions"></a><a class="headerlink" href="#user-defined-distributions" title="Link to this heading">#</a></h2>
+<p>In addition to the distributions provided by CUQIpy, there is also the possibility for users to specify new distributions. One option is to write their own class in the same style as existing distributions such as the Cauchy distribution (see code here: <a class="reference external" href="https://github.com/CUQI-DTU/CUQIpy/blob/main/cuqi/distribution/_cauchy.py">Cauchy</a>).</p>
+<p>Another option is to specify a user-defined distribution, which is convenient if one, for example, only wishes to evaluate the logpdf.</p>
+<p>The example below demonstrates how to manually specify a normal distribution through a lambda function for the logpdf and compare it to a CUQIpy normal distribution.</p>
+<p>We specify variables for the mean and the standard deviation and specify the lambda function for the logpdf.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">mu1</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">std1</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="n">logpdf_func</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">xx</span><span class="p">:</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">std1</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">))</span><span class="o">-</span><span class="mf">0.5</span><span class="o">*</span><span class="p">((</span><span class="n">xx</span><span class="o">-</span><span class="n">mu1</span><span class="p">)</span><span class="o">/</span><span class="n">std1</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>To set up the user-defined distribution we need to specify the logpdf as well as its dimension (number of variables) since that cannot be automatically inferred from the lambda function:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">x_user</span> <span class="o">=</span> <span class="n">cuqi</span><span class="o">.</span><span class="n">distribution</span><span class="o">.</span><span class="n">UserDefinedDistribution</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">logpdf_func</span><span class="o">=</span><span class="n">logpdf_func</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>We can now evalute the logpdf, as well as the pdf:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">x_user</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">x_user</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>-0.9189385332046727
+0.3989422804014327
+</pre></div>
+</div>
+</div>
+</div>
+<p>We can compare this with the normal distribution <code class="docutils literal notranslate"><span class="pre">x=Normal(0,1)</span></code> and observe that their pdfs agree:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="n">Normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">node_k</span><span class="p">)</span> <span class="k">for</span> <span class="n">node_k</span> <span class="ow">in</span> <span class="n">grid</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;CUQIpy Normal&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="p">[</span><span class="n">x_user</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">node_k</span><span class="p">)</span> <span class="k">for</span> <span class="n">node_k</span> <span class="ow">in</span> <span class="n">grid</span><span class="p">],</span> <span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;User-defined Normal&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x7f49d1e3fd30&gt;
+</pre></div>
+</div>
+<img alt="../_images/1c282e61782163feeb811eee9b5d186149e1f2003ecafd2eb2a4507491a49f74.png" src="../_images/1c282e61782163feeb811eee9b5d186149e1f2003ecafd2eb2a4507491a49f74.png" />
+</div>
+</div>
+<p>We cannot sample the user-defined distribution because we have only provided the logpdf:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">try</span><span class="p">:</span>
+    <span class="n">x_user</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
+<span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>sample_func is not defined. Sampling can be performed by passing the density to a sampler from the &#39;sampler&#39; module.
+</pre></div>
+</div>
+</div>
+</div>
+<p>We can equip the user-defined distribution with a sample_func which specified how to sample (it is up to the user to ensure consistency between logpdf and sample_func):</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">x_user</span><span class="o">.</span><span class="n">sample_func</span> <span class="o">=</span> <span class="k">lambda</span> <span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">mu1</span> <span class="o">+</span> <span class="n">std1</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">x_user</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CUQIarray: NumPy array wrapped with geometry.
+---------------------------------------------
+
+Geometry:
+ _DefaultGeometry1D(1,)
+
+Parameters:
+ True
+
+Array:
+CUQIarray(-0.19561743)
+</pre></div>
+</div>
+</div>
+</div>
+<p>We can compare the samples obtained from the original normal distribution and the user-defined:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">x_samples</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="mi">10000</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">x_user_samples</span> <span class="o">=</span> <span class="n">x_user</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="mi">10000</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>We plot their histograms and note that they appear similar:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">x_samples</span><span class="o">.</span><span class="n">hist_chain</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">bins</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+<span class="n">x_user_samples</span><span class="o">.</span><span class="n">hist_chain</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">bins</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">([</span><span class="s1">&#39;CUQIpy Normal&#39;</span><span class="p">,</span> <span class="s1">&#39;User-defined Normal&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x7f49d19524d0&gt;
+</pre></div>
+</div>
+<img alt="../_images/999a39f8ee200ce9a281f2d1f6e611ca446b17aa8ec43127c8ab81c13d661270.png" src="../_images/999a39f8ee200ce9a281f2d1f6e611ca446b17aa8ec43127c8ab81c13d661270.png" />
+</div>
+</div>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "CUQI-DTU/CUQI-Book",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./chapter02"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="chapter02.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Chapter 2: Prior and Hierarchical Bayesian Models</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="gibbs.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Gibbs sampling</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#contents-of-this-notebook"><font color="#CD853F"> Contents of this notebook: </font></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#learning-objectives"><font color="#CD853F"> Learning objectives: </font> <a name="r-learning-objectives"></a></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#distributions-in-cuqipy"><font color="#CD853F"> Distributions in CUQIpy  </font> <a class="anchor" id="r-Distributions-in-CUQIpy"></a></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#multivariate-gaussian-distribution"><font color="#CD853F"> Multivariate Gaussian distribution </font> <a class="anchor" id="r-Multivariate-Gaussian-distribution"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercise"><font color="#8B4513">Exercise:</font></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#computing-the-entropy-of-a-distribution-numerically"><font color="#8B4513">Computing the entropy of a distribution, numerically:</font></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1"><font color="#8B4513">Exercise:</font></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#geometry-object-representation-parametrization-and-mapping"><font color="#CD853F"> Geometry object: representation, parametrization and mapping </font> <a class="anchor" id="r-Geometry"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#geometry-are-used-to-specify-variable-representation"><font color="#8B4513"> Geometry are used to specify variable representation </font></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#geometry-are-used-to-parameterize-the-variables"><font color="#8B4513"> Geometry are used to parameterize the variables </font></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#geometry-are-used-to-map-the-variables"><font color="#8B4513"> ★ Geometry are used to map the variables </font></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elaboration-specifying-a-geometry-object-for-cuqiarray-objects"><font color="#8B4513"> ★ Elaboration: Specifying a Geometry object for CUQIarray objects:</font></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#markov-random-fields-in-cuqipy"><font color="#CD853F"> Markov random fields in CUQIpy </font> <a class="anchor" id="r-Markov-Random-Field"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id4"><font color="#8B4513">Exercise:</font></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#other-markov-random-fields-in-cuqipy"><font color="#8B4513">Other Markov random fields in CUQIpy:</font></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#elaboration-on-conditional-distributions"><font color="#CD853F"> ★ Elaboration on conditional distributions </font> <a class="anchor" id="r-Conditional-distributions"></a></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#user-defined-distributions"><font color="#CD853F"> ★ User-defined distributions  </font> <a class="anchor" id="r-User-defined-distributions"></a></a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By CUQIpy developer team
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=3ee479438cf8b5e0d341"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=3ee479438cf8b5e0d341"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

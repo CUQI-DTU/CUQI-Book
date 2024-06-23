@@ -1,0 +1,1975 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Sampling with CUQIpy: five little stories &#8212; Uncertainty Quantification in Inverse Problems with CUQIpy</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=3ee479438cf8b5e0d341" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=3ee479438cf8b5e0d341" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=3ee479438cf8b5e0d341" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=3ee479438cf8b5e0d341" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=a3416100" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=87e54e7c" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=3ee479438cf8b5e0d341" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=3ee479438cf8b5e0d341" />
+  <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=3ee479438cf8b5e0d341"></script>
+
+    <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js?v=4a39c7ea"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"tex": {"macros": {"dd": "\\mathrm{d}", "abs": ["\\left\\vert#1\\right\\vert", 1], "ve": ["\\bm{#1}", 1], "mat": ["\\mathbf{#1}", 1], "N": "\\mathbb{N}", "floor": ["\\lfloor#1\\rfloor", 1], "bmat": ["\\left[\\begin{array}"], "emat": ["\\end{array}\\right]"], "bm": ["{\\boldsymbol #1}", 1]}}, "options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'chapter03/gradient_based_sampling_with_cuqipy';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Chapter 4: Advanced Bayesian Inference in CUQIpy" href="../chapter04/chapter04.html" />
+    <link rel="prev" title="Sampling with CUQIpy: Two target distributions and exploring the posterior using the BayesianProblem class" href="sampling_with_cuqipy_two_target.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+
+<a class="navbar-brand logo" href="../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/logo.png" class="logo__image only-light" alt="Uncertainty Quantification in Inverse Problems with CUQIpy - Home"/>
+    <script>document.write(`<img src="../_static/logo.png" class="logo__image only-dark" alt="Uncertainty Quantification in Inverse Problems with CUQIpy - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../intro.html">
+                    Welcome to the “Uncertainty Quantification in Inverse Problems with CUQIpy” mini-book!
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../chapter01/chapter01.html">Chapter 1: Introduction to Bayesian Inverse Problems (BIP) in CUQIpy</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../chapter01/introduction_overview_of_cuqipy.html">Overview of CUQIpy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter01/Intro_example.html">Probably the simplest BIP in the world</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter01/two_forward_problems_new.html">Two forward models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter01/extra_forward_models.html">Extra material: Forward models, data generation and forward UQ</a></li>
+
+
+
+
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../chapter02/chapter02.html">Chapter 2: Prior and Hierarchical Bayesian Models</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../chapter02/prior.html">Distributions, priors, and basic sampling in CUQIpy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter02/gibbs.html">Gibbs sampling</a></li>
+
+
+
+
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="chapter03.html">Chapter 3: Sampling with CUQIpy</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="sampling_with_cuqipy_two_target.html">Sampling with CUQIpy: Two target distributions and exploring the posterior using the BayesianProblem class</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Sampling with CUQIpy: five little stories</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../chapter04/chapter04.html">Chapter 4: Advanced Bayesian Inference in CUQIpy</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../chapter04/project.html">CUQIpy component final project</a></li>
+
+
+
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-launch-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Launch interactive content">
+    <i class="fas fa-rocket"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://colab.research.google.com/github/CUQI-DTU/CUQI-Book/blob/master/chapter03/gradient_based_sampling_with_cuqipy.ipynb" target="_blank"
+   class="btn btn-sm dropdown-item"
+   title="Launch on Colab"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  
+    <img alt="Colab logo" src="../_static/images/logo_colab.png">
+  </span>
+<span class="btn__text-container">Colab</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="initThebeSBT()"
+  class="btn btn-sm btn-launch-thebe dropdown-item"
+  title="Launch Thebe"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-play"></i>
+  </span>
+<span class="btn__text-container">Live Code</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/CUQI-DTU/CUQI-Book" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/CUQI-DTU/CUQI-Book/issues/new?title=Issue%20on%20page%20%2Fchapter03/gradient_based_sampling_with_cuqipy.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/chapter03/gradient_based_sampling_with_cuqipy.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Sampling with CUQIpy: five little stories</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-two-targets-again"><font color="#CD853F">  The two targets, again </font></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#sampling-the-posterior"><font color="#CD853F">  Sampling the posterior </font></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#story-1-it-pays-off-to-adapt-comparing-metropolis-hastings-mh-with-and-without-adaptation"><font color="#CD853F"> Story 1 - It pays off to adapt: Comparing Metropolis Hastings (MH) with and without adaptation </font></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercise"><font color="#8B4513"> Exercise: </font></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1"><font color="#8B4513"> Exercise: </font></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#story-2-not-all-unkowns-are-created-equal-component-wise-metropolis-hastings-cwmh"><font color="#CD853F"> Story 2 - Not all unkowns are created equal: Component-wise Metropolis Hastings CWMH </font></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2"><font color="#8B4513"> Exercise: </font></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#story-3-may-the-force-guide-you-unadjusted-langevin-algorithm-ula"><font color="#CD853F"> Story 3 -  May the force guide you: Unadjusted Langevin algorithm (ULA)  </font></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3"><font color="#8B4513"> Exercise: </font></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#story-4-this-is-a-bias-we-can-fix-metropolis-adjusted-langevin-algorithm-mala"><font color="#CD853F"> Story 4: This is a bias we can fix - Metropolis-adjusted Langevin algorithm (MALA) </font></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#story-5-sampling-goes-nuts-with-nuts-hamiltonian-monte-carlo-hmc-and-no-u-turn-sampler-nuts"><font color="#CD853F"> Story 5 - Sampling goes nuts with NUTS: Hamiltonian Monte Carlo (HMC) and No-U-Turn Sampler (NUTS) </font></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#no-u-turn-sampler">No-U-Turn sampler <a class="anchor" id="NUTS"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id4"><font color="#8B4513"> Exercise: </font></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id5"><font color="#8B4513"> Exercise: </font></a></li>
+</ul>
+</li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <div hidden>
+<p><span class="math notranslate nohighlight">\(\gdef\dd{\mathrm{d}}\)</span></p>
+</div>
+<div hidden>
+<p><span class="math notranslate nohighlight">\(\gdef\abs#1{\left\vert#1\right\vert}\)</span></p>
+</div>
+<div hidden>
+<p><span class="math notranslate nohighlight">\(\gdef\ve#1{\bm{#1}}\)</span></p>
+</div>
+<div hidden>
+<p><span class="math notranslate nohighlight">\(\gdef\mat#1{\mathbf{#1}}\)</span></p>
+</div>
+<section class="tex2jax_ignore mathjax_ignore" id="sampling-with-cuqipy-five-little-stories">
+<h1>Sampling with CUQIpy: five little stories<a class="headerlink" href="#sampling-with-cuqipy-five-little-stories" title="Link to this heading">#</a></h1>
+<div class="cell tag_hide-cell docutils container">
+<details class="hide above-input">
+<summary aria-label="Toggle hidden content">
+<span class="collapsed">Show code cell content</span>
+<span class="expanded">Hide code cell content</span>
+</summary>
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">cuqi.distribution</span> <span class="kn">import</span> <span class="n">DistributionGallery</span><span class="p">,</span> <span class="n">Gaussian</span><span class="p">,</span> <span class="n">JointDistribution</span>
+<span class="kn">from</span> <span class="nn">cuqi.testproblem</span> <span class="kn">import</span> <span class="n">Poisson1D</span>
+<span class="kn">from</span> <span class="nn">cuqi.problem</span> <span class="kn">import</span> <span class="n">BayesianProblem</span>
+<span class="kn">import</span> <span class="nn">cuqi</span>
+<span class="kn">import</span> <span class="nn">inspect</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">cuqi.sampler</span> <span class="kn">import</span> <span class="n">MH</span><span class="p">,</span> <span class="n">CWMH</span><span class="p">,</span> <span class="n">ULA</span><span class="p">,</span> <span class="n">MALA</span><span class="p">,</span> <span class="n">NUTS</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">scipy.stats</span> <span class="k">as</span> <span class="nn">sps</span>
+<span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="kn">import</span> <span class="n">gaussian_kde</span>
+</pre></div>
+</div>
+</div>
+</details>
+</div>
+<section id="the-two-targets-again">
+<h2><font color=#CD853F>  The two targets, again </font><a class="headerlink" href="#the-two-targets-again" title="Link to this heading">#</a></h2>
+<p>Here we will add the code for building the two targets that we discussed in the previous <a class="reference external" href="https://cuqi-dtu.github.io/CUQI-Book/chapter03/sampling_with_cuqipy_two_target.html">notebook</a>. The details of the two targets can be found in that notebook. After running the following (hidden) code cell, we will have the two targets ready for sampling:</p>
+<ul class="simple">
+<li><p>The donut target <code class="docutils literal notranslate"><span class="pre">target_donut</span></code> (distribution)</p></li>
+<li><p>The Poisson 1D target <code class="docutils literal notranslate"><span class="pre">target_poisson</span></code> (posterior)</p></li>
+</ul>
+<div class="cell tag_hide-cell docutils container">
+<details class="hide above-input">
+<summary aria-label="Toggle hidden content">
+<span class="collapsed">Show code cell content</span>
+<span class="expanded">Hide code cell content</span>
+</summary>
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># The donut distribution </span>
+<span class="n">target_donut</span> <span class="o">=</span> <span class="n">DistributionGallery</span><span class="p">(</span><span class="s2">&quot;donut&quot;</span><span class="p">)</span>
+
+<span class="c1"># The Poisson1D Bayesian problem</span>
+<span class="n">dim</span> <span class="o">=</span> <span class="mi">201</span>
+<span class="n">L</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span>
+
+<span class="n">xs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">])</span><span class="o">*</span><span class="n">L</span>
+<span class="n">ws</span> <span class="o">=</span> <span class="mf">0.8</span>
+<span class="n">sigma_s</span> <span class="o">=</span> <span class="mf">0.05</span>
+<span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="n">t</span><span class="p">):</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">dim</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">):</span>
+        <span class="n">s</span> <span class="o">+=</span> <span class="n">ws</span> <span class="o">*</span> <span class="n">sps</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="n">xs</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">scale</span><span class="o">=</span><span class="n">sigma_s</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">s</span>
+
+<span class="n">A</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">Poisson1D</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="n">dim</span><span class="p">,</span> 
+                    <span class="n">endpoint</span><span class="o">=</span><span class="n">L</span><span class="p">,</span>
+                    <span class="n">field_type</span><span class="o">=</span><span class="s1">&#39;KL&#39;</span><span class="p">,</span>
+                    <span class="n">field_params</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;num_modes&#39;</span><span class="p">:</span> <span class="mi">10</span><span class="p">}</span> <span class="p">,</span>
+                    <span class="nb">map</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> 
+                    <span class="n">source</span><span class="o">=</span><span class="n">f</span><span class="p">)</span><span class="o">.</span><span class="n">get_components</span><span class="p">()</span>
+<span class="n">sigma_x</span> <span class="o">=</span> <span class="mi">30</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">Gaussian</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">sigma_x</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="n">geometry</span><span class="o">=</span><span class="n">A</span><span class="o">.</span><span class="n">domain_geometry</span><span class="p">)</span>
+<span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">x_true</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
+<span class="n">sigma_y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">0.001</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">Gaussian</span><span class="p">(</span><span class="n">A</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">sigma_y</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="n">geometry</span><span class="o">=</span><span class="n">A</span><span class="o">.</span><span class="n">range_geometry</span><span class="p">)</span>
+<span class="n">y_obs</span> <span class="o">=</span> <span class="n">y</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x_true</span><span class="p">)</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
+<span class="n">joint</span> <span class="o">=</span> <span class="n">JointDistribution</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+<span class="n">target_poisson</span> <span class="o">=</span> <span class="n">joint</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="n">y_obs</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</details>
+</div>
+<p>The in the following (hidden) code cell we again define the method <code class="docutils literal notranslate"><span class="pre">plot_pdf_1D</span></code> and <code class="docutils literal notranslate"><span class="pre">plot_pdf_2D</span></code> for plotting univariate and bi-variate pdfs. We have used these method before in <a class="reference external" href="https://cuqi-dtu.github.io/CUQI-Book/chapter01/Intro_example.html">a previous notebook</a>.</p>
+<div class="cell tag_hide-cell docutils container">
+<details class="hide above-input">
+<summary aria-label="Toggle hidden content">
+<span class="collapsed">Show code cell content</span>
+<span class="expanded">Hide code cell content</span>
+</summary>
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">plot2d</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">x1_min</span><span class="p">,</span> <span class="n">x1_max</span><span class="p">,</span> <span class="n">x2_min</span><span class="p">,</span> <span class="n">x2_max</span><span class="p">,</span> <span class="n">N2</span><span class="o">=</span><span class="mi">201</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="c1"># plot</span>
+    <span class="n">pixelwidth_x</span> <span class="o">=</span> <span class="p">(</span><span class="n">x1_max</span><span class="o">-</span><span class="n">x1_min</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">N2</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">pixelwidth_y</span> <span class="o">=</span> <span class="p">(</span><span class="n">x2_max</span><span class="o">-</span><span class="n">x2_min</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">N2</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">hp_x</span> <span class="o">=</span> <span class="mf">0.5</span><span class="o">*</span><span class="n">pixelwidth_x</span>
+    <span class="n">hp_y</span> <span class="o">=</span> <span class="mf">0.5</span><span class="o">*</span><span class="n">pixelwidth_y</span>
+
+    <span class="n">extent</span> <span class="o">=</span> <span class="p">(</span><span class="n">x1_min</span><span class="o">-</span><span class="n">hp_x</span><span class="p">,</span> <span class="n">x1_max</span><span class="o">+</span><span class="n">hp_x</span><span class="p">,</span> <span class="n">x2_min</span><span class="o">-</span><span class="n">hp_y</span><span class="p">,</span> <span class="n">x2_max</span><span class="o">+</span><span class="n">hp_y</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">origin</span><span class="o">=</span><span class="s1">&#39;lower&#39;</span><span class="p">,</span> <span class="n">extent</span><span class="o">=</span><span class="n">extent</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">()</span>
+
+
+<span class="k">def</span> <span class="nf">plot_pdf_2D</span><span class="p">(</span><span class="n">distb</span><span class="p">,</span> <span class="n">x1_min</span><span class="p">,</span> <span class="n">x1_max</span><span class="p">,</span> <span class="n">x2_min</span><span class="p">,</span> <span class="n">x2_max</span><span class="p">,</span> <span class="n">N2</span><span class="o">=</span><span class="mi">201</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="n">N2</span> <span class="o">=</span> <span class="mi">201</span>
+    <span class="n">ls1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">x1_min</span><span class="p">,</span> <span class="n">x1_max</span><span class="p">,</span> <span class="n">N2</span><span class="p">)</span>
+    <span class="n">ls2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">x2_min</span><span class="p">,</span> <span class="n">x2_max</span><span class="p">,</span> <span class="n">N2</span><span class="p">)</span>
+    <span class="n">grid1</span><span class="p">,</span> <span class="n">grid2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">ls1</span><span class="p">,</span> <span class="n">ls2</span><span class="p">)</span>
+    <span class="n">distb_pdf</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">N2</span><span class="p">,</span><span class="n">N2</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N2</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">jj</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N2</span><span class="p">):</span>
+            <span class="n">distb_pdf</span><span class="p">[</span><span class="n">ii</span><span class="p">,</span><span class="n">jj</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">distb</span><span class="o">.</span><span class="n">logd</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">grid1</span><span class="p">[</span><span class="n">ii</span><span class="p">,</span><span class="n">jj</span><span class="p">],</span> <span class="n">grid2</span><span class="p">[</span><span class="n">ii</span><span class="p">,</span><span class="n">jj</span><span class="p">]])))</span> 
+    <span class="n">plot2d</span><span class="p">(</span><span class="n">distb_pdf</span><span class="p">,</span> <span class="n">x1_min</span><span class="p">,</span> <span class="n">x1_max</span><span class="p">,</span> <span class="n">x2_min</span><span class="p">,</span> <span class="n">x2_max</span><span class="p">,</span> <span class="n">N2</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">plot_pdf_1D</span><span class="p">(</span><span class="n">distb</span><span class="p">,</span> <span class="nb">min</span><span class="p">,</span> <span class="nb">max</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="n">grid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="nb">min</span><span class="p">,</span> <span class="nb">max</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="p">[</span><span class="n">distb</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">grid_point</span><span class="p">)</span> <span class="k">for</span> <span class="n">grid_point</span> <span class="ow">in</span> <span class="n">grid</span><span class="p">]</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</details>
+</div>
+</section>
+<section id="sampling-the-posterior">
+<h2><font color=#CD853F>  Sampling the posterior </font><a class="headerlink" href="#sampling-the-posterior" title="Link to this heading">#</a></h2>
+<p>After defining the posterior distribution (or a target distribution in general) for the parameters of interest <span class="math notranslate nohighlight">\(\mathbf{x}\)</span>, we can characterize the parameter and its uncertainty by samples from the posterior (target) distribution. However, in general the posterior (target) is not a simple distribution that we can easily sample from. Instead, we need to rely on Markov Chain Monte Carlo (MCMC) methods to sample from the posterior.</p>
+<p>In CUQIpy, a number of MCMC samplers are provided in the sampler module that can be used to sample probability distributions. All samplers have the same signature, namely <code class="docutils literal notranslate"><span class="pre">Sampler(target,</span> <span class="pre">...)</span></code>, where <code class="docutils literal notranslate"><span class="pre">target</span></code> is the target CUQIpy distribution and <code class="docutils literal notranslate"><span class="pre">...</span></code> indicates any (optional) arguments.</p>
+<p>In CUQIpy we have a number of samplers available, that we can list using:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">sampler</span> <span class="k">for</span> <span class="n">sampler</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="n">cuqi</span><span class="o">.</span><span class="n">sampler</span><span class="p">)</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">sampler</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)]</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;CWMH&#39;,
+ &#39;Conjugate&#39;,
+ &#39;ConjugateApprox&#39;,
+ &#39;Gibbs&#39;,
+ &#39;LinearRTO&#39;,
+ &#39;MALA&#39;,
+ &#39;MH&#39;,
+ &#39;NUTS&#39;,
+ &#39;ProposalBasedSampler&#39;,
+ &#39;RegularizedLinearRTO&#39;,
+ &#39;Sampler&#39;,
+ &#39;UGLA&#39;,
+ &#39;ULA&#39;,
+ &#39;pCN&#39;]
+</pre></div>
+</div>
+</div>
+</div>
+<p>Note that there is also the experimental <code class="docutils literal notranslate"><span class="pre">mcmc</span></code> module that has a new implementation of the samplers. This module is still under development and is aim to replace the current <code class="docutils literal notranslate"><span class="pre">sampler</span></code> module. We can list the samplers in the <code class="docutils literal notranslate"><span class="pre">mcmc</span></code> module using:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># This code needs the latest development version of cuqipy to run</span>
+<span class="c1"># [samplerNew for samplerNew in dir(cuqi.experimental.mcmc) if not samplerNew.startswith(&#39;_&#39;)]</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="story-1-it-pays-off-to-adapt-comparing-metropolis-hastings-mh-with-and-without-adaptation">
+<h2><font color=#CD853F> Story 1 - It pays off to adapt: Comparing Metropolis Hastings (MH) with and without adaptation </font><a class="headerlink" href="#story-1-it-pays-off-to-adapt-comparing-metropolis-hastings-mh-with-and-without-adaptation" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>In the class, you learned about MH method.</p></li>
+<li><p>In MH, for each iteration, a new sample is proposed based on the current sample (essintially adding a random perturbation to the corrent sample).</p></li>
+<li><p>Then the porposed sample is accepted or rejected based on the acceptance probability: <span class="math notranslate nohighlight">\(\min\left(1, \frac{p(\mathbf{x}_{k+1})q(\mathbf{x}_k|\mathbf{x}_{k+1})}{p(\mathbf{x}_k)q(\mathbf{x}_{k+1}|\mathbf{x}_k)}\right)\)</span>, where <span class="math notranslate nohighlight">\(p(\mathbf{x})\)</span> is the target distribution and <span class="math notranslate nohighlight">\(q(\mathbf{x}|\mathbf{y})\)</span> is the proposal distribution.</p></li>
+<li><p>Here we test the MH method with and without adaptation.</p></li>
+<li><p>For adaptation, MH uses vanishing adaptation to set the step size (scale) to achieve a desired acceptance rate (0.234 in this case).</p></li>
+</ul>
+<p>Let us sample the <code class="docutils literal notranslate"><span class="pre">target_donut</span></code> with a fixed <code class="docutils literal notranslate"><span class="pre">scale</span></code>. We first set up the number of samples, number of burn-in samples, and the fixed scale.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">Ns</span> <span class="o">=</span> <span class="mi">10000</span> <span class="c1"># Number of samples</span>
+<span class="n">Nb</span> <span class="o">=</span> <span class="mi">0</span> <span class="c1"># Number of burn-in samples</span>
+<span class="n">scale</span> <span class="o">=</span> <span class="mf">0.05</span> <span class="c1"># Fixed step size &quot;scale&quot;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>We create the <code class="docutils literal notranslate"><span class="pre">MH</span></code> sampler with the target distribution <code class="docutils literal notranslate"><span class="pre">target_donut</span></code>, the scale <code class="docutils literal notranslate"><span class="pre">scale</span></code> and an initial sample <code class="docutils literal notranslate"><span class="pre">x0</span></code>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">MH_sampler</span> <span class="o">=</span> <span class="n">MH</span><span class="p">(</span><span class="n">target_donut</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">scale</span><span class="p">,</span> <span class="n">x0</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]))</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>We sample using <code class="docutils literal notranslate"><span class="pre">sample</span></code> method:</p>
+<div class="cell tag_scroll-output docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">MH_fixed_samples</span> <span class="o">=</span> <span class="n">MH_sampler</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">Ns</span><span class="p">,</span> <span class="n">Nb</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 100 / 10000
+Sample 200 / 10000
+Sample 300 / 10000
+Sample 400 / 10000
+Sample 500 / 10000
+Sample 600 / 10000
+Sample 700 / 10000
+Sample 800 / 10000
+Sample 900 / 10000
+Sample 1000 / 10000
+Sample 1100 / 10000
+Sample 1200 / 10000
+Sample 1300 / 10000
+Sample 1400 / 10000
+Sample 1500 / 10000
+Sample 1600 / 10000
+Sample 1700 / 10000
+Sample 1800 / 10000
+Sample 1900 / 10000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 2000 / 10000
+Sample 2100 / 10000
+Sample 2200 / 10000
+Sample 2300 / 10000
+Sample 2400 / 10000
+Sample 2500 / 10000
+Sample 2600 / 10000
+Sample 2700 / 10000
+Sample 2800 / 10000
+Sample 2900 / 10000
+Sample 3000 / 10000
+Sample 3100 / 10000
+Sample 3200 / 10000
+Sample 3300 / 10000
+Sample 3400 / 10000
+Sample 3500 / 10000
+Sample 3600 / 10000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 3700 / 10000
+Sample 3800 / 10000
+Sample 3900 / 10000
+Sample 4000 / 10000
+Sample 4100 / 10000
+Sample 4200 / 10000
+Sample 4300 / 10000
+Sample 4400 / 10000
+Sample 4500 / 10000
+Sample 4600 / 10000
+Sample 4700 / 10000
+Sample 4800 / 10000
+Sample 4900 / 10000
+Sample 5000 / 10000
+Sample 5100 / 10000
+Sample 5200 / 10000
+Sample 5300 / 10000
+Sample 5400 / 10000
+Sample 5500 / 10000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 5600 / 10000
+Sample 5700 / 10000
+Sample 5800 / 10000
+Sample 5900 / 10000
+Sample 6000 / 10000
+Sample 6100 / 10000
+Sample 6200 / 10000
+Sample 6300 / 10000
+Sample 6400 / 10000
+Sample 6500 / 10000
+Sample 6600 / 10000
+Sample 6700 / 10000
+Sample 6800 / 10000
+Sample 6900 / 10000
+Sample 7000 / 10000
+Sample 7100 / 10000
+Sample 7200 / 10000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 7300 / 10000
+Sample 7400 / 10000
+Sample 7500 / 10000
+Sample 7600 / 10000
+Sample 7700 / 10000
+Sample 7800 / 10000
+Sample 7900 / 10000
+Sample 8000 / 10000
+Sample 8100 / 10000
+Sample 8200 / 10000
+Sample 8300 / 10000
+Sample 8400 / 10000
+Sample 8500 / 10000
+Sample 8600 / 10000
+Sample 8700 / 10000
+Sample 8800 / 10000
+Sample 8900 / 10000
+Sample 9000 / 10000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 9100 / 10000
+Sample 9200 / 10000
+Sample 9300 / 10000
+Sample 9400 / 10000
+Sample 9500 / 10000
+Sample 9600 / 10000
+Sample 9700 / 10000
+Sample 9800 / 10000
+Sample 9900 / 10000
+Sample 10000 / 10000
+Sample 10000 / 10000
+
+Average acceptance rate: 0.8742 
+</pre></div>
+</div>
+</div>
+</div>
+<p>The samples are stored in a <code class="docutils literal notranslate"><span class="pre">Samples</span></code> object that is returned by the <code class="docutils literal notranslate"><span class="pre">sample</span></code> method. Let us visualize the samples using the <code class="docutils literal notranslate"><span class="pre">plot_pair</span></code> method, along with the density of the target distribution using the <code class="docutils literal notranslate"><span class="pre">plot_pdf_2D</span></code> method:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plot_pdf_2D</span><span class="p">(</span><span class="n">target_donut</span><span class="p">,</span> <span class="o">-</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="o">-</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+<span class="n">MH_fixed_samples</span><span class="o">.</span><span class="n">plot_pair</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/tmp/ipykernel_1989/1564103046.py:23: DeprecationWarning: Conversion of an array with ndim &gt; 0 to a scalar is deprecated, and will error in future. Ensure you extract a single element from your array before performing this operation. (Deprecated NumPy 1.25.)
+  distb_pdf[ii,jj] = np.exp(distb.logd(np.array([grid1[ii,jj], grid2[ii,jj]])))
+</pre></div>
+</div>
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Axes: xlabel=&#39;v0&#39;, ylabel=&#39;v1&#39;&gt;
+</pre></div>
+</div>
+<img alt="../_images/b9232a42595ac7d080f836393fa5750ab83cfd7c7daa2f5dd0253d27e9d6913d.png" src="../_images/b9232a42595ac7d080f836393fa5750ab83cfd7c7daa2f5dd0253d27e9d6913d.png" />
+</div>
+</div>
+<p><strong>Observations</strong></p>
+<ul class="simple">
+<li><p>The samples captures only part of the target distribution.</p></li>
+<li><p>Once the chain reaches the high density region, it stays there.</p></li>
+<li><p>The samples starts at the center and takes some time to move to the donut shape. This part of the chain is the burn-in phase.</p></li>
+</ul>
+<section id="exercise">
+<h3><font color=#8B4513> Exercise: </font><a class="headerlink" href="#exercise" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>In CUQIpy we can remove the burin in in two ways. The first approach is to set Nb to the number of samples you want to remove. The second approach is after you already have the samples, you can use the <code class="docutils literal notranslate"><span class="pre">Samples</span></code> object <code class="docutils literal notranslate"><span class="pre">burnthin</span></code> method which removes the burn-in and applies thinning if the user asked for it. Try the second approach to remove a burn-in of size 1500 samples and plot the samples again (same as above, visualize both the density using <code class="docutils literal notranslate"><span class="pre">plot_pdf_2D</span></code> and the samples using the <code class="docutils literal notranslate"><span class="pre">plot_pair</span></code> method).</p></li>
+<li><p>Try sampling with another scale (much smaller 0.005 and much larger 1) and visualize the samples, how does that affect the samples and the acceptance rate, and why.</p></li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># your code here</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Now we try the solving the same problem with adaptation. We make sure to set the scale to the previous value 0.05.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">MH_sampler</span><span class="o">.</span><span class="n">scale</span> <span class="o">=</span> <span class="mf">0.05</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Then we sample this time using <code class="docutils literal notranslate"><span class="pre">sample_adapt</span></code> method which adapts the step size. Note that the adaptation happen during the burin-in phase so we need to set <code class="docutils literal notranslate"><span class="pre">Nb</span></code> to some large value to see the effect of adaptation.</p>
+<div class="cell tag_scroll-output docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">Ns</span> <span class="o">=</span> <span class="mi">8500</span>
+<span class="n">Nb</span> <span class="o">=</span> <span class="mi">1500</span>
+<span class="n">MH_adapted_samples</span> <span class="o">=</span> <span class="n">MH_sampler</span><span class="o">.</span><span class="n">sample_adapt</span><span class="p">(</span><span class="n">Ns</span><span class="p">,</span> <span class="n">Nb</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 100 / 10000
+Sample 200 / 10000
+Sample 300 / 10000
+Sample 400 / 10000
+Sample 500 / 10000
+Sample 600 / 10000
+Sample 700 / 10000
+Sample 800 / 10000
+Sample 900 / 10000
+Sample 1000 / 10000
+Sample 1100 / 10000
+Sample 1200 / 10000
+Sample 1300 / 10000
+Sample 1400 / 10000
+Sample 1500 / 10000
+Sample 1600 / 10000
+Sample 1700 / 10000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 1800 / 10000
+Sample 1900 / 10000
+Sample 2000 / 10000
+Sample 2100 / 10000
+Sample 2200 / 10000
+Sample 2300 / 10000
+Sample 2400 / 10000
+Sample 2500 / 10000
+Sample 2600 / 10000
+Sample 2700 / 10000
+Sample 2800 / 10000
+Sample 2900 / 10000
+Sample 3000 / 10000
+Sample 3100 / 10000
+Sample 3200 / 10000
+Sample 3300 / 10000
+Sample 3400 / 10000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 3500 / 10000
+Sample 3600 / 10000
+Sample 3700 / 10000
+Sample 3800 / 10000
+Sample 3900 / 10000
+Sample 4000 / 10000
+Sample 4100 / 10000
+Sample 4200 / 10000
+Sample 4300 / 10000
+Sample 4400 / 10000
+Sample 4500 / 10000
+Sample 4600 / 10000
+Sample 4700 / 10000
+Sample 4800 / 10000
+Sample 4900 / 10000
+Sample 5000 / 10000
+Sample 5100 / 10000
+Sample 5200 / 10000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 5300 / 10000
+Sample 5400 / 10000
+Sample 5500 / 10000
+Sample 5600 / 10000
+Sample 5700 / 10000
+Sample 5800 / 10000
+Sample 5900 / 10000
+Sample 6000 / 10000
+Sample 6100 / 10000
+Sample 6200 / 10000
+Sample 6300 / 10000
+Sample 6400 / 10000
+Sample 6500 / 10000
+Sample 6600 / 10000
+Sample 6700 / 10000
+Sample 6800 / 10000
+Sample 6900 / 10000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 7000 / 10000
+Sample 7100 / 10000
+Sample 7200 / 10000
+Sample 7300 / 10000
+Sample 7400 / 10000
+Sample 7500 / 10000
+Sample 7600 / 10000
+Sample 7700 / 10000
+Sample 7800 / 10000
+Sample 7900 / 10000
+Sample 8000 / 10000
+Sample 8100 / 10000
+Sample 8200 / 10000
+Sample 8300 / 10000
+Sample 8400 / 10000
+Sample 8500 / 10000
+Sample 8600 / 10000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 8700 / 10000
+Sample 8800 / 10000
+Sample 8900 / 10000
+Sample 9000 / 10000
+Sample 9100 / 10000
+Sample 9200 / 10000
+Sample 9300 / 10000
+Sample 9400 / 10000
+Sample 9500 / 10000
+Sample 9600 / 10000
+Sample 9700 / 10000
+Sample 9800 / 10000
+Sample 9900 / 10000
+Sample 10000 / 10000
+Sample 10000 / 10000
+
+Average acceptance rate: 0.5038823529411764 MCMC scale: 0.38003425321366907 
+</pre></div>
+</div>
+</div>
+</div>
+<p>Here we visualize the results (both the ones with and without adaptation). We set the color of the samples and the transparency <code class="docutils literal notranslate"><span class="pre">alpha</span></code> using the arviz argument <code class="docutils literal notranslate"><span class="pre">scatter_kwargs</span></code>:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plot_pdf_2D</span><span class="p">(</span><span class="n">target_donut</span><span class="p">,</span> <span class="o">-</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="o">-</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+<span class="n">MH_fixed_samples</span><span class="o">.</span><span class="n">plot_pair</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">(),</span><span class="n">scatter_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;c&#39;</span><span class="p">:</span><span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="s1">&#39;alpha&#39;</span><span class="p">:</span><span class="mf">0.3</span><span class="p">})</span>
+<span class="n">MH_adapted_samples</span><span class="o">.</span><span class="n">plot_pair</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">(),</span><span class="n">scatter_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;c&#39;</span><span class="p">:</span><span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="s1">&#39;alpha&#39;</span><span class="p">:</span><span class="mf">0.3</span><span class="p">})</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/tmp/ipykernel_1989/1564103046.py:23: DeprecationWarning: Conversion of an array with ndim &gt; 0 to a scalar is deprecated, and will error in future. Ensure you extract a single element from your array before performing this operation. (Deprecated NumPy 1.25.)
+  distb_pdf[ii,jj] = np.exp(distb.logd(np.array([grid1[ii,jj], grid2[ii,jj]])))
+</pre></div>
+</div>
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Axes: xlabel=&#39;v0&#39;, ylabel=&#39;v1&#39;&gt;
+</pre></div>
+</div>
+<img alt="../_images/e33964df5bc9ba5ccf9e71ac4f3ad1c76a617b1e2bc20eac1dae814983256e0d.png" src="../_images/e33964df5bc9ba5ccf9e71ac4f3ad1c76a617b1e2bc20eac1dae814983256e0d.png" />
+</div>
+</div>
+</section>
+<section id="id1">
+<h3><font color=#8B4513> Exercise: </font><a class="headerlink" href="#id1" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>What do you notice about the acceptance rate and the scale in the case with adaptation compared to the previous case.</p></li>
+<li><p>Time the two sampling methods, which one is faster and by what factor?</p></li>
+<li><p>Compute the effective sample size for both cases. Note that you can use <code class="docutils literal notranslate"><span class="pre">compute_ess</span></code> method of the <code class="docutils literal notranslate"><span class="pre">Samples</span></code> object to compute the effective sample size. Which one is larger.</p></li>
+<li><p>Scale the ESS by the time so that you have the ESS per second. Which one is larger? Does it pay off to use adaptation?</p></li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># your code here</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Let us plot the chains for the two cases, removing the burin-in from the fixed scale case:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">MH_fixed_samples</span><span class="o">.</span><span class="n">burnthin</span><span class="p">(</span><span class="n">Nb</span><span class="p">)</span><span class="o">.</span><span class="n">plot_trace</span><span class="p">()</span>
+<span class="n">MH_adapted_samples</span><span class="o">.</span><span class="n">plot_trace</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([[&lt;Axes: title={&#39;center&#39;: &#39;v0&#39;}&gt;, &lt;Axes: title={&#39;center&#39;: &#39;v0&#39;}&gt;],
+       [&lt;Axes: title={&#39;center&#39;: &#39;v1&#39;}&gt;, &lt;Axes: title={&#39;center&#39;: &#39;v1&#39;}&gt;]],
+      dtype=object)
+</pre></div>
+</div>
+<img alt="../_images/1625f1e7eed0cebba09df81dbab4be825eaeff38c9afe8443c9801ed3608d18c.png" src="../_images/1625f1e7eed0cebba09df81dbab4be825eaeff38c9afe8443c9801ed3608d18c.png" />
+<img alt="../_images/d872da268c14c4098b3db0c18d5fc13ebe71bfcc89d17c15764bf615e2bb3e7e.png" src="../_images/d872da268c14c4098b3db0c18d5fc13ebe71bfcc89d17c15764bf615e2bb3e7e.png" />
+</div>
+</div>
+<p><strong>Notes</strong></p>
+<ul class="simple">
+<li><p>The chains in the second case (with adaptation) has much better mixing compared to the first case (closer to a fuzzy warm shape).</p></li>
+<li><p>The estimate density of the target distribution is much better in the second case, captures the 2 modes.</p></li>
+</ul>
+<p>We can also use <code class="docutils literal notranslate"><span class="pre">plot_pair</span></code> with additional arviz arguments <code class="docutils literal notranslate"><span class="pre">kind</span></code>, <code class="docutils literal notranslate"><span class="pre">kde_kwargs</span></code>, and <code class="docutils literal notranslate"><span class="pre">marginals</span></code> to visualize the marginals and the kernel density estimate of the target distribution. Let us do this for the two cases:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">MH_adapted_samples</span><span class="o">.</span><span class="n">plot_pair</span><span class="p">(</span><span class="n">kind</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;scatter&quot;</span><span class="p">,</span> <span class="s2">&quot;kde&quot;</span><span class="p">],</span> <span class="n">kde_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;fill_last&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">},</span> <span class="n">marginals</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">MH_fixed_samples</span><span class="o">.</span><span class="n">plot_pair</span><span class="p">(</span><span class="n">kind</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;scatter&quot;</span><span class="p">,</span> <span class="s2">&quot;kde&quot;</span><span class="p">],</span> <span class="n">kde_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;fill_last&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">},</span> <span class="n">marginals</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([[&lt;Axes: &gt;, None],
+       [&lt;Axes: xlabel=&#39;v0&#39;, ylabel=&#39;v1&#39;&gt;, &lt;Axes: &gt;]], dtype=object)
+</pre></div>
+</div>
+<img alt="../_images/84576567fff7d517a34d753b402cccd7bac11ff94b5b24b261dee9abae46813b.png" src="../_images/84576567fff7d517a34d753b402cccd7bac11ff94b5b24b261dee9abae46813b.png" />
+<img alt="../_images/e5f6544a8f74bc0dbcc68c331d36d8e3d9a9c86b26baea19061fdb127d20aa48.png" src="../_images/e5f6544a8f74bc0dbcc68c331d36d8e3d9a9c86b26baea19061fdb127d20aa48.png" />
+</div>
+</div>
+<p>It is clear from these figures how using adaptation of the step size is very beneficial to capture the target distribution in this scenario.</p>
+</section>
+</section>
+<section id="story-2-not-all-unkowns-are-created-equal-component-wise-metropolis-hastings-cwmh">
+<h2><font color=#CD853F> Story 2 - Not all unkowns are created equal: Component-wise Metropolis Hastings CWMH </font><a class="headerlink" href="#story-2-not-all-unkowns-are-created-equal-component-wise-metropolis-hastings-cwmh" title="Link to this heading">#</a></h2>
+<p>To get to the next sample, CWMH updates the components of the current sample one at a time and applies the accept/reject step for each component. Updating the scale happens for each component separately depending on the acceptance rate of the component.</p>
+<p>Let us test sampling the Poisson problem target with CWMH. We fix the seed for reproducibility and set the number of samples, burn-in samples, and the scale.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="c1"># Fix the seed for reproducibility</span>
+<span class="n">scale</span> <span class="o">=</span> <span class="mf">0.06</span>
+<span class="n">Ns</span> <span class="o">=</span> <span class="mi">500</span>
+<span class="n">Nb</span> <span class="o">=</span> <span class="mi">500</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>For comparison, we sample the Poisson problem target with the MH sampler first:</p>
+<div class="cell tag_scroll-output docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">MH_sampler</span> <span class="o">=</span> <span class="n">MH</span><span class="p">(</span><span class="n">target_poisson</span><span class="p">,</span> <span class="n">scale</span> <span class="o">=</span> <span class="n">scale</span><span class="p">,</span> <span class="n">x0</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">target_poisson</span><span class="o">.</span><span class="n">dim</span><span class="p">))</span>
+<span class="n">MH_samples</span> <span class="o">=</span> <span class="n">MH_sampler</span><span class="o">.</span><span class="n">sample_adapt</span><span class="p">(</span><span class="n">Ns</span><span class="p">,</span> <span class="n">Nb</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 10 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 20 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 30 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 40 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 50 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 60 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 70 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 80 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 90 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 100 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 110 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 120 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 130 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 140 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 150 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 160 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 170 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 180 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 190 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 200 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 210 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 220 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 230 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 240 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 250 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 260 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 270 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 280 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 290 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 300 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 310 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 320 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 330 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 340 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 350 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 360 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 370 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 380 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 390 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 400 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 410 / 1000
+Sample 420 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 430 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 440 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 450 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 460 / 1000
+Sample 470 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 480 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 490 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 500 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 510 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 520 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 530 / 1000
+Sample 540 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 550 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 560 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 570 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 580 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 590 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 600 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 610 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 620 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 630 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 640 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 650 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 660 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 670 / 1000
+Sample 680 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 690 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 700 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 710 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 720 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 730 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 740 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 750 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 760 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 770 / 1000
+Sample 780 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 790 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 800 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 810 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 820 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 830 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 840 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 850 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 860 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 870 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 880 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 890 / 1000
+Sample 900 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 910 / 1000
+Sample 920 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 930 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 940 / 1000
+Sample 950 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 960 / 1000
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sample 970 / 1000
+</pre></div>
+</div>
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">KeyboardInterrupt</span><span class="g g-Whitespace">                         </span>Traceback (most recent call last)
+<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">18</span><span class="p">],</span> <span class="n">line</span> <span class="mi">2</span>
+<span class="g g-Whitespace">      </span><span class="mi">1</span> <span class="n">MH_sampler</span> <span class="o">=</span> <span class="n">MH</span><span class="p">(</span><span class="n">target_poisson</span><span class="p">,</span> <span class="n">scale</span> <span class="o">=</span> <span class="n">scale</span><span class="p">,</span> <span class="n">x0</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">target_poisson</span><span class="o">.</span><span class="n">dim</span><span class="p">))</span>
+<span class="ne">----&gt; </span><span class="mi">2</span> <span class="n">MH_samples</span> <span class="o">=</span> <span class="n">MH_sampler</span><span class="o">.</span><span class="n">sample_adapt</span><span class="p">(</span><span class="n">Ns</span><span class="p">,</span> <span class="n">Nb</span><span class="p">)</span>
+
+<span class="nn">File ~/.local/lib/python3.10/site-packages/cuqi/sampler/_sampler.py:97,</span> in <span class="ni">Sampler.sample_adapt</span><span class="nt">(self, N, Nb)</span>
+<span class="g g-Whitespace">     </span><span class="mi">95</span> <span class="k">def</span> <span class="nf">sample_adapt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">N</span><span class="p">,</span><span class="n">Nb</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<span class="g g-Whitespace">     </span><span class="mi">96</span>     <span class="c1"># Get samples from the samplers sample method</span>
+<span class="ne">---&gt; </span><span class="mi">97</span>     <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sample_adapt</span><span class="p">(</span><span class="n">N</span><span class="p">,</span><span class="n">Nb</span><span class="p">)</span>
+<span class="g g-Whitespace">     </span><span class="mi">98</span>     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_Sample_object</span><span class="p">(</span><span class="n">result</span><span class="p">,</span><span class="n">N</span><span class="o">+</span><span class="n">Nb</span><span class="p">)</span>
+
+<span class="nn">File ~/.local/lib/python3.10/site-packages/cuqi/sampler/_mh.py:136,</span> in <span class="ni">MH._sample_adapt</span><span class="nt">(self, N, Nb)</span>
+<span class="g g-Whitespace">    </span><span class="mi">133</span> <span class="c1"># run MCMC</span>
+<span class="g g-Whitespace">    </span><span class="mi">134</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">Ns</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+<span class="g g-Whitespace">    </span><span class="mi">135</span>     <span class="c1"># run component by component</span>
+<span class="ne">--&gt; </span><span class="mi">136</span>     <span class="n">samples</span><span class="p">[:,</span> <span class="n">s</span><span class="o">+</span><span class="mi">1</span><span class="p">],</span> <span class="n">target_eval</span><span class="p">[</span><span class="n">s</span><span class="o">+</span><span class="mi">1</span><span class="p">],</span> <span class="n">acc</span><span class="p">[</span><span class="n">s</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">single_update</span><span class="p">(</span><span class="n">samples</span><span class="p">[:,</span> <span class="n">s</span><span class="p">],</span> <span class="n">target_eval</span><span class="p">[</span><span class="n">s</span><span class="p">])</span>
+<span class="g g-Whitespace">    </span><span class="mi">138</span>     <span class="c1"># adapt prop spread using acc of past samples</span>
+<span class="g g-Whitespace">    </span><span class="mi">139</span>     <span class="k">if</span> <span class="p">((</span><span class="n">s</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">%</span> <span class="n">Na</span> <span class="o">==</span> <span class="mi">0</span><span class="p">):</span>
+<span class="g g-Whitespace">    </span><span class="mi">140</span>         <span class="c1"># evaluate average acceptance rate</span>
+
+<span class="nn">File ~/.local/lib/python3.10/site-packages/cuqi/sampler/_mh.py:173,</span> in <span class="ni">MH.single_update</span><span class="nt">(self, x_t, target_eval_t)</span>
+<span class="g g-Whitespace">    </span><span class="mi">170</span> <span class="n">x_star</span> <span class="o">=</span> <span class="n">x_t</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">scale</span><span class="o">*</span><span class="n">xi</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>   <span class="c1"># MH proposal</span>
+<span class="g g-Whitespace">    </span><span class="mi">172</span> <span class="c1"># evaluate target</span>
+<span class="ne">--&gt; </span><span class="mi">173</span> <span class="n">target_eval_star</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="o">.</span><span class="n">logd</span><span class="p">(</span><span class="n">x_star</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">175</span> <span class="c1"># ratio and acceptance probability</span>
+<span class="g g-Whitespace">    </span><span class="mi">176</span> <span class="n">ratio</span> <span class="o">=</span> <span class="n">target_eval_star</span> <span class="o">-</span> <span class="n">target_eval_t</span>  <span class="c1"># proposal is symmetric</span>
+
+<span class="nn">File ~/.local/lib/python3.10/site-packages/cuqi/distribution/_distribution.py:219,</span> in <span class="ni">Distribution.logd</span><span class="nt">(self, *args, **kwargs)</span>
+<span class="g g-Whitespace">    </span><span class="mi">215</span>         <span class="k">return</span> <span class="n">new_dist</span><span class="o">.</span><span class="n">logd</span><span class="p">(</span><span class="o">**</span><span class="n">main_params</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">217</span> <span class="c1"># Not conditional distribution, simply evaluate log density directly</span>
+<span class="g g-Whitespace">    </span><span class="mi">218</span> <span class="k">else</span><span class="p">:</span>
+<span class="ne">--&gt; </span><span class="mi">219</span>     <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">logd</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+<span class="nn">File ~/.local/lib/python3.10/site-packages/cuqi/density/_density.py:91,</span> in <span class="ni">Density.logd</span><span class="nt">(self, *args, **kwargs)</span>
+<span class="g g-Whitespace">     </span><span class="mi">88</span>     <span class="c1"># Ensure that the keyword arguments are given in the correct order and use them as positional arguments.</span>
+<span class="g g-Whitespace">     </span><span class="mi">89</span>     <span class="n">args</span> <span class="o">=</span> <span class="p">[</span><span class="n">kwargs</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">par_names</span><span class="p">]</span>            
+<span class="ne">---&gt; </span><span class="mi">91</span> <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_logd</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_constant</span>
+
+<span class="nn">File ~/.local/lib/python3.10/site-packages/cuqi/distribution/_distribution.py:222,</span> in <span class="ni">Distribution._logd</span><span class="nt">(self, *args)</span>
+<span class="g g-Whitespace">    </span><span class="mi">221</span> <span class="k">def</span> <span class="nf">_logd</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+<span class="ne">--&gt; </span><span class="mi">222</span>     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+
+<span class="nn">File ~/.local/lib/python3.10/site-packages/cuqi/distribution/_posterior.py:86,</span> in <span class="ni">Posterior.logpdf</span><span class="nt">(self, *args, **kwargs)</span>
+<span class="g g-Whitespace">     </span><span class="mi">84</span> <span class="k">def</span> <span class="nf">logpdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="g g-Whitespace">     </span><span class="mi">85</span><span class="w">     </span><span class="sd">&quot;&quot;&quot; Returns the logpdf of the posterior distribution&quot;&quot;&quot;</span>
+<span class="ne">---&gt; </span><span class="mi">86</span>     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">likelihood</span><span class="o">.</span><span class="n">logd</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span><span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">prior</span><span class="o">.</span><span class="n">logd</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+<span class="nn">File ~/.local/lib/python3.10/site-packages/cuqi/density/_density.py:91,</span> in <span class="ni">Density.logd</span><span class="nt">(self, *args, **kwargs)</span>
+<span class="g g-Whitespace">     </span><span class="mi">88</span>     <span class="c1"># Ensure that the keyword arguments are given in the correct order and use them as positional arguments.</span>
+<span class="g g-Whitespace">     </span><span class="mi">89</span>     <span class="n">args</span> <span class="o">=</span> <span class="p">[</span><span class="n">kwargs</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">par_names</span><span class="p">]</span>            
+<span class="ne">---&gt; </span><span class="mi">91</span> <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_logd</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_constant</span>
+
+<span class="nn">File ~/.local/lib/python3.10/site-packages/cuqi/likelihood/_likelihood.py:62,</span> in <span class="ni">Likelihood._logd</span><span class="nt">(self, *args, **kwargs)</span>
+<span class="g g-Whitespace">     </span><span class="mi">60</span> <span class="k">def</span> <span class="nf">_logd</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="g g-Whitespace">     </span><span class="mi">61</span><span class="w">     </span><span class="sd">&quot;&quot;&quot;Return the log-likelihood function at given value&quot;&quot;&quot;</span>
+<span class="ne">---&gt; </span><span class="mi">62</span>     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">distribution</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span><span class="o">.</span><span class="n">logd</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+
+<span class="nn">File ~/.local/lib/python3.10/site-packages/cuqi/distribution/_distribution.py:357,</span> in <span class="ni">Distribution.__call__</span><span class="nt">(self, *args, **kwargs)</span>
+<span class="g g-Whitespace">    </span><span class="mi">356</span> <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Distribution</span><span class="p">,</span> <span class="n">Likelihood</span><span class="p">,</span> <span class="n">EvaluatedDensity</span><span class="p">]:</span>
+<span class="ne">--&gt; </span><span class="mi">357</span>     <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__call__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+<span class="nn">File ~/.local/lib/python3.10/site-packages/cuqi/density/_density.py:141,</span> in <span class="ni">Density.__call__</span><span class="nt">(self, *args, **kwargs)</span>
+<span class="g g-Whitespace">    </span><span class="mi">132</span> <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="g g-Whitespace">    </span><span class="mi">133</span><span class="w">     </span><span class="sd">&quot;&quot;&quot; Condition the density on a set of parameters.</span>
+<span class="g g-Whitespace">    </span><span class="mi">134</span><span class="sd">     </span>
+<span class="g g-Whitespace">    </span><span class="mi">135</span><span class="sd">     Positional arguments must follow the order of the parameter names.</span>
+<span class="sd">   (...)</span>
+<span class="g g-Whitespace">    </span><span class="mi">139</span><span class="sd">     </span>
+<span class="g g-Whitespace">    </span><span class="mi">140</span><span class="sd">     &quot;&quot;&quot;</span>
+<span class="ne">--&gt; </span><span class="mi">141</span>     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_condition</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+<span class="nn">File ~/.local/lib/python3.10/site-packages/cuqi/distribution/_distribution.py:319,</span> in <span class="ni">Distribution._condition</span><span class="nt">(self, *args, **kwargs)</span>
+<span class="g g-Whitespace">    </span><span class="mi">316</span> <span class="c1"># If any keywords matched we evaluate callable variable</span>
+<span class="g g-Whitespace">    </span><span class="mi">317</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">var_args</span><span class="p">)</span><span class="o">==</span><span class="nb">len</span><span class="p">(</span><span class="n">accepted_keywords</span><span class="p">):</span>  <span class="c1">#All keywords found</span>
+<span class="g g-Whitespace">    </span><span class="mi">318</span>     <span class="c1"># Define variable as the output of callable function</span>
+<span class="ne">--&gt; </span><span class="mi">319</span>     <span class="nb">setattr</span><span class="p">(</span><span class="n">new_dist</span><span class="p">,</span> <span class="n">var_key</span><span class="p">,</span> <span class="n">var_val</span><span class="p">(</span><span class="o">**</span><span class="n">var_args</span><span class="p">))</span>
+<span class="g g-Whitespace">    </span><span class="mi">321</span> <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">var_args</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>                      <span class="c1">#Some keywords found</span>
+<span class="g g-Whitespace">    </span><span class="mi">322</span>     <span class="c1"># Define new partial function with partially defined args</span>
+<span class="g g-Whitespace">    </span><span class="mi">323</span>     <span class="n">func</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">var_val</span><span class="p">,</span> <span class="o">**</span><span class="n">var_args</span><span class="p">)</span>
+
+<span class="nn">File ~/.local/lib/python3.10/site-packages/cuqi/model/_model.py:349,</span> in <span class="ni">Model.__call__</span><span class="nt">(self, *args, **kwargs)</span>
+<span class="g g-Whitespace">    </span><span class="mi">348</span> <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="ne">--&gt; </span><span class="mi">349</span>     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+<span class="nn">File ~/.local/lib/python3.10/site-packages/cuqi/model/_model.py:343,</span> in <span class="ni">Model.forward</span><span class="nt">(self, is_par, *args, **kwargs)</span>
+<span class="g g-Whitespace">    </span><span class="mi">340</span>     <span class="k">return</span> <span class="n">new_model</span>
+<span class="g g-Whitespace">    </span><span class="mi">342</span> <span class="c1"># Else we apply the forward operator</span>
+<span class="ne">--&gt; </span><span class="mi">343</span> <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_apply_func</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_forward_func</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">344</span>                         <span class="bp">self</span><span class="o">.</span><span class="n">range_geometry</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">345</span>                         <span class="bp">self</span><span class="o">.</span><span class="n">domain_geometry</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">346</span>                         <span class="n">x</span><span class="p">,</span> <span class="n">is_par</span><span class="p">)</span>
+
+<span class="nn">File ~/.local/lib/python3.10/site-packages/cuqi/model/_model.py:273,</span> in <span class="ni">Model._apply_func</span><span class="nt">(self, func, func_range_geometry, func_domain_geometry, x, is_par, **kwargs)</span>
+<span class="g g-Whitespace">    </span><span class="mi">270</span> <span class="n">is_CUQIarray</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="ow">is</span> <span class="n">CUQIarray</span>
+<span class="g g-Whitespace">    </span><span class="mi">272</span> <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_2fun</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">func_domain_geometry</span><span class="p">,</span> <span class="n">is_par</span><span class="o">=</span><span class="n">is_par</span><span class="p">)</span>
+<span class="ne">--&gt; </span><span class="mi">273</span> <span class="n">out</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">275</span> <span class="c1"># Return output as parameters </span>
+<span class="g g-Whitespace">    </span><span class="mi">276</span> <span class="c1"># (and wrapped in CUQIarray if input was CUQIarray)</span>
+<span class="g g-Whitespace">    </span><span class="mi">277</span> <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_2par</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">func_range_geometry</span><span class="p">,</span> 
+<span class="g g-Whitespace">    </span><span class="mi">278</span>                             <span class="n">to_CUQIarray</span><span class="o">=</span><span class="n">is_CUQIarray</span><span class="p">)</span>
+
+<span class="nn">File ~/.local/lib/python3.10/site-packages/cuqi/model/_model.py:629,</span> in <span class="ni">PDEModel._forward_func</span><span class="nt">(self, x)</span>
+<span class="g g-Whitespace">    </span><span class="mi">625</span> <span class="k">def</span> <span class="nf">_forward_func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+<span class="g g-Whitespace">    </span><span class="mi">627</span>     <span class="bp">self</span><span class="o">.</span><span class="n">pde</span><span class="o">.</span><span class="n">assemble</span><span class="p">(</span><span class="n">parameter</span><span class="o">=</span><span class="n">x</span><span class="p">)</span>
+<span class="ne">--&gt; </span><span class="mi">629</span>     <span class="n">sol</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pde</span><span class="o">.</span><span class="n">solve</span><span class="p">()</span>
+<span class="g g-Whitespace">    </span><span class="mi">631</span>     <span class="n">obs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pde</span><span class="o">.</span><span class="n">observe</span><span class="p">(</span><span class="n">sol</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">633</span>     <span class="k">return</span> <span class="n">obs</span>
+
+<span class="nn">File ~/.local/lib/python3.10/site-packages/cuqi/pde/_pde.py:167,</span> in <span class="ni">SteadyStateLinearPDE.solve</span><span class="nt">(self)</span>
+<span class="g g-Whitespace">    </span><span class="mi">164</span> <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;diff_op&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;rhs&quot;</span><span class="p">):</span>
+<span class="g g-Whitespace">    </span><span class="mi">165</span>     <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;PDE is not assembled.&quot;</span><span class="p">)</span>
+<span class="ne">--&gt; </span><span class="mi">167</span> <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_solve_linear_system</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">diff_op</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rhs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_linalg_solve</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_linalg_solve_kwargs</span><span class="p">)</span>
+
+<span class="nn">File ~/.local/lib/python3.10/site-packages/cuqi/pde/_pde.py:129,</span> in <span class="ni">LinearPDE._solve_linear_system</span><span class="nt">(self, A, b, linalg_solve, kwargs)</span>
+<span class="g g-Whitespace">    </span><span class="mi">127</span> <span class="k">def</span> <span class="nf">_solve_linear_system</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">linalg_solve</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">):</span>
+<span class="g g-Whitespace">    </span><span class="mi">128</span><span class="w">     </span><span class="sd">&quot;&quot;&quot;Helper function that solves the linear system `A*x=b` using the provided solve method `linalg_solve` and its keyword arguments `kwargs`. It then returns the output in the format: `solution`, `info`&quot;&quot;&quot;</span>
+<span class="ne">--&gt; </span><span class="mi">129</span>     <span class="n">returned_values</span> <span class="o">=</span> <span class="n">linalg_solve</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">130</span>     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">returned_values</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+<span class="g g-Whitespace">    </span><span class="mi">131</span>         <span class="n">solution</span> <span class="o">=</span> <span class="n">returned_values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+<span class="nn">File ~/.local/lib/python3.10/site-packages/scipy/linalg/_basic.py:218,</span> in <span class="ni">solve</span><span class="nt">(a, b, lower, overwrite_a, overwrite_b, check_finite, assume_a, transposed)</span>
+<span class="g g-Whitespace">    </span><span class="mi">215</span> <span class="k">if</span> <span class="n">assume_a</span> <span class="o">==</span> <span class="s1">&#39;gen&#39;</span><span class="p">:</span>
+<span class="g g-Whitespace">    </span><span class="mi">216</span>     <span class="n">gecon</span><span class="p">,</span> <span class="n">getrf</span><span class="p">,</span> <span class="n">getrs</span> <span class="o">=</span> <span class="n">get_lapack_funcs</span><span class="p">((</span><span class="s1">&#39;gecon&#39;</span><span class="p">,</span> <span class="s1">&#39;getrf&#39;</span><span class="p">,</span> <span class="s1">&#39;getrs&#39;</span><span class="p">),</span>
+<span class="g g-Whitespace">    </span><span class="mi">217</span>                                            <span class="p">(</span><span class="n">a1</span><span class="p">,</span> <span class="n">b1</span><span class="p">))</span>
+<span class="ne">--&gt; </span><span class="mi">218</span>     <span class="n">lu</span><span class="p">,</span> <span class="n">ipvt</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">getrf</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span> <span class="n">overwrite_a</span><span class="o">=</span><span class="n">overwrite_a</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">219</span>     <span class="n">_solve_check</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">info</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">220</span>     <span class="n">x</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">getrs</span><span class="p">(</span><span class="n">lu</span><span class="p">,</span> <span class="n">ipvt</span><span class="p">,</span> <span class="n">b1</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">221</span>                     <span class="n">trans</span><span class="o">=</span><span class="n">trans</span><span class="p">,</span> <span class="n">overwrite_b</span><span class="o">=</span><span class="n">overwrite_b</span><span class="p">)</span>
+
+<span class="ne">KeyboardInterrupt</span>: 
+</pre></div>
+</div>
+</div>
+</div>
+<p>Then we create a <code class="docutils literal notranslate"><span class="pre">CWMH</span></code> sampler with the target distribution <code class="docutils literal notranslate"><span class="pre">target_poisson</span></code>, the scale <code class="docutils literal notranslate"><span class="pre">scale</span></code> and an initial sample <code class="docutils literal notranslate"><span class="pre">x0</span></code> and sample from it.</p>
+<div class="cell tag_scroll-output docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">CWMH_sampler</span> <span class="o">=</span> <span class="n">CWMH</span><span class="p">(</span><span class="n">target_poisson</span><span class="p">,</span> <span class="n">scale</span> <span class="o">=</span> <span class="n">scale</span><span class="p">,</span> <span class="n">x0</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">target_poisson</span><span class="o">.</span><span class="n">dim</span><span class="p">))</span>
+<span class="n">CWMH_samples</span> <span class="o">=</span> <span class="n">CWMH_sampler</span><span class="o">.</span><span class="n">sample_adapt</span><span class="p">(</span><span class="n">Ns</span><span class="p">,</span> <span class="n">Nb</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Note that we use adaptation in both cases. Let us visualize the credible intervals in both cases: for <code class="docutils literal notranslate"><span class="pre">MH</span></code></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">MH_samples</span><span class="o">.</span><span class="n">plot_ci</span><span class="p">(</span><span class="n">exact</span><span class="o">=</span><span class="n">x_true</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>And for <code class="docutils literal notranslate"><span class="pre">CWMH</span></code></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">CWMH_samples</span><span class="o">.</span><span class="n">plot_ci</span><span class="p">(</span><span class="n">exact</span><span class="o">=</span><span class="n">x_true</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<section id="id2">
+<h3><font color=#8B4513> Exercise: </font><a class="headerlink" href="#id2" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>We mentioned in the previous <a class="reference external" href="https://cuqi-dtu.github.io/CUQI-Book/chapter03/sampling_with_cuqipy_two_target.html">notebook</a> that the credible interval (CI) visualized here is computed on the KL coefficients and then mapped to the function values (through computing the linear combination of the KL basis weighted by the KL coefficients and applying the map <span class="math notranslate nohighlight">\(x \rightarrow e^x \)</span>). We are interested in mapping all the samples to the function values and then computing the credible interval. To achieve this in CUQIpy, one can use the property <code class="docutils literal notranslate"><span class="pre">funvals</span></code> of the <code class="docutils literal notranslate"><span class="pre">Samples</span></code> object. This property returns the function values of the samples wrapped in another <code class="docutils literal notranslate"><span class="pre">Samples</span></code> object. Use this property to create the <code class="docutils literal notranslate"><span class="pre">Samples</span></code> objects of function values <code class="docutils literal notranslate"><span class="pre">MH_samples_funvals</span></code> and <code class="docutils literal notranslate"><span class="pre">CWMH_samples_funvals</span></code> and then compute the credible interval on these new <code class="docutils literal notranslate"><span class="pre">Samples</span></code> object. Do this for both cases, the <code class="docutils literal notranslate"><span class="pre">MH</span></code> and the <code class="docutils literal notranslate"><span class="pre">CWMH</span></code> cases. Which sampler resulted in samples with a better credible interval?</p></li>
+<li><p>Which approach of visualizing the credible interval do you prefer (mapping then computing the CI or the other way around)? Why?</p></li>
+<li><p>Visualize the credible interval for both cases in the coefficient space. To achieve this in CUQIpy, pass the argument <code class="docutils literal notranslate"><span class="pre">plot_par=True</span></code> to the <code class="docutils literal notranslate"><span class="pre">plot_ci</span></code> method. What do you notice? what do you observe about the credible intervals in the coefficient space as the coefficient index increases? Hint: use the original <code class="docutils literal notranslate"><span class="pre">MH_samples</span></code> and <code class="docutils literal notranslate"><span class="pre">CWMH_samples</span></code> objects and not the ones converted to function values. Which sampler performs better in the coefficient space?</p></li>
+<li><p>Plot the effictive sample size for both cases in the same plot (where the <span class="math notranslate nohighlight">\(x-\text{axis}\)</span> is the sample index and the <span class="math notranslate nohighlight">\(y-\text{axis}\)</span> is the effective sample size). What do you notice? Hint: use the <code class="docutils literal notranslate"><span class="pre">compute_ess</span></code> method of the <code class="docutils literal notranslate"><span class="pre">Samples</span></code> object to compute the effective sample size.</p></li>
+<li><p>Plot the sampler scale for both cases in the same plot (the <span class="math notranslate nohighlight">\(x-\text{axis}\)</span> is the sample index and the <span class="math notranslate nohighlight">\(y-\text{axis}\)</span> is the scale). What do you notice? Hint: you can use <code class="docutils literal notranslate"><span class="pre">CWMH_sampler.scale</span></code> and <code class="docutils literal notranslate"><span class="pre">MH_sampler.scale</span></code> to get the scale for each sampler. Keep in mind that the scale for the <code class="docutils literal notranslate"><span class="pre">MH</span></code> sampler is the same for all components.</p></li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># your code here</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="story-3-may-the-force-guide-you-unadjusted-langevin-algorithm-ula">
+<h2><font color=#CD853F> Story 3 -  May the force guide you: Unadjusted Langevin algorithm (ULA)  </font><a class="headerlink" href="#story-3-may-the-force-guide-you-unadjusted-langevin-algorithm-ula" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>In the Unadjusted Langevin algorithm (ULA), new states are proposed using (overdamped) Langevin dynamics.</p></li>
+<li><p>Let <span class="math notranslate nohighlight">\(p\)</span> denote a probability density on <span class="math notranslate nohighlight">\(\mathbb{R}^d\)</span>, from which it is desired to draw an ensemble of i.i.d. samples. We consider the overdamped Langevin Itô diffusion</p></li>
+</ul>
+<div class="math notranslate nohighlight">
+\[
+\begin{equation*}
+\dfrac{\mathrm{d}\boldsymbol{x}_t}{\mathrm{d} t} = \dfrac{1}{2}\nabla\log p(\boldsymbol{x}_t) + \dfrac{\mathrm{d} W_t}{\mathrm{d} t},
+\end{equation*}
+\]</div>
+<p>driven by the time derivative of a standard Brownian motion <span class="math notranslate nohighlight">\(W\)</span> and force given as gradient of a potential <span class="math notranslate nohighlight">\(\log p(\boldsymbol{x}_t)\)</span>.</p>
+<ul class="simple">
+<li><p>In the limit, as <span class="math notranslate nohighlight">\(t\to\infty\)</span>, the probability distribution of <span class="math notranslate nohighlight">\(X(t)\)</span> approaches a stationary distribution, which is also invariant under the diffusion. It turns out that this distribution is <span class="math notranslate nohighlight">\(p\)</span>.</p></li>
+<li><p>Approximate sample paths of the Langevin diffusion can be generated by the Euler–Maruyama method with a fixed time step <span class="math notranslate nohighlight">\(\varepsilon&gt;0\)</span>. We set <span class="math notranslate nohighlight">\(\boldsymbol{x}_{0}\)</span> and then recursively define an approximation to the true solution by</p></li>
+</ul>
+<div class="math notranslate nohighlight">
+\[
+\begin{equation*}
+\boldsymbol{x}_{k+1} := \boldsymbol{x}_{k} + \dfrac{\varepsilon^2}{2} \nabla \log p(\boldsymbol{x}_{k})+ \varepsilon\,\boldsymbol{\xi}_{k},
+\end{equation*}
+\]</div>
+<p>where each <span class="math notranslate nohighlight">\(\boldsymbol{\xi}_k\sim\mathcal{N}(\boldsymbol{0},\boldsymbol{I}_d)\)</span>.</p>
+<p>Let us create the ULA sampler in CUQIpy with the target distribution <code class="docutils literal notranslate"><span class="pre">target_donuts</span></code>, a fixed scale <code class="docutils literal notranslate"><span class="pre">scale</span></code>, and an initial sample <code class="docutils literal notranslate"><span class="pre">x0</span></code>:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ULA_sampler</span> <span class="o">=</span> <span class="n">ULA</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">target_donut</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mf">0.065</span><span class="p">,</span> <span class="n">x0</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]))</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>We set the number of samples, and sample the target distribution using the <code class="docutils literal notranslate"><span class="pre">sample</span></code> method:</p>
+<div class="cell tag_scroll-output docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">Ns</span> <span class="o">=</span> <span class="mi">1000</span>
+<span class="n">ULA_samples</span> <span class="o">=</span> <span class="n">ULA_sampler</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">Ns</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>And visualize the samples using the <code class="docutils literal notranslate"><span class="pre">plot_pair</span></code> method:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plot_pdf_2D</span><span class="p">(</span><span class="n">target_donut</span><span class="p">,</span> <span class="o">-</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="o">-</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+<span class="n">ULA_samples</span><span class="o">.</span><span class="n">plot_pair</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">(),</span> <span class="n">scatter_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;alpha&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">})</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>We note that the samples are all over the domain and do not capture the target distribution. This is because the ULA sampler will result in approximate (biased) distribution that as <span class="math notranslate nohighlight">\(\varepsilon \rightarrow 0\)</span> will converge to <span class="math notranslate nohighlight">\(p(\mathbf{x})\)</span>.</p>
+<section id="id3">
+<h3><font color=#8B4513> Exercise: </font><a class="headerlink" href="#id3" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>Try a different scales 0.01 and visualize the samples in the same way as above. What do you notice about the samples? does it capture the target distribution?</p></li>
+<li><p>Using the new scale 0.01, sample only 10 samples. Using this scale as well, generate 10 MH samples using a MH sampler <code class="docutils literal notranslate"><span class="pre">MH_10</span> <span class="pre">=</span> <span class="pre">MH(target_donut,</span> <span class="pre">scale=0.01,</span> <span class="pre">x0=np.array([0,</span> <span class="pre">0]))</span></code>. Visualize the samples of both samplers using the <code class="docutils literal notranslate"><span class="pre">plot_pair</span></code> method (along with the pdf plot <code class="docutils literal notranslate"><span class="pre">plot_pdf_2D(target_donut,</span> <span class="pre">-4,</span> <span class="pre">4,</span> <span class="pre">-4,</span> <span class="pre">4)</span></code>). What do you notice about the samples of the two samplers in terms of finding the high density region of the target distribution?</p></li>
+<li><p>Try ULA for a univariate target distribution <code class="docutils literal notranslate"><span class="pre">x_uni</span> <span class="pre">=</span> <span class="pre">Gaussian(0,</span> <span class="pre">1)</span></code>:</p>
+<ul>
+<li><p>Create an ULA sampler object <code class="docutils literal notranslate"><span class="pre">ULA_uni</span></code> for the target distribution <code class="docutils literal notranslate"><span class="pre">x_uni</span></code> with scale 1 and initial sample 0.</p></li>
+<li><p>Generate 40000 samples and store it in <code class="docutils literal notranslate"><span class="pre">ULA_samples_uni</span></code>.</p></li>
+<li><p>Compare the kernel density estimation (KDE) of the samples with the target distribution <code class="docutils literal notranslate"><span class="pre">x_uni</span></code> PDF. What do you notice? does the KDE capture the target distribution? Hint: to plot the PDE use the <code class="docutils literal notranslate"><span class="pre">plot_pdf_1D</span></code> method and to plot the KDE generate a KDE using scipy.stats gaussian_kde (already imported here) <code class="docutils literal notranslate"><span class="pre">kde_est</span> <span class="pre">=</span> <span class="pre">gaussian_kde(ULA_samples_uni.samples[0,:])</span></code>, then create a grid <code class="docutils literal notranslate"><span class="pre">grid</span> <span class="pre">=</span> <span class="pre">np.linspace(-4,</span> <span class="pre">4,</span> <span class="pre">1000)</span></code> and plot the KDE using <code class="docutils literal notranslate"><span class="pre">plt.plot(grid,</span> <span class="pre">kde_est(grid))</span></code>.</p></li>
+<li><p>Try a different scale 0.1 and repeat the above steps. What do you notice about the samples KDE? does it capture the target distribution?</p></li>
+</ul>
+</li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># your code here</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="story-4-this-is-a-bias-we-can-fix-metropolis-adjusted-langevin-algorithm-mala">
+<h2><font color=#CD853F> Story 4: This is a bias we can fix - Metropolis-adjusted Langevin algorithm (MALA) </font><a class="headerlink" href="#story-4-this-is-a-bias-we-can-fix-metropolis-adjusted-langevin-algorithm-mala" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>In contrast to the Euler–Maruyama method for simulating the Langevin diffusion. MALA incorporates an additional step. We consider the above update rule as defining a proposal <span class="math notranslate nohighlight">\(\tilde{\boldsymbol{x}}\)</span> for a new state:</p></li>
+</ul>
+<div class="math notranslate nohighlight">
+\[
+\begin{equation}
+{\tilde{\boldsymbol{x}}}_{k+1}:=\boldsymbol{x}_{k}+\dfrac{\varepsilon^2}{2} \nabla \log p(\boldsymbol{x}_{k})+ \varepsilon\,\boldsymbol{\xi}_{k};
+\end{equation}
+\]</div>
+<p>this proposal is accepted or rejected according to the MH algorithm.</p>
+<ul class="simple">
+<li><p>That is, the acceptance probability is:</p></li>
+</ul>
+<div class="math notranslate nohighlight">
+\[
+\begin{equation}
+\alpha(\boldsymbol{x}_k,{\tilde{\boldsymbol{x}}}_{k+1}) = \min\left(1,\dfrac{p({\tilde{\boldsymbol{x}}}_{k+1})q(\boldsymbol{x}_k \,\vert\, {\tilde{\boldsymbol{x}}}_{k+1})} {p(\boldsymbol{x}_k)q({\tilde{\boldsymbol{x}}}_{k+1} \,\vert\, \boldsymbol{x}_k)}\right);
+\end{equation}
+\]</div>
+<p>where the proposal has the form</p>
+<div class="math notranslate nohighlight">
+\[
+\begin{equation}
+q(\boldsymbol{x}' \,\vert\, \boldsymbol{x}) = \mathcal{N}\left(\boldsymbol{x}';\, \boldsymbol{x}+\dfrac{\varepsilon^2}{2} \nabla \log p(\boldsymbol{x}),\varepsilon^2\boldsymbol{I}_d\right).
+\end{equation}
+\]</div>
+<ul class="simple">
+<li><p>The combined dynamics of the Langevin diffusion and the MH algorithm satisfy the detailed balance conditions necessary for the existence of a unique, invariant, stationary distribution.</p></li>
+<li><p>For limited classes of target distributions, the optimal acceptance rate for this algorithm can be shown to be <span class="math notranslate nohighlight">\(0.574\)</span>; this can be used to tune <span class="math notranslate nohighlight">\(\varepsilon\)</span>.</p></li>
+</ul>
+<p>Let us get back to the uni-variate Gaussian target distribution <code class="docutils literal notranslate"><span class="pre">x_uni</span></code> that was suggested in the exercise of the previous section. We saw that when the scale was 1, the resulting samples did not capture the target distribution, but an appreciably different one, which shows the bias in ULA.</p>
+<p>We will now use MALA to sample from this target distribution. Let us create <code class="docutils literal notranslate"><span class="pre">x_uni</span></code> first:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">x_uni</span> <span class="o">=</span> <span class="n">Gaussian</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Then we create a MALA sampler object <code class="docutils literal notranslate"><span class="pre">MALA_uni</span></code> for the target distribution <code class="docutils literal notranslate"><span class="pre">x_uni</span></code> with scale 1 and initial sample 0 and sample from it:</p>
+<div class="cell tag_scroll-output docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">MALA_uni</span> <span class="o">=</span> <span class="n">MALA</span><span class="p">(</span><span class="n">x_uni</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">x0</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="n">Ns</span> <span class="o">=</span> <span class="mi">40000</span>
+<span class="n">ULA_samples_uni</span> <span class="o">=</span> <span class="n">MALA_uni</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">Ns</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Lastly, we visualize the KDE obtained from samples along with the target distribution PDF:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plot_pdf_1D</span><span class="p">(</span><span class="n">x_uni</span><span class="p">,</span> <span class="o">-</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;True&#39;</span><span class="p">)</span>
+<span class="n">grid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
+<span class="n">kde_est</span> <span class="o">=</span> <span class="n">gaussian_kde</span><span class="p">(</span><span class="n">ULA_samples_uni</span><span class="o">.</span><span class="n">samples</span><span class="p">[</span><span class="mi">0</span><span class="p">,:])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">kde_est</span><span class="p">(</span><span class="n">grid</span><span class="p">),</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Estimated&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>We notice in this case that the KDE of the samples captures the target distribution well. This is because MALA corrects the bias in ULA by using the MH acceptance step.</p>
+</section>
+<section id="story-5-sampling-goes-nuts-with-nuts-hamiltonian-monte-carlo-hmc-and-no-u-turn-sampler-nuts">
+<h2><font color=#CD853F> Story 5 - Sampling goes nuts with NUTS: Hamiltonian Monte Carlo (HMC) and No-U-Turn Sampler (NUTS) </font><a class="headerlink" href="#story-5-sampling-goes-nuts-with-nuts-hamiltonian-monte-carlo-hmc-and-no-u-turn-sampler-nuts" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>Hamiltonian Monte Carlo (HMC): use Hamiltonian dynamics to simulate particle trajectories.</p></li>
+<li><p>Define a Hamiltonian function in terms of the target distribution.</p></li>
+<li><p>Introduce an auxiliary momentum variables, which typically have independent Gaussian distributions.</p></li>
+<li><p>Hamiltonian dynamics operate on a <span class="math notranslate nohighlight">\(d\)</span>-dimensional position vector <span class="math notranslate nohighlight">\(\boldsymbol{x}\)</span>, and a <span class="math notranslate nohighlight">\(d\)</span>-dimensional momentum vector <span class="math notranslate nohighlight">\(\boldsymbol{r}\)</span>, so that the full state space has <span class="math notranslate nohighlight">\(2d\)</span> dimensions. The system is described by a function of <span class="math notranslate nohighlight">\(\boldsymbol{x}\)</span> and <span class="math notranslate nohighlight">\(\boldsymbol{r}\)</span> known as the Hamiltonian <span class="math notranslate nohighlight">\(H(\boldsymbol{x}, \boldsymbol{r})\)</span>.</p></li>
+<li><p>In HMC, one uses Hamiltonian functions that can be written as (closed-system dynamics):</p></li>
+</ul>
+<div class="math notranslate nohighlight">
+\[
+\begin{equation}
+H(\boldsymbol{x}, \boldsymbol{r}) = \underbrace{U(\boldsymbol{x})}_{\text{potential energy}} + \underbrace{K(\boldsymbol{r},\boldsymbol{x})}_{\text{kinetic energy}}.
+\end{equation}
+\]</div>
+<ul class="simple">
+<li><p>The potential energy is completely determined by the target distribution, indeed <span class="math notranslate nohighlight">\(U(\boldsymbol{x})\)</span> is equal to the logarithm of the target distribution <span class="math notranslate nohighlight">\(p\)</span>.</p></li>
+</ul>
+<div class="math notranslate nohighlight">
+\[
+\begin{equation}
+H(\boldsymbol{x}, \boldsymbol{r}) = \underbrace{\text{log}(p(\boldsymbol{x}))}_{\text{potential energy}} + \underbrace{K(\boldsymbol{r},\boldsymbol{x})}_{\text{kinetic energy}}.
+\end{equation}
+\]</div>
+<ul class="simple">
+<li><p>The kinetic energy is unconstrained and must be specified by the implementation.</p></li>
+<li><p>The Hamiltonian is an energy function for the joint state of position-momentum, and so defines a joint distribution for them as follows:</p></li>
+</ul>
+<div class="math notranslate nohighlight">
+\[
+\begin{equation}
+p(\boldsymbol{x}, \boldsymbol{r}) = \dfrac{1}{Z}\exp\left(-\dfrac{H(\boldsymbol{x}, \boldsymbol{r})}{T}\right) = \dfrac{1}{Z}\exp\left(-{U(\boldsymbol{x})}\right)\exp\left(-{K(\boldsymbol{r})}\right).
+\end{equation}
+\]</div>
+<ul class="simple">
+<li><p>There are several ways to set the kinetic energy (density of the auxiliary momentum):</p>
+<ul>
+<li><p>Euclidean–Gaussian kinetic energy: using a fixed covariance <span class="math notranslate nohighlight">\(\boldsymbol{M}\)</span> estimated from the position parameters, <span class="math notranslate nohighlight">\(K(\boldsymbol{r},\boldsymbol{x}) = \dfrac{1}{2} \boldsymbol{r}^T\boldsymbol{M}^{-1}\boldsymbol{r} + \log( \abs{\boldsymbol{M}}) + \text{const}\)</span>.</p></li>
+<li><p>Riemann–Gaussian kinetic energy: unlike the Euclidean metric, varies as one moves through parameter space, <span class="math notranslate nohighlight">\(K(\boldsymbol{r}, \boldsymbol{x}) = \dfrac{1}{2} \boldsymbol{r}^T\boldsymbol{\Sigma}(\boldsymbol{x})^{-1}\boldsymbol{r} + \dfrac{1}{2}\log( \abs{\boldsymbol{\Sigma}(\boldsymbol{x})}) + \text{const}\)</span>.</p></li>
+<li><p>Non-Gaussian kinetic energies.</p></li>
+</ul>
+</li>
+<li><p>Hamilton’s equations read as follows:</p></li>
+</ul>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{align}
+\dfrac{\mathrm{d} \boldsymbol{x}}{\dd t} &amp;= +\frac{\partial H}{\partial \boldsymbol{r}} = \boldsymbol{M}^{-1}\boldsymbol{r} \\
+\dfrac{\mathrm{d} \boldsymbol{r}}{\mathrm{d} t} &amp;= -\dfrac{\partial H}{\partial \boldsymbol{x}} = -\dfrac{\partial K}{\partial \boldsymbol{x}} - \dfrac{\partial U}{\partial \boldsymbol{x}},
+\end{align}
+\end{split}\]</div>
+<p>where <span class="math notranslate nohighlight">\(\dfrac{\partial U}{\partial \boldsymbol{x}} = \dfrac{\partial \text{log}p(\boldsymbol{x})}{\partial \boldsymbol{x}}\)</span> is the gradient of the logarithm of the target density.</p>
+<ul class="simple">
+<li><p>Discretizing Hamilton’s equations:</p>
+<ul>
+<li><p>Symplectic integrators: the leapfrog method (the standard choice).</p></li>
+</ul>
+</li>
+<li><p>Hamiltonian dynamics are time-reversible and volume-preserving.</p></li>
+<li><p>The dynamics keep the Hamiltonian invariant. A Hamiltonian trajectory will (if simulated exactly) move within a hypersurface of constant probability density.</p></li>
+<li><p>Each iteration of the HMC algorithm has two steps. Both steps leave the joint distribution of <span class="math notranslate nohighlight">\(p(\boldsymbol{x}, \boldsymbol{r})\)</span> invariant (detailed balance).</p>
+<ul>
+<li><p>In the first step, new values of <span class="math notranslate nohighlight">\(\boldsymbol{r}\)</span> are randomly drawn from their Gaussian distribution, independently of the current <span class="math notranslate nohighlight">\(\boldsymbol{x}\)</span>.</p></li>
+<li><p>In the second step, a Metropolis update is performed, using Hamiltonian dynamics to propose a new state.</p></li>
+<li><p>Optimal acceptance rate is 0.65. The step size <span class="math notranslate nohighlight">\(\varepsilon\)</span> and trajectory length <span class="math notranslate nohighlight">\(L\)</span> need to be tuned.</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="no-u-turn-sampler">
+<h2>No-U-Turn sampler <a class="anchor" id="NUTS"></a><a class="headerlink" href="#no-u-turn-sampler" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>HMC is an algorithm that avoids the random walk behavior and sensitivity to correlated parameters that plague many MCMC methods by taking a series of steps informed by first-order gradient information.</p></li>
+<li><p>However, HMC’s performance is highly sensitive to two user-specified parameters: a step size <span class="math notranslate nohighlight">\(\varepsilon\)</span> and a desired number of steps <span class="math notranslate nohighlight">\(L\)</span>.</p></li>
+<li><p>The No-U-Turn Sampler (NUTS), an extension to HMC that eliminates the need to set a number of steps <span class="math notranslate nohighlight">\(L\)</span>, as well as the step-size.</p></li>
+<li><p>We simulate in discrete time steps, and to make sure you explore the parameter space properly you simulate steps in one direction and the twice as many in the other direction, turn around again, etc. At some point you want to stop this and a good way of doing that is when you have done a U-turn (i.e., appear to have gone all over the place).</p></li>
+<li><p>NUTS begins by introducing an auxiliary variable with conditional distribution. After re-sampling from this distribution, NUTS uses the leapfrog integrator to trace out a path forwards and backwards in fictitious time. First running forwards or backwards 1 step, then forwards or backwards 2 steps, then forwards or backwards 4 steps, etc.</p></li>
+<li><p>This doubling process implicitly builds a balanced binary tree whose leaf nodes correspond to position-momentum state. The doubling is stopped when the subtrajectory from the leftmost to the rightmost nodes of any balanced subtree of the overall binary tree starts to double back on itself (i.e., the fictional particle starts to make a U-turn).</p></li>
+<li><p>At this point NUTS stops the simulation and samples from among the set of points computed during the simulation, taking care to preserve detailed balance.</p></li>
+<li><p>To adapt the step-size, NUTS uses a modified dual averaging algorithm during the burn-in phase.</p></li>
+<li><p>The good thing about NUTS is that proposals are made based on the shape of the posterior and they can happend at the other end of the distribution. In contrast, MH makes proposals within a ball, and Gibbs sampling only moves along one (or at least very few) dimensions at a time.</p></li>
+</ul>
+<p>Let us try the NUTS sampler in CUQIpy for the donut target distribution <code class="docutils literal notranslate"><span class="pre">target_donut</span></code>. We create the NUTS sampler object <code class="docutils literal notranslate"><span class="pre">NUTS_donut</span></code> for the target distribution <code class="docutils literal notranslate"><span class="pre">target_donut</span></code> with initial sample <code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">0]</span></code>:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">NUTS_donut</span> <span class="o">=</span> <span class="n">NUTS</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">target_donut</span><span class="p">,</span> <span class="n">x0</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]))</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>We set the number of samples and burin-in and sample the target distribution: Note: for <code class="docutils literal notranslate"><span class="pre">NUTS</span></code> in CUQIpy, using <code class="docutils literal notranslate"><span class="pre">sample</span></code> or <code class="docutils literal notranslate"><span class="pre">sample_adapt</span></code> is the same. <code class="docutils literal notranslate"><span class="pre">NUTS</span></code> will always adapt if the number of burn-in samples is larger than 0 and the parameter <code class="docutils literal notranslate"><span class="pre">adapt_step_size</span></code> is passed as <code class="docutils literal notranslate"><span class="pre">True</span></code>, the later is a default behavior.</p>
+<div class="cell tag_scroll-output docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">Ns</span> <span class="o">=</span> <span class="mi">100</span>
+<span class="n">Nb</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="n">NUTS_donuts_samples</span> <span class="o">=</span> <span class="n">NUTS_donut</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">Ns</span><span class="p">,</span> <span class="n">Nb</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Let us visualize the samples using the <code class="docutils literal notranslate"><span class="pre">plot_pair</span></code> method over the target distribution PDF. We will also add connetions between the samples to visualize the path of the NUTS sampler:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plot_pdf_2D</span><span class="p">(</span><span class="n">target_donut</span><span class="p">,</span> <span class="o">-</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="o">-</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+<span class="n">NUTS_donuts_samples</span><span class="o">.</span><span class="n">plot_pair</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">(),</span> <span class="n">scatter_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;alpha&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">:</span> <span class="s1">&#39;r&#39;</span><span class="p">})</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">NUTS_donuts_samples</span><span class="o">.</span><span class="n">samples</span><span class="p">[</span><span class="mi">0</span><span class="p">,:],</span> <span class="n">NUTS_donuts_samples</span><span class="o">.</span><span class="n">samples</span><span class="p">[</span><span class="mi">1</span><span class="p">,:],</span> <span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>We can see that NUTS can take rapid steps in exploring the target distribution. The samples are spread all over the domain and capture the target distribution efficiently.</p>
+<section id="id4">
+<h3><font color=#8B4513> Exercise: </font><a class="headerlink" href="#id4" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>Compute the ESS of the NUTS samples and visualize the chain. What do you observe?</p></li>
+<li><p>Generate a plot similar to the one above (showing samples and connections) but with samples generated from MALA using scale = 0.01. What do you notice about the samples of the two samplers in terms of exploring the target distribution?</p></li>
+<li><p>Inspect how the step size in NUTS is adapted during the burn-in phase as well as the size of the tree that is built each step. Create a plot that visualizes both quantities over the sample index. What do you notice? Hint: you can use the properties <code class="docutils literal notranslate"><span class="pre">epsilon_list</span></code> and <code class="docutils literal notranslate"><span class="pre">num_tree_node_list</span></code> of the <code class="docutils literal notranslate"><span class="pre">NUTS_donut</span></code> object to get, respectively, the step size and the tree size lists for the samples.</p></li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># your code here</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="id5">
+<h3><font color=#8B4513> Exercise: </font><a class="headerlink" href="#id5" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>Try the NUTS sampler for the Poisson problem target <code class="docutils literal notranslate"><span class="pre">target_poisson</span></code>:</p>
+<ul>
+<li><p>Enable finite difference approximation of the posterior gradient by calling <code class="docutils literal notranslate"><span class="pre">target_poisson.enable_FD()</span></code></p></li>
+<li><p>Create a NUTS sampler object <code class="docutils literal notranslate"><span class="pre">NUTS_poisson</span></code> for the target distribution <code class="docutils literal notranslate"><span class="pre">target_poisson</span></code> and limit the depth of the tree to 7 (use <code class="docutils literal notranslate"><span class="pre">help(NUTS)</span></code> to learn about the smapler paramters).</p></li>
+<li><p>Sample the target distribution using the <code class="docutils literal notranslate"><span class="pre">sample</span></code> method setting Ns to 100 and Nb to 10 (sampling might take about 12 min).</p></li>
+<li><p>Visualize the credible interval of the samples along with the exact solution using the <code class="docutils literal notranslate"><span class="pre">plot_ci</span></code> method. How does the results compare to the MH and CWMH samplers we used earlier?</p></li>
+<li><p>Compute the ESS of the samples and comment on how they compare to the MH and CWMH cases.</p></li>
+<li><p>Can you guess roughly how many times the forward operator was called?</p></li>
+</ul>
+</li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># your code here</span>
+<span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="c1"># Fix the seed for reproducibility</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>We see that although the number of <code class="docutils literal notranslate"><span class="pre">NUTS</span></code> samples is much smaller than in the <code class="docutils literal notranslate"><span class="pre">CWMH</span></code> samples, the ESS is much larger. This however comes at a cost of computational time, which is due to building the tree structure in each iteration as well as the finite difference approximation of the gradient. Note that other approaches that are more computationally efficient can be used to compute the gradient of the target distribution, e.g. computing the adjoint-based gradient.</p>
+</section>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "CUQI-DTU/CUQI-Book",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./chapter03"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="sampling_with_cuqipy_two_target.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Sampling with CUQIpy: Two target distributions and exploring the posterior using the BayesianProblem class</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../chapter04/chapter04.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Chapter 4: Advanced Bayesian Inference in CUQIpy</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-two-targets-again"><font color="#CD853F">  The two targets, again </font></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#sampling-the-posterior"><font color="#CD853F">  Sampling the posterior </font></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#story-1-it-pays-off-to-adapt-comparing-metropolis-hastings-mh-with-and-without-adaptation"><font color="#CD853F"> Story 1 - It pays off to adapt: Comparing Metropolis Hastings (MH) with and without adaptation </font></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercise"><font color="#8B4513"> Exercise: </font></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1"><font color="#8B4513"> Exercise: </font></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#story-2-not-all-unkowns-are-created-equal-component-wise-metropolis-hastings-cwmh"><font color="#CD853F"> Story 2 - Not all unkowns are created equal: Component-wise Metropolis Hastings CWMH </font></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2"><font color="#8B4513"> Exercise: </font></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#story-3-may-the-force-guide-you-unadjusted-langevin-algorithm-ula"><font color="#CD853F"> Story 3 -  May the force guide you: Unadjusted Langevin algorithm (ULA)  </font></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3"><font color="#8B4513"> Exercise: </font></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#story-4-this-is-a-bias-we-can-fix-metropolis-adjusted-langevin-algorithm-mala"><font color="#CD853F"> Story 4: This is a bias we can fix - Metropolis-adjusted Langevin algorithm (MALA) </font></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#story-5-sampling-goes-nuts-with-nuts-hamiltonian-monte-carlo-hmc-and-no-u-turn-sampler-nuts"><font color="#CD853F"> Story 5 - Sampling goes nuts with NUTS: Hamiltonian Monte Carlo (HMC) and No-U-Turn Sampler (NUTS) </font></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#no-u-turn-sampler">No-U-Turn sampler <a class="anchor" id="NUTS"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id4"><font color="#8B4513"> Exercise: </font></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id5"><font color="#8B4513"> Exercise: </font></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By CUQIpy developer team
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=3ee479438cf8b5e0d341"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=3ee479438cf8b5e0d341"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

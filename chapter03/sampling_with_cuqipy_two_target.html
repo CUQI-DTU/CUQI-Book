@@ -1,0 +1,1251 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Sampling with CUQIpy: Two target distributions and exploring the posterior using the BayesianProblem class &#8212; Uncertainty Quantification in Inverse Problems with CUQIpy</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=3ee479438cf8b5e0d341" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=3ee479438cf8b5e0d341" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=3ee479438cf8b5e0d341" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=3ee479438cf8b5e0d341" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=a3416100" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=87e54e7c" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=3ee479438cf8b5e0d341" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=3ee479438cf8b5e0d341" />
+  <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=3ee479438cf8b5e0d341"></script>
+
+    <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js?v=4a39c7ea"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"tex": {"macros": {"dd": "\\mathrm{d}", "abs": ["\\left\\vert#1\\right\\vert", 1], "ve": ["\\bm{#1}", 1], "mat": ["\\mathbf{#1}", 1], "N": "\\mathbb{N}", "floor": ["\\lfloor#1\\rfloor", 1], "bmat": ["\\left[\\begin{array}"], "emat": ["\\end{array}\\right]"], "bm": ["{\\boldsymbol #1}", 1]}}, "options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'chapter03/sampling_with_cuqipy_two_target';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Sampling with CUQIpy: five little stories" href="gradient_based_sampling_with_cuqipy.html" />
+    <link rel="prev" title="Chapter 3: Sampling with CUQIpy" href="chapter03.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+
+<a class="navbar-brand logo" href="../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/logo.png" class="logo__image only-light" alt="Uncertainty Quantification in Inverse Problems with CUQIpy - Home"/>
+    <script>document.write(`<img src="../_static/logo.png" class="logo__image only-dark" alt="Uncertainty Quantification in Inverse Problems with CUQIpy - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../intro.html">
+                    Welcome to the “Uncertainty Quantification in Inverse Problems with CUQIpy” mini-book!
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../chapter01/chapter01.html">Chapter 1: Introduction to Bayesian Inverse Problems (BIP) in CUQIpy</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../chapter01/introduction_overview_of_cuqipy.html">Overview of CUQIpy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter01/Intro_example.html">Probably the simplest BIP in the world</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter01/two_forward_problems_new.html">Two forward models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter01/extra_forward_models.html">Extra material: Forward models, data generation and forward UQ</a></li>
+
+
+
+
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../chapter02/chapter02.html">Chapter 2: Prior and Hierarchical Bayesian Models</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../chapter02/prior.html">Distributions, priors, and basic sampling in CUQIpy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter02/gibbs.html">Gibbs sampling</a></li>
+
+
+
+
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="chapter03.html">Chapter 3: Sampling with CUQIpy</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Sampling with CUQIpy: Two target distributions and exploring the posterior using the BayesianProblem class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gradient_based_sampling_with_cuqipy.html">Sampling with CUQIpy: five little stories</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../chapter04/chapter04.html">Chapter 4: Advanced Bayesian Inference in CUQIpy</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../chapter04/project.html">CUQIpy component final project</a></li>
+
+
+
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-launch-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Launch interactive content">
+    <i class="fas fa-rocket"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://colab.research.google.com/github/CUQI-DTU/CUQI-Book/blob/master/chapter03/sampling_with_cuqipy_two_target.ipynb" target="_blank"
+   class="btn btn-sm dropdown-item"
+   title="Launch on Colab"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  
+    <img alt="Colab logo" src="../_static/images/logo_colab.png">
+  </span>
+<span class="btn__text-container">Colab</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="initThebeSBT()"
+  class="btn btn-sm btn-launch-thebe dropdown-item"
+  title="Launch Thebe"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-play"></i>
+  </span>
+<span class="btn__text-container">Live Code</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/CUQI-DTU/CUQI-Book" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/CUQI-DTU/CUQI-Book/issues/new?title=Issue%20on%20page%20%2Fchapter03/sampling_with_cuqipy_two_target.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/chapter03/sampling_with_cuqipy_two_target.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Sampling with CUQIpy: Two target distributions and exploring the posterior using the BayesianProblem class</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-dount-distribution"><font color="#CD853F"> The “dount” distribution </font> <a name="r-donut"></a></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#a-1d-poisson-based-bip"><font color="#CD853F"> A 1D Poisson-based BIP </font> <a name="r-donut"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-forward-model"><font color="#8B4513"> The forward model </font> <a name="r-forward-model"></a></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-bip-the-prior"><font color="#8B4513"> The BIP: the prior </font> <a name="r-forward-model"></a></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercise"><font color="#8B4513"> Exercise </font> <a name="r-forward-model"></a></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-bip-the-likelihood"><font color="#8B4513"> The BIP: the likelihood </font> <a name="r-forward-model"></a></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-bip-the-posterior-distribution-the-high-level-approach-using-the-bayesianproblem-class"><font color="#8B4513"> The BIP: the posterior distribution  (the high level approach: using the BayesianProblem class)</font></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1"><font color="#8B4513"> Exercise </font> <a name="r-forward-model"></a></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-bip-computing-the-map-point-with-the-bayesianproblem-class"><font color="#8B4513"> The BIP: computing the MAP point with the BayesianProblem class</font></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-bip-the-posterior-distribution-the-low-level-approach-using-the-jointdistribution"><font color="#8B4513"> The BIP: the posterior distribution  (the low level approach: using the JointDistribution)</font></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2"><font color="#8B4513"> Exercise </font> <a name="r-forward-model"></a></a></li>
+</ul>
+</li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <div hidden>
+<p><span class="math notranslate nohighlight">\(\gdef\dd{\mathrm{d}}\)</span></p>
+</div>
+<div hidden>
+<p><span class="math notranslate nohighlight">\(\gdef\abs#1{\left\vert#1\right\vert}\)</span></p>
+</div>
+<div hidden>
+<p><span class="math notranslate nohighlight">\(\gdef\ve#1{\bm{#1}}\)</span></p>
+</div>
+<div hidden>
+<p><span class="math notranslate nohighlight">\(\gdef\mat#1{\mathbf{#1}}\)</span></p>
+</div>
+<section class="tex2jax_ignore mathjax_ignore" id="sampling-with-cuqipy-two-target-distributions-and-exploring-the-posterior-using-the-bayesianproblem-class">
+<h1>Sampling with CUQIpy: Two target distributions and exploring the posterior using the BayesianProblem class<a class="headerlink" href="#sampling-with-cuqipy-two-target-distributions-and-exploring-the-posterior-using-the-bayesianproblem-class" title="Link to this heading">#</a></h1>
+<p>In this notebook, we define two target distributions:</p>
+<ul class="simple">
+<li><p>a bi-variate “donut” distribution,</p></li>
+<li><p>and a posterior distribution for a 1D Poisson-based BIP.
+that we will use in this chapter to illustrate sampling with CUQIpy. The former target is used for illustrative purposes and is not associated with an inverse problem, while the latter is a more realistic example of a BIP.</p></li>
+</ul>
+<p>We also show high level usage of the <code class="docutils literal notranslate"><span class="pre">BayesianProblem</span></code> class to explore the posterior distribution as well as defining the target distribution in a more low-level approach through the <code class="docutils literal notranslate"><span class="pre">JointDistribution</span></code> class.</p>
+<div class="cell tag_hide-cell docutils container">
+<details class="hide above-input">
+<summary aria-label="Toggle hidden content">
+<span class="collapsed">Show code cell content</span>
+<span class="expanded">Hide code cell content</span>
+</summary>
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">cuqi.distribution</span> <span class="kn">import</span> <span class="n">DistributionGallery</span><span class="p">,</span> <span class="n">Gaussian</span><span class="p">,</span> <span class="n">JointDistribution</span>
+<span class="kn">from</span> <span class="nn">cuqi.testproblem</span> <span class="kn">import</span> <span class="n">Poisson1D</span>
+<span class="kn">from</span> <span class="nn">cuqi.problem</span> <span class="kn">import</span> <span class="n">BayesianProblem</span>
+<span class="kn">import</span> <span class="nn">inspect</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">cuqi.sampler</span> <span class="kn">import</span> <span class="n">MH</span><span class="p">,</span> <span class="n">CWMH</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">scipy.stats</span> <span class="k">as</span> <span class="nn">sps</span>
+</pre></div>
+</div>
+</div>
+</details>
+</div>
+<div class="cell tag_hide-cell docutils container">
+<details class="hide above-input">
+<summary aria-label="Toggle hidden content">
+<span class="collapsed">Show code cell content</span>
+<span class="expanded">Hide code cell content</span>
+</summary>
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">plot2d</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">x1_min</span><span class="p">,</span> <span class="n">x1_max</span><span class="p">,</span> <span class="n">x2_min</span><span class="p">,</span> <span class="n">x2_max</span><span class="p">,</span> <span class="n">N2</span><span class="o">=</span><span class="mi">201</span><span class="p">):</span>
+    <span class="c1"># plot</span>
+    <span class="n">pixelwidth_x</span> <span class="o">=</span> <span class="p">(</span><span class="n">x1_max</span><span class="o">-</span><span class="n">x1_min</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">N2</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">pixelwidth_y</span> <span class="o">=</span> <span class="p">(</span><span class="n">x2_max</span><span class="o">-</span><span class="n">x2_min</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">N2</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">hp_x</span> <span class="o">=</span> <span class="mf">0.5</span><span class="o">*</span><span class="n">pixelwidth_x</span>
+    <span class="n">hp_y</span> <span class="o">=</span> <span class="mf">0.5</span><span class="o">*</span><span class="n">pixelwidth_y</span>
+
+    <span class="n">extent</span> <span class="o">=</span> <span class="p">(</span><span class="n">x1_min</span><span class="o">-</span><span class="n">hp_x</span><span class="p">,</span> <span class="n">x1_max</span><span class="o">+</span><span class="n">hp_x</span><span class="p">,</span> <span class="n">x2_min</span><span class="o">-</span><span class="n">hp_y</span><span class="p">,</span> <span class="n">x2_max</span><span class="o">+</span><span class="n">hp_y</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">origin</span><span class="o">=</span><span class="s1">&#39;lower&#39;</span><span class="p">,</span> <span class="n">extent</span><span class="o">=</span><span class="n">extent</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">()</span>
+
+
+<span class="k">def</span> <span class="nf">plot_pdf_2D</span><span class="p">(</span><span class="n">distb</span><span class="p">,</span> <span class="n">x1_min</span><span class="p">,</span> <span class="n">x1_max</span><span class="p">,</span> <span class="n">x2_min</span><span class="p">,</span> <span class="n">x2_max</span><span class="p">,</span> <span class="n">N2</span><span class="o">=</span><span class="mi">201</span><span class="p">):</span>
+    <span class="n">N2</span> <span class="o">=</span> <span class="mi">201</span>
+    <span class="n">ls1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">x1_min</span><span class="p">,</span> <span class="n">x1_max</span><span class="p">,</span> <span class="n">N2</span><span class="p">)</span>
+    <span class="n">ls2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">x2_min</span><span class="p">,</span> <span class="n">x2_max</span><span class="p">,</span> <span class="n">N2</span><span class="p">)</span>
+    <span class="n">grid1</span><span class="p">,</span> <span class="n">grid2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">ls1</span><span class="p">,</span> <span class="n">ls2</span><span class="p">)</span>
+    <span class="n">distb_pdf</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">N2</span><span class="p">,</span><span class="n">N2</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N2</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">jj</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N2</span><span class="p">):</span>
+            <span class="n">distb_pdf</span><span class="p">[</span><span class="n">ii</span><span class="p">,</span><span class="n">jj</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">distb</span><span class="o">.</span><span class="n">logd</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">grid1</span><span class="p">[</span><span class="n">ii</span><span class="p">,</span><span class="n">jj</span><span class="p">],</span> <span class="n">grid2</span><span class="p">[</span><span class="n">ii</span><span class="p">,</span><span class="n">jj</span><span class="p">]])))</span> 
+    <span class="n">plot2d</span><span class="p">(</span><span class="n">distb_pdf</span><span class="p">,</span> <span class="n">x1_min</span><span class="p">,</span> <span class="n">x1_max</span><span class="p">,</span> <span class="n">x2_min</span><span class="p">,</span> <span class="n">x2_max</span><span class="p">,</span> <span class="n">N2</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</details>
+</div>
+<section id="the-dount-distribution">
+<h2><font color=#CD853F> The “dount” distribution </font> <a name="r-donut"></a><a class="headerlink" href="#the-dount-distribution" title="Link to this heading">#</a></h2>
+<p>In CUQIpy, we provide a set of bi-variate distributions for illustrative purposes. One of these is the “donut” distribution, which is a bi-variate distribution of a donut-shaped. The distribution is defined as follows:</p>
+<div class="math notranslate nohighlight">
+\[ \begin{align}\begin{aligned}\begin{aligned}
+log (p(\mathbf{x})) \propto - \frac{1}{\sigma_\text{donut}^2} \left( \left\| \mathbf{x} \right\| - r_\text{donut} \right)^2\\\end{aligned}\end{aligned}\end{align} \]</div>
+<p>Where <span class="math notranslate nohighlight">\(\mathbf{x} = (x_1, x_2)\)</span> is a 2D vector, <span class="math notranslate nohighlight">\(\left\| \mathbf{x} \right\|\)</span> is the Euclidean norm of <span class="math notranslate nohighlight">\(\mathbf{x}\)</span>, <span class="math notranslate nohighlight">\(r_\text{donut}\)</span> is the radius of the donut, and <span class="math notranslate nohighlight">\(\sigma_\text{donut}\)</span> is a scalar value that controls the width of the “donut”.</p>
+<p>To load the “donut” distribution, we use the following:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">target_donut</span> <span class="o">=</span> <span class="n">DistributionGallery</span><span class="p">(</span><span class="s2">&quot;donut&quot;</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">target_donut</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CUQI DistributionGallery.
+</pre></div>
+</div>
+</div>
+</div>
+<p>We can plot the distribution probability density function (pdf):</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plot_pdf_2D</span><span class="p">(</span><span class="n">target_donut</span><span class="p">,</span> <span class="o">-</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="o">-</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/tmp/ipykernel_2019/3621908757.py:23: DeprecationWarning: Conversion of an array with ndim &gt; 0 to a scalar is deprecated, and will error in future. Ensure you extract a single element from your array before performing this operation. (Deprecated NumPy 1.25.)
+  distb_pdf[ii,jj] = np.exp(distb.logd(np.array([grid1[ii,jj], grid2[ii,jj]])))
+</pre></div>
+</div>
+<img alt="../_images/53d5a27ad038c54be2b6274a566769a7a7e5e0ef358fe0e86b7d702e4e442b65.png" src="../_images/53d5a27ad038c54be2b6274a566769a7a7e5e0ef358fe0e86b7d702e4e442b65.png" />
+</div>
+</div>
+</section>
+<section id="a-1d-poisson-based-bip">
+<h2><font color=#CD853F> A 1D Poisson-based BIP </font> <a name="r-donut"></a><a class="headerlink" href="#a-1d-poisson-based-bip" title="Link to this heading">#</a></h2>
+<section id="the-forward-model">
+<h3><font color=#8B4513> The forward model </font> <a name="r-forward-model"></a><a class="headerlink" href="#the-forward-model" title="Link to this heading">#</a></h3>
+<p>Consider a heat conductive rod of length <span class="math notranslate nohighlight">\(L = \pi\)</span> with a varying conductivity (the conductivity of the rod changes from point to point). We fix the temperature at the end-points of the rod and apply a heat source distributed along the length of the rod. We wait until the rod reaches an equilibrium temperature distribution. The equilibrium temperature of the rod is modelled using the second order steady-state PDE as</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\left\{
+\begin{aligned}
+&amp; \dfrac{\dd}{\dd \xi}\left(u(\xi) \dfrac{\dd y(\xi)}{\dd \xi}\right) = -f(\xi), \quad &amp; \xi\in (0,L) \\
+&amp; y(0) = y(L) = 0.
+\end{aligned}
+\right.
+\end{split}\]</div>
+<p>Here, <span class="math notranslate nohighlight">\(y\)</span> represents the temperature distribution along the rod, <span class="math notranslate nohighlight">\(u(\xi) \)</span> is the unknown conductivity of the rod and <span class="math notranslate nohighlight">\(f(\xi)\)</span> is a deterministic heat source given by</p>
+<div class="math notranslate nohighlight">
+\[
+\begin{aligned}
+	f(\xi) = 10\exp( -\frac{ (\xi - L/2)^2} {0.02} ).
+\end{aligned}
+\]</div>
+<p>To ensure that the conductivity of the rod is non-negative, we parameterize <span class="math notranslate nohighlight">\(u\)</span> by a random variable <span class="math notranslate nohighlight">\(x\)</span> as follows:</p>
+<div class="math notranslate nohighlight">
+\[
+ \begin{aligned}
+ u( \cdot  ) = \exp( x( \cdot  ) )
+ \end{aligned}
+\]</div>
+<p>where <span class="math notranslate nohighlight">\(x\)</span> is not necessarily positive.</p>
+<p>Let us load the forward model that maps the random variable <span class="math notranslate nohighlight">\(x\)</span> to the temperature distribution <span class="math notranslate nohighlight">\(y\)</span> in CUQIpy. We will use the following parameters:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">dim</span></code> : number of discretization points for the rod</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">L</span></code> : length of the rod</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">f</span></code> : a function that represents the heat source</p></li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dim</span> <span class="o">=</span> <span class="mi">201</span>
+<span class="n">L</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>The source term represents spikes at four locations <code class="docutils literal notranslate"><span class="pre">xs</span></code> with weight <code class="docutils literal notranslate"><span class="pre">ws</span></code></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">xs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">])</span><span class="o">*</span><span class="n">L</span>
+<span class="n">ws</span> <span class="o">=</span> <span class="mf">0.8</span>
+<span class="n">sigma_s</span> <span class="o">=</span> <span class="mf">0.05</span>
+<span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="n">t</span><span class="p">):</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">dim</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">):</span>
+        <span class="n">s</span> <span class="o">+=</span> <span class="n">ws</span> <span class="o">*</span> <span class="n">sps</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="n">xs</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">scale</span><span class="o">=</span><span class="n">sigma_s</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">s</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Let us plot the source term for visualization:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">temp_grid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">L</span><span class="p">,</span> <span class="n">dim</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">temp_grid</span><span class="p">,</span> <span class="n">f</span><span class="p">(</span><span class="n">temp_grid</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&lt;matplotlib.lines.Line2D at 0x7fe04743d900&gt;]
+</pre></div>
+</div>
+<img alt="../_images/46b9d2f9094c3273cc50e39c668bfe9ddbf57141a622c46e31f8e1ffa7da984e.png" src="../_images/46b9d2f9094c3273cc50e39c668bfe9ddbf57141a622c46e31f8e1ffa7da984e.png" />
+</div>
+</div>
+<p>Then we can load the 1D Poisson forward model as follows:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">A</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">Poisson1D</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="n">dim</span><span class="p">,</span> 
+                    <span class="n">endpoint</span><span class="o">=</span><span class="n">L</span><span class="p">,</span>
+                    <span class="n">field_type</span><span class="o">=</span><span class="s1">&#39;KL&#39;</span><span class="p">,</span>
+                    <span class="n">field_params</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;num_modes&#39;</span><span class="p">:</span> <span class="mi">10</span><span class="p">}</span> <span class="p">,</span>
+                    <span class="nb">map</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> 
+                    <span class="n">source</span><span class="o">=</span><span class="n">f</span><span class="p">)</span><span class="o">.</span><span class="n">get_components</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>We print the forward model to see its details.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">A</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CUQI PDEModel: MappedGeometry(KLExpansion(10,)) -&gt; Continuous1D(200,).
+    Forward parameters: [&#39;x&#39;].
+    PDE: SteadyStateLinearPDE.
+</pre></div>
+</div>
+</div>
+</div>
+<p>Let us look at the <code class="docutils literal notranslate"><span class="pre">pde</span></code> property of the forward model:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">A</span><span class="o">.</span><span class="n">pde</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CUQI SteadyStateLinearPDE.
+PDE form expression:
+        PDE_form = lambda x: (Dx.T @ np.diag(x) @ Dx, rhs)
+</pre></div>
+</div>
+</div>
+</div>
+<p>We can look at the domain and range geometries of the forward model.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">A</span><span class="o">.</span><span class="n">domain_geometry</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">A</span><span class="o">.</span><span class="n">range_geometry</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>MappedGeometry(KLExpansion(10,))
+Continuous1D(200,)
+</pre></div>
+</div>
+</div>
+</div>
+<p>And inspect the domain geometry further. Let us look at the mapping in the <code class="docutils literal notranslate"><span class="pre">MappedGeometry</span></code> object.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">getsource</span><span class="p">(</span><span class="n">A</span><span class="o">.</span><span class="n">domain_geometry</span><span class="o">.</span><span class="n">map</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>                    map=lambda x: np.exp(x), 
+</pre></div>
+</div>
+</div>
+</div>
+<p>We can extract the underlying geometry of the <code class="docutils literal notranslate"><span class="pre">MappedGeometry</span></code> object.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">underlying_geometry</span> <span class="o">=</span> <span class="n">A</span><span class="o">.</span><span class="n">domain_geometry</span><span class="o">.</span><span class="n">geometry</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">underlying_geometry</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>KLExpansion(10,)
+</pre></div>
+</div>
+</div>
+</div>
+<p>The underlying geometry represents a Karhunen–Loève (KL) expansion of a random field. Let us look at some of the properties of this <code class="docutils literal notranslate"><span class="pre">underlying_geometry</span></code> such as the number of modes in the KL expansion and the grid on which the KL expansion basis functions are defined.</p>
+<div class="cell tag_scroll-output docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">A</span><span class="o">.</span><span class="n">domain_geometry</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">num_modes</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">A</span><span class="o">.</span><span class="n">domain_geometry</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">grid</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>10
+[0.         0.01570796 0.03141593 0.04712389 0.06283185 0.07853982
+ 0.09424778 0.10995574 0.12566371 0.14137167 0.15707963 0.1727876
+ 0.18849556 0.20420352 0.21991149 0.23561945 0.25132741 0.26703538
+ 0.28274334 0.2984513  0.31415927 0.32986723 0.34557519 0.36128316
+ 0.37699112 0.39269908 0.40840704 0.42411501 0.43982297 0.45553093
+ 0.4712389  0.48694686 0.50265482 0.51836279 0.53407075 0.54977871
+ 0.56548668 0.58119464 0.5969026  0.61261057 0.62831853 0.64402649
+ 0.65973446 0.67544242 0.69115038 0.70685835 0.72256631 0.73827427
+ 0.75398224 0.7696902  0.78539816 0.80110613 0.81681409 0.83252205
+ 0.84823002 0.86393798 0.87964594 0.89535391 0.91106187 0.92676983
+ 0.9424778  0.95818576 0.97389372 0.98960169 1.00530965 1.02101761
+ 1.03672558 1.05243354 1.0681415  1.08384947 1.09955743 1.11526539
+ 1.13097336 1.14668132 1.16238928 1.17809725 1.19380521 1.20951317
+ 1.22522113 1.2409291  1.25663706 1.27234502 1.28805299 1.30376095
+ 1.31946891 1.33517688 1.35088484 1.3665928  1.38230077 1.39800873
+ 1.41371669 1.42942466 1.44513262 1.46084058 1.47654855 1.49225651
+ 1.50796447 1.52367244 1.5393804  1.55508836 1.57079633 1.58650429
+ 1.60221225 1.61792022 1.63362818 1.64933614 1.66504411 1.68075207
+ 1.69646003 1.712168   1.72787596 1.74358392 1.75929189 1.77499985
+ 1.79070781 1.80641578 1.82212374 1.8378317  1.85353967 1.86924763
+ 1.88495559 1.90066356 1.91637152 1.93207948 1.94778745 1.96349541
+ 1.97920337 1.99491134 2.0106193  2.02632726 2.04203522 2.05774319
+ 2.07345115 2.08915911 2.10486708 2.12057504 2.136283   2.15199097
+ 2.16769893 2.18340689 2.19911486 2.21482282 2.23053078 2.24623875
+ 2.26194671 2.27765467 2.29336264 2.3090706  2.32477856 2.34048653
+ 2.35619449 2.37190245 2.38761042 2.40331838 2.41902634 2.43473431
+ 2.45044227 2.46615023 2.4818582  2.49756616 2.51327412 2.52898209
+ 2.54469005 2.56039801 2.57610598 2.59181394 2.6075219  2.62322987
+ 2.63893783 2.65464579 2.67035376 2.68606172 2.70176968 2.71747765
+ 2.73318561 2.74889357 2.76460154 2.7803095  2.79601746 2.81172542
+ 2.82743339 2.84314135 2.85884931 2.87455728 2.89026524 2.9059732
+ 2.92168117 2.93738913 2.95309709 2.96880506 2.98451302 3.00022098
+ 3.01592895 3.03163691 3.04734487 3.06305284 3.0787608  3.09446876
+ 3.11017673 3.12588469 3.14159265]
+</pre></div>
+</div>
+</div>
+</div>
+<p>The range geometry is of type <code class="docutils literal notranslate"><span class="pre">Continuous1D</span></code> which represents a 1D continuous signal/field defined on a grid. We can view the grid:</p>
+<div class="cell tag_scroll-output docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">A</span><span class="o">.</span><span class="n">domain_geometry</span><span class="o">.</span><span class="n">grid</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[0.         0.01570796 0.03141593 0.04712389 0.06283185 0.07853982
+ 0.09424778 0.10995574 0.12566371 0.14137167 0.15707963 0.1727876
+ 0.18849556 0.20420352 0.21991149 0.23561945 0.25132741 0.26703538
+ 0.28274334 0.2984513  0.31415927 0.32986723 0.34557519 0.36128316
+ 0.37699112 0.39269908 0.40840704 0.42411501 0.43982297 0.45553093
+ 0.4712389  0.48694686 0.50265482 0.51836279 0.53407075 0.54977871
+ 0.56548668 0.58119464 0.5969026  0.61261057 0.62831853 0.64402649
+ 0.65973446 0.67544242 0.69115038 0.70685835 0.72256631 0.73827427
+ 0.75398224 0.7696902  0.78539816 0.80110613 0.81681409 0.83252205
+ 0.84823002 0.86393798 0.87964594 0.89535391 0.91106187 0.92676983
+ 0.9424778  0.95818576 0.97389372 0.98960169 1.00530965 1.02101761
+ 1.03672558 1.05243354 1.0681415  1.08384947 1.09955743 1.11526539
+ 1.13097336 1.14668132 1.16238928 1.17809725 1.19380521 1.20951317
+ 1.22522113 1.2409291  1.25663706 1.27234502 1.28805299 1.30376095
+ 1.31946891 1.33517688 1.35088484 1.3665928  1.38230077 1.39800873
+ 1.41371669 1.42942466 1.44513262 1.46084058 1.47654855 1.49225651
+ 1.50796447 1.52367244 1.5393804  1.55508836 1.57079633 1.58650429
+ 1.60221225 1.61792022 1.63362818 1.64933614 1.66504411 1.68075207
+ 1.69646003 1.712168   1.72787596 1.74358392 1.75929189 1.77499985
+ 1.79070781 1.80641578 1.82212374 1.8378317  1.85353967 1.86924763
+ 1.88495559 1.90066356 1.91637152 1.93207948 1.94778745 1.96349541
+ 1.97920337 1.99491134 2.0106193  2.02632726 2.04203522 2.05774319
+ 2.07345115 2.08915911 2.10486708 2.12057504 2.136283   2.15199097
+ 2.16769893 2.18340689 2.19911486 2.21482282 2.23053078 2.24623875
+ 2.26194671 2.27765467 2.29336264 2.3090706  2.32477856 2.34048653
+ 2.35619449 2.37190245 2.38761042 2.40331838 2.41902634 2.43473431
+ 2.45044227 2.46615023 2.4818582  2.49756616 2.51327412 2.52898209
+ 2.54469005 2.56039801 2.57610598 2.59181394 2.6075219  2.62322987
+ 2.63893783 2.65464579 2.67035376 2.68606172 2.70176968 2.71747765
+ 2.73318561 2.74889357 2.76460154 2.7803095  2.79601746 2.81172542
+ 2.82743339 2.84314135 2.85884931 2.87455728 2.89026524 2.9059732
+ 2.92168117 2.93738913 2.95309709 2.96880506 2.98451302 3.00022098
+ 3.01592895 3.03163691 3.04734487 3.06305284 3.0787608  3.09446876
+ 3.11017673 3.12588469 3.14159265]
+</pre></div>
+</div>
+</div>
+</div>
+<p>Additionally, the properties <code class="docutils literal notranslate"><span class="pre">domain_dim</span></code> and <code class="docutils literal notranslate"><span class="pre">range_dim</span></code> of the forward model represent the dimension of the input and output of the forward model, respectively.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">A</span><span class="o">.</span><span class="n">domain_dim</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">A</span><span class="o">.</span><span class="n">range_dim</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>10
+200
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="the-bip-the-prior">
+<h3><font color=#8B4513> The BIP: the prior </font> <a name="r-forward-model"></a><a class="headerlink" href="#the-bip-the-prior" title="Link to this heading">#</a></h3>
+<p>We now build a posterior distribution based on this forward model. The unknown  <span class="math notranslate nohighlight">\(\mathbf{x}\)</span> represents the coefficients in the KL expansion. We assume that the prior distribution of <span class="math notranslate nohighlight">\(\mathbf{x}\)</span> is an i.i.d Gaussian distribution with mean <span class="math notranslate nohighlight">\(0\)</span> and variance <span class="math notranslate nohighlight">\(\sigma_x^2\)</span>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sigma_x</span> <span class="o">=</span> <span class="mi">30</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">Gaussian</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">sigma_x</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="n">geometry</span><span class="o">=</span><span class="n">A</span><span class="o">.</span><span class="n">domain_geometry</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Let us assume that the true solution we want to infer is a sample from <code class="docutils literal notranslate"><span class="pre">x</span></code>. Note: we fix the random seed for reproducibility.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">x_true</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="exercise">
+<h3><font color=#8B4513> Exercise </font> <a name="r-forward-model"></a><a class="headerlink" href="#exercise" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>Visualize <code class="docutils literal notranslate"><span class="pre">x_true</span></code> in the KL coefficient space. Hint: try <code class="docutils literal notranslate"><span class="pre">x_true.plot(plot_par=True)</span></code></p></li>
+<li><p>Visualize <code class="docutils literal notranslate"><span class="pre">x_true</span></code> in the corresponding function space (after applying the linear combination of KL basis weighted by KL vectors and then applying the exponantial mapping). Hint: all this can be achieved in one line by <code class="docutils literal notranslate"><span class="pre">x_true.plot(plot_par=False)</span></code></p></li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># your code here</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="the-bip-the-likelihood">
+<h3><font color=#8B4513> The BIP: the likelihood </font> <a name="r-forward-model"></a><a class="headerlink" href="#the-bip-the-likelihood" title="Link to this heading">#</a></h3>
+<p>We assume the data we obtain is a noisy measurement of the temperature <span class="math notranslate nohighlight">\(y\)</span> over the interval <span class="math notranslate nohighlight">\([0, L]\)</span> in all grid points. The measurements form a vector <span class="math notranslate nohighlight">\(\mathbf{y}\)</span>. The noise is assumed to be additive Gaussian noise with mean <span class="math notranslate nohighlight">\(0\)</span> and variance <span class="math notranslate nohighlight">\(\sigma_y^2\)</span>.</p>
+<div class="math notranslate nohighlight">
+\[
+\mathbf{y} = \mathbf{A}(\mathbf{x}) + \epsilon  \quad \text{where} \quad \epsilon \sim \mathcal{N}(0, \sigma_y^2).\]</div>
+<p>We define the data distribution <span class="math notranslate nohighlight">\(p(\mathbf{y} | \mathbf{x})\)</span> in <code class="docutils literal notranslate"><span class="pre">CUQIpy</span></code> in this case as</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sigma_y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">0.001</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">Gaussian</span><span class="p">(</span><span class="n">A</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">sigma_y</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="n">geometry</span><span class="o">=</span><span class="n">A</span><span class="o">.</span><span class="n">range_geometry</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>We create a synthetic data to use it to test solving our BIP.  We denote this data as <span class="math notranslate nohighlight">\(\mathbf{y}_{\text{obs}}\)</span> which is a particular observed data realization from a setup where the KL coefficients are <code class="docutils literal notranslate"><span class="pre">x_true</span></code>. To create this data in <code class="docutils literal notranslate"><span class="pre">CUQIpy</span></code>, we use the following:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">y_obs</span> <span class="o">=</span> <span class="n">y</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x_true</span><span class="p">)</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Let us plot the true conductivity field, corresponding to <code class="docutils literal notranslate"><span class="pre">x_true</span></code>, the data <code class="docutils literal notranslate"><span class="pre">y_true</span></code> without noise i.e. <code class="docutils literal notranslate"><span class="pre">A(x_true)</span></code>, and the noisy data <code class="docutils literal notranslate"><span class="pre">y_obs</span></code> in the same plot.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">y_obs</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;y_obs&#39;</span><span class="p">)</span>
+<span class="n">A</span><span class="p">(</span><span class="n">x_true</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;y_true&#39;</span><span class="p">)</span>
+<span class="n">x_true</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;x_true&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x7fe0442e5b10&gt;
+</pre></div>
+</div>
+<img alt="../_images/a9b6de89c3c12fe0e2d935f8420b90ee73dbf04ffc4bbcbae7fd7caa1a67b725.png" src="../_images/a9b6de89c3c12fe0e2d935f8420b90ee73dbf04ffc4bbcbae7fd7caa1a67b725.png" />
+</div>
+</div>
+</section>
+<section id="the-bip-the-posterior-distribution-the-high-level-approach-using-the-bayesianproblem-class">
+<h3><font color=#8B4513> The BIP: the posterior distribution  (the high level approach: using the BayesianProblem class)</font><a class="headerlink" href="#the-bip-the-posterior-distribution-the-high-level-approach-using-the-bayesianproblem-class" title="Link to this heading">#</a></h3>
+<p>The posterior distribution of the Bayesian inverse problem in this case is given by</p>
+<div class="math notranslate nohighlight">
+\[
+\begin{align*}
+p(\mathbf{x} \mid \mathbf{y}=\mathbf{y}_\mathrm{obs}) \propto L(\mathbf{x} \mid \mathbf{y}=\mathbf{y}_\mathrm{obs})p(\mathbf{x}),
+\end{align*}
+\]</div>
+<p>where we use the notation <span class="math notranslate nohighlight">\(L(\mathbf{x} \mid \mathbf{y}=\mathbf{y}_\mathrm{obs}) := p(\mathbf{y}=\mathbf{y}_\mathrm{obs} \mid \mathbf{x})\)</span> for the likelihood function to emphasize that, in the context of the posterior where <span class="math notranslate nohighlight">\(\mathbf{y}\)</span> is fixed to <span class="math notranslate nohighlight">\(\mathbf{y}_\mathrm{obs}\)</span>, it is a function of <span class="math notranslate nohighlight">\(\mathbf{x}\)</span> and not on <span class="math notranslate nohighlight">\(\mathbf{y}\)</span>. In CUQIpy we sometimes use the short-hand printing style <code class="docutils literal notranslate"><span class="pre">L(x|y)</span></code> for brevity.</p>
+<p>The simplest way to sample a Bayesian inverse problem in CUQIpy is to use the <a class="reference external" href="https://cuqi-dtu.github.io/CUQIpy/api/_autosummary/cuqi.problem/cuqi.problem.BayesianProblem.html#cuqi.problem.BayesianProblem">BayesianProblem class</a>.</p>
+<p>Using the BayesianProblem class, one can easily define and sample from the posterior distribution of a Bayesian inverse problem by providing the distributions for the parameters and data and subsequently setting the observed data.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">BP_poisson</span> <span class="o">=</span> <span class="n">BayesianProblem</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>      <span class="c1"># Create Bayesian problem</span>
+<span class="n">BP_poisson</span><span class="o">.</span><span class="n">set_data</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="n">y_obs</span><span class="p">)</span>           <span class="c1"># Provide observed data</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>BayesianProblem with target: 
+ Posterior(
+    Equation:
+	 p(x|y) ∝ L(x|y)p(x)
+    Densities:
+	y ~ CUQI Gaussian Likelihood function. Parameters [&#39;x&#39;].
+ 	x ~ CUQI Gaussian.
+ )
+</pre></div>
+</div>
+</div>
+</div>
+<p>In the above example, we provided our assumptions about the data generating process by defining the distributions for the parameters and data and provided the observed data for the problem. <code class="docutils literal notranslate"><span class="pre">CUQIpy</span></code> internally created the posterior distribution using the provided distributions and data.</p>
+<p>We can use this object to sample from the posterior distribution using the <code class="docutils literal notranslate"><span class="pre">UQ</span></code> method, which we will experiment with in this exercise:</p>
+</section>
+<section id="id1">
+<h3><font color=#8B4513> Exercise </font> <a name="r-forward-model"></a><a class="headerlink" href="#id1" title="Link to this heading">#</a></h3>
+<p>Use the <code class="docutils literal notranslate"><span class="pre">UQ</span></code> method of the <code class="docutils literal notranslate"><span class="pre">BP_poisson</span></code> object to sample the posterior distribution. The <code class="docutils literal notranslate"><span class="pre">UQ</span></code> returns a <code class="docutils literal notranslate"><span class="pre">Samples</span></code> object, store the result in a variable called <code class="docutils literal notranslate"><span class="pre">BP_poisson_samples</span></code>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># your code here</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>In the previous exercise we saw that <code class="docutils literal notranslate"><span class="pre">CUQIpy</span></code> automatically decided on using a sampler, preconditioned Crank Nicolson <code class="docutils literal notranslate"><span class="pre">pCN</span></code> in this case, and sampled the posterior distribution. Additionally, the  credibility interval for the parameter <span class="math notranslate nohighlight">\(\mathbf{x}\)</span> as well as the mean of the posterior was plotted and compared to the ground truth (<code class="docutils literal notranslate"><span class="pre">x_true</span></code>).</p>
+<p><strong>Note about visualizing the credible interval</strong>:
+Using the <code class="docutils literal notranslate"><span class="pre">UQ</span></code> method, the credibility interval is computed for the KL coefficients. Then mapped to the function space and plotted. We can also compute the credibility interval directly on the function values. We will revisit this at a later stage.</p>
+<p>In the next section, we show how to define the posterior distribution more explicitly.</p>
+</section>
+<section id="the-bip-computing-the-map-point-with-the-bayesianproblem-class">
+<h3><font color=#8B4513> The BIP: computing the MAP point with the BayesianProblem class</font><a class="headerlink" href="#the-bip-computing-the-map-point-with-the-bayesianproblem-class" title="Link to this heading">#</a></h3>
+<p>In addition to sampling the posterior, we can also compute point estimates of the posterior. A common point estimate to consider is the Maximum A Posteriori (MAP) estimate, which is the value of the Bayesian parameter that maximizes the posterior density. That is,</p>
+<div class="math notranslate nohighlight">
+\[
+\begin{align*}
+\mathbf{x}_\mathrm{MAP} = \arg\max_\mathbf{x} p(\mathbf{x} \mid \mathbf{y}_\mathrm{obs}).
+\end{align*}
+\]</div>
+<p>The easiest way to compute the MAP estimate in CUQIpy is to use the <code class="docutils literal notranslate"><span class="pre">MAP</span></code> method of the <code class="docutils literal notranslate"><span class="pre">BayesianProblem</span></code> class as follows:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># x_map = BP_poisson.MAP()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>We can plot the MAP estimate and compare it to the true solution <code class="docutils literal notranslate"><span class="pre">x_true</span></code>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># x_map.plot(label=&#39;MAP estimate&#39;)</span>
+<span class="n">x_true</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;True solution&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x7fe047483040&gt;
+</pre></div>
+</div>
+<img alt="../_images/4989137c36976f59fe61a3bf7ae77ee4957b201835d748576f71513921df6c3e.png" src="../_images/4989137c36976f59fe61a3bf7ae77ee4957b201835d748576f71513921df6c3e.png" />
+</div>
+</div>
+<p>We can also look at the MAP estimate in the KL coefficient space:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># x_map.plot(label=&#39;MAP estimate&#39; ,plot_par=True)</span>
+<span class="n">x_true</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;True solution&#39;</span> <span class="p">,</span><span class="n">plot_par</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x7fe0441cf970&gt;
+</pre></div>
+</div>
+<img alt="../_images/5e93159bda038bdb571b9407e8128ecf90340b2c098444344155b5002c9946a1.png" src="../_images/5e93159bda038bdb571b9407e8128ecf90340b2c098444344155b5002c9946a1.png" />
+</div>
+</div>
+<p>We notice that in general the larger the mode number, the harder it is to be inferred (can you think why?).</p>
+</section>
+<section id="the-bip-the-posterior-distribution-the-low-level-approach-using-the-jointdistribution">
+<h3><font color=#8B4513> The BIP: the posterior distribution  (the low level approach: using the JointDistribution)</font><a class="headerlink" href="#the-bip-the-posterior-distribution-the-low-level-approach-using-the-jointdistribution" title="Link to this heading">#</a></h3>
+<p>To define the posterior distribution explicitly in CUQIpy, we first define the joint distribution <span class="math notranslate nohighlight">\(p(\mathbf{y},\mathbf{x})\)</span>, then we supply the observed data to create the conditional distribution <span class="math notranslate nohighlight">\(p(\mathbf{x} \mid \mathbf{y}=\mathbf{y}_\mathrm{obs})\)</span>.</p>
+<p>Let us first define the joint distribution <span class="math notranslate nohighlight">\(p(\mathbf{y},\mathbf{x})\)</span> in CUQIpy. We use the following:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Define joint distribution p(y,x)</span>
+<span class="n">joint</span> <span class="o">=</span> <span class="n">JointDistribution</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Calling <code class="docutils literal notranslate"><span class="pre">print</span></code> on the joint distribution gives a nice overview matching the mathematical description of the joint distribution.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">joint</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>JointDistribution(
+    Equation: 
+	p(y,x) = p(y|x)p(x)
+    Densities: 
+	y ~ CUQI Gaussian. Conditioning variables [&#39;x&#39;].
+	x ~ CUQI Gaussian.
+)
+</pre></div>
+</div>
+</div>
+</div>
+<p>CUQIpy can automatically derive the posterior distribution for any joint distribution when we pass the observed data as an argument to the “call” (condition) method of the joint distribution.  This is done as follows:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">target_poisson</span> <span class="o">=</span> <span class="n">joint</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="n">y_obs</span><span class="p">)</span> <span class="c1"># Condition p(x,y) on y=y_data. Applies Bayes&#39; rule automatically</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>We can now inspect the posterior distribution by calling <code class="docutils literal notranslate"><span class="pre">print</span></code> on it. Notice that the posterior equation matches the mathematical expression we showed above.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">target_poisson</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Posterior(
+    Equation:
+	 p(x|y) ∝ L(x|y)p(x)
+    Densities:
+	y ~ CUQI Gaussian Likelihood function. Parameters [&#39;x&#39;].
+ 	x ~ CUQI Gaussian.
+ )
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="id2">
+<h3><font color=#8B4513> Exercise </font> <a name="r-forward-model"></a><a class="headerlink" href="#id2" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>The posterior is essentially just another CUQIpy distribution. Have a look at the <a class="reference external" href="https://cuqi-dtu.github.io/CUQIpy/api/_autosummary/cuqi.distribution/cuqi.distribution.Posterior.html">Posterior class</a> in the online documentation to see what attributes and methods are available.</p></li>
+<li><p>Try evaluating the posterior log probability density function (logpdf) and pdf at some points say <code class="docutils literal notranslate"><span class="pre">x_true</span></code> and <code class="docutils literal notranslate"><span class="pre">x_true*1.1</span></code>.</p></li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Your code here</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "CUQI-DTU/CUQI-Book",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./chapter03"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="chapter03.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Chapter 3: Sampling with CUQIpy</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="gradient_based_sampling_with_cuqipy.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Sampling with CUQIpy: five little stories</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-dount-distribution"><font color="#CD853F"> The “dount” distribution </font> <a name="r-donut"></a></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#a-1d-poisson-based-bip"><font color="#CD853F"> A 1D Poisson-based BIP </font> <a name="r-donut"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-forward-model"><font color="#8B4513"> The forward model </font> <a name="r-forward-model"></a></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-bip-the-prior"><font color="#8B4513"> The BIP: the prior </font> <a name="r-forward-model"></a></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercise"><font color="#8B4513"> Exercise </font> <a name="r-forward-model"></a></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-bip-the-likelihood"><font color="#8B4513"> The BIP: the likelihood </font> <a name="r-forward-model"></a></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-bip-the-posterior-distribution-the-high-level-approach-using-the-bayesianproblem-class"><font color="#8B4513"> The BIP: the posterior distribution  (the high level approach: using the BayesianProblem class)</font></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1"><font color="#8B4513"> Exercise </font> <a name="r-forward-model"></a></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-bip-computing-the-map-point-with-the-bayesianproblem-class"><font color="#8B4513"> The BIP: computing the MAP point with the BayesianProblem class</font></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-bip-the-posterior-distribution-the-low-level-approach-using-the-jointdistribution"><font color="#8B4513"> The BIP: the posterior distribution  (the low level approach: using the JointDistribution)</font></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2"><font color="#8B4513"> Exercise </font> <a name="r-forward-model"></a></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By CUQIpy developer team
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=3ee479438cf8b5e0d341"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=3ee479438cf8b5e0d341"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

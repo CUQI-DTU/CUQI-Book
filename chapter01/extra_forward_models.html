@@ -1,0 +1,1700 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Extra material: Forward models, data generation and forward UQ &#8212; Uncertainty Quantification in Inverse Problems with CUQIpy</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=3ee479438cf8b5e0d341" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=3ee479438cf8b5e0d341" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=3ee479438cf8b5e0d341" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=3ee479438cf8b5e0d341" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=a3416100" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=87e54e7c" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=3ee479438cf8b5e0d341" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=3ee479438cf8b5e0d341" />
+  <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=3ee479438cf8b5e0d341"></script>
+
+    <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js?v=4a39c7ea"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"tex": {"macros": {"dd": "\\mathrm{d}", "abs": ["\\left\\vert#1\\right\\vert", 1], "ve": ["\\bm{#1}", 1], "mat": ["\\mathbf{#1}", 1], "N": "\\mathbb{N}", "floor": ["\\lfloor#1\\rfloor", 1], "bmat": ["\\left[\\begin{array}"], "emat": ["\\end{array}\\right]"], "bm": ["{\\boldsymbol #1}", 1]}}, "options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'chapter01/extra_forward_models';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Chapter 2: Prior and Hierarchical Bayesian Models" href="../chapter02/chapter02.html" />
+    <link rel="prev" title="Two forward models" href="two_forward_problems_new.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+
+<a class="navbar-brand logo" href="../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/logo.png" class="logo__image only-light" alt="Uncertainty Quantification in Inverse Problems with CUQIpy - Home"/>
+    <script>document.write(`<img src="../_static/logo.png" class="logo__image only-dark" alt="Uncertainty Quantification in Inverse Problems with CUQIpy - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../intro.html">
+                    Welcome to the “Uncertainty Quantification in Inverse Problems with CUQIpy” mini-book!
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="chapter01.html">Chapter 1: Introduction to Bayesian Inverse Problems (BIP) in CUQIpy</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="introduction_overview_of_cuqipy.html">Overview of CUQIpy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Intro_example.html">Probably the simplest BIP in the world</a></li>
+<li class="toctree-l2"><a class="reference internal" href="two_forward_problems_new.html">Two forward models</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Extra material: Forward models, data generation and forward UQ</a></li>
+
+
+
+
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../chapter02/chapter02.html">Chapter 2: Prior and Hierarchical Bayesian Models</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../chapter02/prior.html">Distributions, priors, and basic sampling in CUQIpy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter02/gibbs.html">Gibbs sampling</a></li>
+
+
+
+
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../chapter03/chapter03.html">Chapter 3: Sampling with CUQIpy</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../chapter03/sampling_with_cuqipy_two_target.html">Sampling with CUQIpy: Two target distributions and exploring the posterior using the BayesianProblem class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter03/gradient_based_sampling_with_cuqipy.html">Sampling with CUQIpy: five little stories</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../chapter04/chapter04.html">Chapter 4: Advanced Bayesian Inference in CUQIpy</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../chapter04/project.html">CUQIpy component final project</a></li>
+
+
+
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-launch-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Launch interactive content">
+    <i class="fas fa-rocket"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://colab.research.google.com/github/CUQI-DTU/CUQI-Book/blob/master/chapter01/extra_forward_models.ipynb" target="_blank"
+   class="btn btn-sm dropdown-item"
+   title="Launch on Colab"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  
+    <img alt="Colab logo" src="../_static/images/logo_colab.png">
+  </span>
+<span class="btn__text-container">Colab</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="initThebeSBT()"
+  class="btn btn-sm btn-launch-thebe dropdown-item"
+  title="Launch Thebe"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-play"></i>
+  </span>
+<span class="btn__text-container">Live Code</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/CUQI-DTU/CUQI-Book" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/CUQI-DTU/CUQI-Book/issues/new?title=Issue%20on%20page%20%2Fchapter01/extra_forward_models.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/chapter01/extra_forward_models.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Extra material: Forward models, data generation and forward UQ</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Extra material: Forward models, data generation and forward UQ</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#learning-objectives">Learning objectives</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#table-of-contents">Table of contents</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references">References</a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#access-forward-models-from-test-problems">1. Access forward models from test problems<a class="anchor" id="testproblems"></a></a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#deconvolution-in-1d">1.1 Deconvolution in 1D</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#deconvolution2d-inverse-problem-of-two-dimensional-image-deblurring">1.2 Deconvolution2D: Inverse problem of two-dimensional image deblurring</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#heat1d-a-model-for-a-pde-based-inverse-problem">1.3 Heat1D: A model for a PDE-based inverse problem</a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#basic-usage-of-models">2 Basic usage of models <a class="anchor" id="models"></a></a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#try-yourself-optional">★ Try yourself (optional):</a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#generating-synthetic-data">3. Generating synthetic data <a class="anchor" id="data"></a></a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data-distribution">3.1 Data distribution</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#sampling-a-data-distribtuion">3.2 Sampling a data distribtuion</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">Try yourself (optional):</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#creating-custom-forward-models">4. Creating custom forward models <a class="anchor" id="custom"></a></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#defining-model-from-a-matrix">4.1 Defining model from a matrix</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#optional-exercise">Optional exercise:</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#defining-model-from-a-function">4.2 Defining model from a function</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#linear-model-from-functions">4.3 Linear model from functions</a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#forward-uq">5. ★ Forward UQ <a class="anchor" id="forwardUQ"></a></a></li>
+</ul>
+
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="extra-material-forward-models-data-generation-and-forward-uq">
+<h1>Extra material: Forward models, data generation and forward UQ<a class="headerlink" href="#extra-material-forward-models-data-generation-and-forward-uq" title="Link to this heading">#</a></h1>
+<p>In this notebook, we dive into forward models in CUQIpy. In brief, a forward model is defined as a mathematical model that describes the relationship between some input parameters (which are not directly observable) and some output data (which is observable).</p>
+<p>In the context of inverse problems, forward models are an important concept. If the forward model is ill-conditioned, it will amplifies noise or uncertainties in the data and the inverse problem then becomes <em>ill-posed</em>, which means that existence, uniqueness and/or stability of inversion cannot be guaranteed. This ill-posedness deserves a separate discussion, which is out-of-scope for this notebook and we refer to [1] for the interested reader.</p>
+<p>For the purpose of this notebook, we show the basics of how to use forward models in CUQIpy. In particular for generating simulated noisy data and some forward uncertainty quantification. Finally, we also show how to define new custom linear or non-linear forward models in CUQIpy from either a matrix or functions.</p>
+<section id="learning-objectives">
+<h2>Learning objectives<a class="headerlink" href="#learning-objectives" title="Link to this heading">#</a></h2>
+<p>Going through this notebook you will see how to</p>
+<ul class="simple">
+<li><p>Access and use pre-defined forward models from the CUQIpy testproblem library.</p></li>
+<li><p>Carry out basic operations of forward models such as forward evaluation.</p></li>
+<li><p>Generate noisy forward simulated data.</p></li>
+<li><p>Make a custom forward model from an existing matrix or function.</p></li>
+<li><p>Run a simple forward UQ analysis.</p></li>
+</ul>
+</section>
+<section id="table-of-contents">
+<h2>Table of contents<a class="headerlink" href="#table-of-contents" title="Link to this heading">#</a></h2>
+<ol class="arabic simple">
+<li><p><a class="reference internal" href="#testproblems"><span class="xref myst">Access forward models from test problems</span></a></p></li>
+<li><p><a class="reference internal" href="#models"><span class="xref myst">Basic usage of forward models</span></a></p></li>
+<li><p><a class="reference internal" href="#data"><span class="xref myst">Generating synthetic data</span></a></p></li>
+<li><p><a class="reference internal" href="#custom"><span class="xref myst">Creating custom forward models</span></a></p></li>
+<li><p><a class="reference internal" href="#forwardUQ"><span class="xref myst">★ Forward UQ</span></a></p></li>
+</ol>
+</section>
+<section id="references">
+<h2>References<a class="headerlink" href="#references" title="Link to this heading">#</a></h2>
+<p>[1] Hansen, P. C. (2010). Discrete inverse problems: insight and algorithms. Society for Industrial and Applied Mathematics, <a class="reference external" href="https://epubs.siam.org/doi/book/10.1137/1.9780898718836">10.1137/1.9780898718836</a>.</p>
+<p>Before getting started, we have to import the Python packages we need. Here we also import CUQIpy (cuqi).</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">cuqi</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section class="tex2jax_ignore mathjax_ignore" id="access-forward-models-from-test-problems">
+<h1>1. Access forward models from test problems<a class="anchor" id="testproblems"></a><a class="headerlink" href="#access-forward-models-from-test-problems" title="Link to this heading">#</a></h1>
+<p>Forward models in CUQIpy are the link between the parameter of interest (which we call solution), say <span class="math notranslate nohighlight">\(\mathbf{x}\)</span>, and the observed data, say <span class="math notranslate nohighlight">\(\mathbf{y}\)</span>. In their simplest form, they are simply a mapping <span class="math notranslate nohighlight">\(A: \mathbf{x} \mapsto \mathbf{y}\)</span>. In CUQIpy, forward models are so commonly used that we refer to them simply as models.</p>
+<p>In addition to providing a mapping for the “forward” operation and potentially the adjoint, a CUQIpy model also contains information on the parametrization of its domain and range, as well as possible gradients and so on.</p>
+<p>To get a better grasp of the extend of CUQIpy models, let us look at a few examples taken from the testproblem library.</p>
+<p>A CUQIpy test problem contains all components specifying an inverse problem, including example data. Most test problems can be configured in different ways. A simple way to work with test problems is to return the main components, namely the forward model, the data and dictionary with problem information.</p>
+<section id="deconvolution-in-1d">
+<h2>1.1 Deconvolution in 1D<a class="headerlink" href="#deconvolution-in-1d" title="Link to this heading">#</a></h2>
+<p>For example, we can set up a <a class="reference external" href="https://cuqi-dtu.github.io/CUQIpy/api/_autosummary/cuqi.testproblem/cuqi.testproblem.Deconvolution1D.html">1D Deconvolution test problem</a> and return the main components by:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">model1</span><span class="p">,</span> <span class="n">data1</span><span class="p">,</span> <span class="n">probInfo1</span> <span class="o">=</span> <span class="n">cuqi</span><span class="o">.</span><span class="n">testproblem</span><span class="o">.</span><span class="n">Deconvolution1D</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">64</span><span class="p">,</span> <span class="n">phantom</span><span class="o">=</span><span class="s2">&quot;sinc&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">get_components</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Here we define the testproblem with mostly default settings, except for the dimension and phantom type (exact solution).</p>
+<p>Calling print around the model gives us some of the most important information about the model:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">model1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CUQI LinearModel: Continuous1D(64,) -&gt; Continuous1D(64,).
+    Forward parameters: [&#39;x&#39;].
+</pre></div>
+</div>
+</div>
+</div>
+<p>In this case, we see that we are working with a LinearModel (linear in the operator sense), which makes sense for the deconvolution problem. We also see that the domain and range are both parametrized as Continous1D with 64 parameters. Finally, we see that the forward parameter is called ‘x’.</p>
+<p>The problem info typically contains both the exact synthetic signal <code class="docutils literal notranslate"><span class="pre">exactSolution</span></code> from which the data was produced and the exact simulated data <code class="docutils literal notranslate"><span class="pre">exactData</span></code>:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">probInfo1</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>ProblemInfo with the following set attributes:
+[&#39;infoString&#39;, &#39;exactData&#39;, &#39;exactSolution&#39;]
+ infoString: Noise type: Additive Gaussian with std: 0.01
+</pre></div>
+</div>
+</div>
+</div>
+<p>The true signal (before blurring) looks like this:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">probInfo1</span><span class="o">.</span><span class="n">exactSolution</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Exact Solution&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/67d94af7e54b05aedb4298e889a4ae785e3c6ec0eae21e0bafb28517ce48d767.png" src="../_images/67d94af7e54b05aedb4298e889a4ae785e3c6ec0eae21e0bafb28517ce48d767.png" />
+</div>
+</div>
+<p>We can plot and compare the clean and noisy data:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">data1</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;Noisy data&#39;</span><span class="p">)</span>
+<span class="n">probInfo1</span><span class="o">.</span><span class="n">exactData</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;Exact data&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x7f1cfc10f760&gt;
+</pre></div>
+</div>
+<img alt="../_images/e8b85ec1e966250d24f940cd9dab9a8e5b199c9954a6b3b20a785c8c24b01928.png" src="../_images/e8b85ec1e966250d24f940cd9dab9a8e5b199c9954a6b3b20a785c8c24b01928.png" />
+</div>
+</div>
+<p>and easily take a look also at their difference:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">data1</span><span class="o">-</span><span class="n">probInfo1</span><span class="o">.</span><span class="n">exactData</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Noise realization&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/43f63db9ed739aefd010c55fb7ffafff6489379746362b8948cd317589fcebe0.png" src="../_images/43f63db9ed739aefd010c55fb7ffafff6489379746362b8948cd317589fcebe0.png" />
+</div>
+</div>
+</section>
+<section id="deconvolution2d-inverse-problem-of-two-dimensional-image-deblurring">
+<h2>1.2 Deconvolution2D: Inverse problem of two-dimensional image deblurring<a class="headerlink" href="#deconvolution2d-inverse-problem-of-two-dimensional-image-deblurring" title="Link to this heading">#</a></h2>
+<p>CUQIpy offers a <a class="reference external" href="https://cuqi-dtu.github.io/CUQIpy/api/_autosummary/cuqi.testproblem/cuqi.testproblem.Deconvolution2D.html">2D image deblurring test problem</a> as well, which can be set up in the same way as the 1D problem (now with all default settings):</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">model2</span><span class="p">,</span> <span class="n">data2</span><span class="p">,</span> <span class="n">probInfo2</span> <span class="o">=</span> <span class="n">cuqi</span><span class="o">.</span><span class="n">testproblem</span><span class="o">.</span><span class="n">Deconvolution2D</span><span class="p">()</span><span class="o">.</span><span class="n">get_components</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>If we take a look at the model, we see it is a linear model, now with <code class="docutils literal notranslate"><span class="pre">Image2D</span></code> geometries instead of <code class="docutils literal notranslate"><span class="pre">Continuous1D</span></code> as before - the size corresponds to image of size 128x128 = 16384 pixels:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">model2</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CUQI LinearModel: Image2D(16384,) -&gt; Image2D(16384,).
+    Forward parameters: [&#39;x&#39;].
+</pre></div>
+</div>
+</div>
+</div>
+<p>The exact solution is available and <code class="docutils literal notranslate"><span class="pre">plot</span></code> method displays as an image due to the <code class="docutils literal notranslate"><span class="pre">Image2D</span></code> geometry:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">probInfo2</span><span class="o">.</span><span class="n">exactSolution</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Exact Solution (sharp image)&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/de6a3e364e7dca19b19873b971622ef798f6e4875b62901340c0146eb1212730.png" src="../_images/de6a3e364e7dca19b19873b971622ef798f6e4875b62901340c0146eb1212730.png" />
+</div>
+</div>
+<p>Similarly the blurred and noisy data, the clean data and their difference (i.e. the added noise) can be displayed as images:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">data2</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Data (noisy blurred image)&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/39642f160af2a622ae8e497fd171b59f61c9deef11d8e3d7ffe0ff0bd9e290fc.png" src="../_images/39642f160af2a622ae8e497fd171b59f61c9deef11d8e3d7ffe0ff0bd9e290fc.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">probInfo2</span><span class="o">.</span><span class="n">exactData</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Exact data (blurred image)&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/57f8da1b00dd1dcbb0f671c9f3ce3ea0262a142a1c9268005a0f0a3967484793.png" src="../_images/57f8da1b00dd1dcbb0f671c9f3ce3ea0262a142a1c9268005a0f0a3967484793.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">data2</span> <span class="o">-</span> <span class="n">probInfo2</span><span class="o">.</span><span class="n">exactData</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Noise realization&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/6d0351aec2814227da682eabd63240360abf2b6da9312b5d60c2450d923f21fe.png" src="../_images/6d0351aec2814227da682eabd63240360abf2b6da9312b5d60c2450d923f21fe.png" />
+</div>
+</div>
+</section>
+<section id="heat1d-a-model-for-a-pde-based-inverse-problem">
+<h2>1.3 Heat1D: A model for a PDE-based inverse problem<a class="headerlink" href="#heat1d-a-model-for-a-pde-based-inverse-problem" title="Link to this heading">#</a></h2>
+<p>A completely different test problem is <a class="reference external" href="https://cuqi-dtu.github.io/CUQIpy/api/_autosummary/cuqi.testproblem/cuqi.testproblem.Heat1D.html">The 1D heat test problem</a>, which is described by a partial differential equation (PDE), namely the heat equation. The forward model of <code class="docutils literal notranslate"><span class="pre">Heat1D</span></code> maps an initial temperature distribution on an interval to the temperature distribution after a specified amount of time has passed, by solving the 1D heat equation. For more details, see <a class="reference internal" href="#../PDE/PDE01_Exercise_PDE.ipynb"><span class="xref myst">Notebook 5</span></a>.</p>
+<p>Here, we simply set up the test problem in the same way as before:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">modelH</span><span class="p">,</span> <span class="n">dataH</span><span class="p">,</span> <span class="n">probInfoH</span> <span class="o">=</span> <span class="n">cuqi</span><span class="o">.</span><span class="n">testproblem</span><span class="o">.</span><span class="n">Heat1D</span><span class="p">()</span><span class="o">.</span><span class="n">get_components</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>We start by plotting the exact solution, i.e., the true initial temperature distribution over the interval:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">probInfoH</span><span class="o">.</span><span class="n">exactSolution</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Exact Solution (temperature)&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/87060d8d5c99eb513f9b32d26113c74098659830b92b20a477bc54396f366384.png" src="../_images/87060d8d5c99eb513f9b32d26113c74098659830b92b20a477bc54396f366384.png" />
+</div>
+</div>
+<p>The data is the noisy observations of the temperature distribution after some time has passed (notice the difference in y-axis values). We plot the data and the exact data as well as their difference:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dataH</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;Data (final noisy temperature)&quot;</span><span class="p">)</span>
+<span class="n">probInfoH</span><span class="o">.</span><span class="n">exactData</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;Exact data (final temperature)&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x7f1cc3433940&gt;
+</pre></div>
+</div>
+<img alt="../_images/d9c0d82202eb3624d74ed70a729390ba4467966f3a2bf1fa6f2805ec283811da.png" src="../_images/d9c0d82202eb3624d74ed70a729390ba4467966f3a2bf1fa6f2805ec283811da.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">dataH</span> <span class="o">-</span> <span class="n">probInfoH</span><span class="o">.</span><span class="n">exactData</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Noise realization&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/a78aa95281557c217338ac7ef8d7387dc219d5bf1defee1d2e71d500d7fcab0d.png" src="../_images/a78aa95281557c217338ac7ef8d7387dc219d5bf1defee1d2e71d500d7fcab0d.png" />
+</div>
+</div>
+<p>We can take a closer look at the model:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">modelH</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CUQI PDEModel: Continuous1D(128,) -&gt; Continuous1D(128,).
+    Forward parameters: [&#39;x&#39;].
+    PDE: TimeDependentLinearPDE.
+</pre></div>
+</div>
+</div>
+</div>
+<p>Here the domain and range are parametrized as Continuous1D with 128 parameters, and the model is now noted as PDEModel and a new field for a PDE is listed.</p>
+<p>A PDEModel in CUQIpy is a model where in each forward computation a PDE is 1) assembled, 2) solved and 3) observed. The specifics would depend on the underlying PDE. With that in mind, let us have a look at the underlying PDE for this PDEModel.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">modelH</span><span class="o">.</span><span class="n">pde</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CUQI TimeDependentLinearPDE.
+PDE form expression:
+        def PDE_form(IC, t): return (Dxx, np.zeros(N), IC)
+</pre></div>
+</div>
+</div>
+</div>
+<p>Here we see that the underlying PDE is a time-dependent linear PDE which makes sense for the 1D heat testproblem. We could keep exploring PDEModels, but we leave that to our specific notebook on <a class="reference internal" href="#../PDE/PDE01_Exercise_PDE.ipynb"><span class="xref myst">PDEs</span></a>.</p>
+<p>For now, the main message is that the CUQIpy model provides an abstract representation of a forward model of many and different inverse problems, and that CUQIpy offers a collection of test problems containing forward models, data and exact solutions that can be used for demonstration and benchmarking.</p>
+</section>
+</section>
+<section class="tex2jax_ignore mathjax_ignore" id="basic-usage-of-models">
+<h1>2 Basic usage of models <a class="anchor" id="models"></a><a class="headerlink" href="#basic-usage-of-models" title="Link to this heading">#</a></h1>
+<p>In this section we demonstrate common operations with CUQIpy models. Let us focus on the <code class="docutils literal notranslate"><span class="pre">LinearModel</span></code> representing the convolution operation from the deconvolution test problem.</p>
+<p>To simplify notation, let us define this model simply as <span class="math notranslate nohighlight">\(\mathbf{A}\)</span> (but remember this is a CUQIpy model, not a matrix) and let us define the exact solution as <span class="math notranslate nohighlight">\(\mathbf{x}_\mathrm{exact}\)</span>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">A</span><span class="p">,</span><span class="n">_</span><span class="p">,</span><span class="n">probInfo</span> <span class="o">=</span> <span class="n">cuqi</span><span class="o">.</span><span class="n">testproblem</span><span class="o">.</span><span class="n">Deconvolution1D</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">64</span><span class="p">,</span> <span class="n">phantom</span><span class="o">=</span><span class="s2">&quot;sinc&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">get_components</span><span class="p">()</span>
+<span class="n">x_exact</span> <span class="o">=</span> <span class="n">probInfo</span><span class="o">.</span><span class="n">exactSolution</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>One of the most basic usages of a CUQIpy model is to evaluate the forward map. This is simply done by calling the <code class="docutils literal notranslate"><span class="pre">.forward</span></code> method, or in the case of a <code class="docutils literal notranslate"><span class="pre">LinearModel</span></code> the short-hand “&#64;” (matrix multiply in Python) can also be used.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">y_exact</span>  <span class="o">=</span> <span class="n">A</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">x_exact</span><span class="p">)</span> <span class="c1"># Explicitly call the forward method</span>
+<span class="n">y_exact</span>  <span class="o">=</span> <span class="n">A</span><span class="nd">@x_exact</span>          <span class="c1"># Can also use short-hand for matrix multiply (gives the same result)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Linear model also supports basic operations such as evaluating the adjoint, which can also be done using the numpy-like syntax “.T” for transpose. For example here we apply the adjoint operator of <code class="docutils literal notranslate"><span class="pre">A</span></code> to <code class="docutils literal notranslate"><span class="pre">y_exact</span></code>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">z</span> <span class="o">=</span> <span class="n">A</span><span class="o">.</span><span class="n">adjoint</span><span class="p">(</span><span class="n">y_exact</span><span class="p">)</span> <span class="c1"># Explicitly call the adjoint method</span>
+<span class="n">z</span> <span class="o">=</span> <span class="n">A</span><span class="o">.</span><span class="n">T</span><span class="nd">@y_exact</span>        <span class="c1"># Can also use short-hand for matrix transpose (gives the same result)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Unlike distributions or CUQIarrays, which have only one geometry attribute, forward models are distinct in having two geometries. <code class="docutils literal notranslate"><span class="pre">domain_geometry</span></code> relates to the domain of the forward mapping, and <code class="docutils literal notranslate"><span class="pre">range_geometry</span></code> relates to the range. These geometries play an important role in linking samplers, which deal with single vectors, to forward models, which are geared towards handling more complex data structures.</p>
+<p>For example, let us take a look at the range geometry of <code class="docutils literal notranslate"><span class="pre">A</span></code>:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">A</span><span class="o">.</span><span class="n">range_geometry</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Continuous1D(64,)
+</pre></div>
+</div>
+</div>
+</div>
+<p>When computing the forward operation, <code class="docutils literal notranslate"><span class="pre">A</span></code> passes its range geometry to the output. We can validate this by inspecting <code class="docutils literal notranslate"><span class="pre">y_exact</span></code> from earlier.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">y_exact</span><span class="o">.</span><span class="n">geometry</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Continuous1D(64,)
+</pre></div>
+</div>
+</div>
+</div>
+<p>This allows plotting in the correct geometry immediately after forward computation</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">y_exact</span><span class="o">.</span><span class="n">plot</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/ebfe785ecfd9f7b8b86acc442df2ec4d1f63e77cdbd6e388dea42d2d7cfe0490.png" src="../_images/ebfe785ecfd9f7b8b86acc442df2ec4d1f63e77cdbd6e388dea42d2d7cfe0490.png" />
+</div>
+</div>
+<p>It can be useful to change to domain or range geometries of a model, for example to work with different parametrizations or simply for visualization purposes.</p>
+<p>Here we change the range geometry of the model to <a class="reference external" href="https://cuqi-dtu.github.io/CUQIpy/api/_autosummary/cuqi.geometry/cuqi.geometry.Discrete.html">Discrete</a> and see this reflected in the plotting of the computed output:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">A</span><span class="o">.</span><span class="n">range_geometry</span> <span class="o">=</span> <span class="n">cuqi</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">Discrete</span><span class="p">(</span><span class="n">A</span><span class="o">.</span><span class="n">range_dim</span><span class="p">)</span>
+<span class="n">A</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">x_exact</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&lt;matplotlib.lines.Line2D at 0x7f1cc03b24a0&gt;]
+</pre></div>
+</div>
+<img alt="../_images/ad1fe6104137763c695760d5e086167af60c8a8b80575fcfd22557c8e0c7e160.png" src="../_images/ad1fe6104137763c695760d5e086167af60c8a8b80575fcfd22557c8e0c7e160.png" />
+</div>
+</div>
+<p>Note that since we are only interested in generating a plot here, we do not need to store a new variable for <code class="docutils literal notranslate"><span class="pre">y_exact</span></code>, but rather just immediately call the <code class="docutils literal notranslate"><span class="pre">plot</span></code> method in the same line.</p>
+<p>Here we also used <code class="docutils literal notranslate"><span class="pre">A.range_dim</span></code> to get not the range geometry but the dimension of it. Similarly, we can ask for the dimension of the domain geometry:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">A</span><span class="o">.</span><span class="n">domain_dim</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>64
+</pre></div>
+</div>
+</div>
+</div>
+<p>Some <code class="docutils literal notranslate"><span class="pre">LinearModel</span></code> objects simply contain a matrix representing the linear mapping; while others use a matrix-free approach. In both cases, one can extract the matrix of the linear model by (this will raise an error if the model is too large):</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">A</span><span class="o">.</span><span class="n">get_matrix</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;64x64 sparse matrix of type &#39;&lt;class &#39;numpy.float64&#39;&gt;&#39;
+	with 4096 stored elements in Compressed Sparse Column format&gt;
+</pre></div>
+</div>
+</div>
+</div>
+<p>Finally, models can also be applied to <a class="reference external" href="https://cuqi-dtu.github.io/CUQIpy/api/_autosummary/cuqi.samples/cuqi.samples.Samples.html#cuqi.samples.Samples">Samples objects</a>, for example to evaluate the forward on all samples. This can be used for forward UQ as shown in Section 5 of this notebook.</p>
+<p>Given a distribution and some samples generated from it:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="n">cuqi</span><span class="o">.</span><span class="n">distribution</span><span class="o">.</span><span class="n">Gaussian</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">A</span><span class="o">.</span><span class="n">domain_dim</span><span class="p">),</span> <span class="n">cov</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">xs</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">xs</span><span class="p">))</span>
+<span class="n">xs</span><span class="o">.</span><span class="n">shape</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;class &#39;cuqi.samples._samples.Samples&#39;&gt;
+</pre></div>
+</div>
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(64, 1000)
+</pre></div>
+</div>
+</div>
+</div>
+<p>i.e. 1000 samples each of size 64 matching the domain of <code class="docutils literal notranslate"><span class="pre">A</span></code>. We can apply <code class="docutils literal notranslate"><span class="pre">A</span></code> directly to the Samples object:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ys</span> <span class="o">=</span> <span class="n">A</span><span class="nd">@xs</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>We plot a couple of selected samples from x:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">xs</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="mi">100</span><span class="p">,</span><span class="mi">200</span><span class="p">,</span><span class="mi">300</span><span class="p">])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Samples from x&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/ad5cad78f88a76d74121fdfa7eb119df27ba6602cf42c192998df2f93389830b.png" src="../_images/ad5cad78f88a76d74121fdfa7eb119df27ba6602cf42c192998df2f93389830b.png" />
+</div>
+</div>
+<p>and plot the same samples from y:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ys</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="mi">100</span><span class="p">,</span><span class="mi">200</span><span class="p">,</span><span class="mi">300</span><span class="p">])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Samples from y&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/c26314ab26da89741e734256784986c71d1daacb2f902ae46dfc6f1e24f048cd.png" src="../_images/c26314ab26da89741e734256784986c71d1daacb2f902ae46dfc6f1e24f048cd.png" />
+</div>
+</div>
+<p>where we note the computed samples ys = A(xs) have the Discrete geometry as <code class="docutils literal notranslate"><span class="pre">A</span></code> is now equipped with.</p>
+<section id="try-yourself-optional">
+<h2>★ Try yourself (optional):<a class="headerlink" href="#try-yourself-optional" title="Link to this heading">#</a></h2>
+<p>Try modifying the range geometry of <code class="docutils literal notranslate"><span class="pre">A</span></code> to a <code class="docutils literal notranslate"><span class="pre">Continuous2D</span></code> and plotting the resulting samples <code class="docutils literal notranslate"><span class="pre">ys</span> <span class="pre">=</span> <span class="pre">A(xs)</span></code>.</p>
+<p><strong>Hint:</strong> Continuous2D can created with a tuple of integers defining the size of each dimension, e.g. to define a 8 by 8 geometry <code class="docutils literal notranslate"><span class="pre">cuqi.geometry.Continuous2D((8,8))</span></code></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># This is where you type the code:</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section class="tex2jax_ignore mathjax_ignore" id="generating-synthetic-data">
+<h1>3. Generating synthetic data <a class="anchor" id="data"></a><a class="headerlink" href="#generating-synthetic-data" title="Link to this heading">#</a></h1>
+<p>One of the main tasks when working on numerical experiments for inverse problems is to generate synthetic data (potentially many realizations) to test and validate against.</p>
+<p>In this section, we demonstrate one way this can be achieved by defining the <em>data distribution</em>.</p>
+<p>Let us return to the forward model from the deconvolution testproblem from earlier, and assume that the measurement data is affected by additive i.i.d. Gaussian noise with standard deviation <span class="math notranslate nohighlight">\(0.05\)</span>. This leads to the Bayesian model for the inverse problem</p>
+<div class="math notranslate nohighlight">
+\[\mathbf{y} = \mathbf{A}\mathbf{x}+\mathbf{e},\]</div>
+<p>where <span class="math notranslate nohighlight">\(\mathbf{y}\)</span>, <span class="math notranslate nohighlight">\(\mathbf{x}\)</span> and <span class="math notranslate nohighlight">\(\mathbf{e}\)</span> are random variables and where the goal now is to generate examples of observed data assuming <span class="math notranslate nohighlight">\(\mathbf{e}\sim \mathcal{N}(\mathbf{0},0.05^2\mathbf{I})\)</span> and given some exact solution vector <span class="math notranslate nohighlight">\(\mathbf{x}_\mathrm{exact}\)</span>.</p>
+<p><strong>Note</strong> <em>Generating noisy data in the above example with additive Gaussian noise is rather straightforward. However, the focus here is to provide a common framework for a much larger variety of models and noise types - exemplified by the Gaussian case.</em></p>
+<section id="data-distribution">
+<h2>3.1 Data distribution<a class="headerlink" href="#data-distribution" title="Link to this heading">#</a></h2>
+<p>First, note that since <span class="math notranslate nohighlight">\(\mathbf{e}\)</span> is the only random contribution to <span class="math notranslate nohighlight">\(\mathbf{y}\)</span> when <span class="math notranslate nohighlight">\(\mathbf{x}\)</span> is fixed we can directly see that</p>
+<div class="math notranslate nohighlight">
+\[\mathbf{y} \mid \mathbf{x} \sim \mathcal{N}(\mathbf{A}\mathbf{x}, 0.05^2 \mathbf{I}).\]</div>
+<p>We call the distribution <span class="math notranslate nohighlight">\(p(\mathbf{y} \mid \mathbf{x})\)</span> associated with <span class="math notranslate nohighlight">\(\mathbf{y} \mid \mathbf{x}\)</span> a <em>data distribution</em>.
+To generate synthetic data from <span class="math notranslate nohighlight">\(\mathbf{x}_\mathrm{exact}\)</span>, we are thus interested in sampling from
+<span class="math notranslate nohighlight">\(p(\mathbf{y} \mid \mathbf{x}=\mathbf{x}_\mathrm{exact})\)</span>.</p>
+<p>Let us use the phantom from probInfo and extract the model again from the testproblem (just in case some changes were made above)</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">n</span> <span class="o">=</span> <span class="mi">64</span>
+<span class="n">A</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">probInfo</span> <span class="o">=</span> <span class="n">cuqi</span><span class="o">.</span><span class="n">testproblem</span><span class="o">.</span><span class="n">Deconvolution1D</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="n">n</span><span class="p">,</span> <span class="n">phantom</span><span class="o">=</span><span class="s2">&quot;sinc&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">get_components</span><span class="p">()</span>
+<span class="n">x_exact</span> <span class="o">=</span> <span class="n">probInfo</span><span class="o">.</span><span class="n">exactSolution</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>The data distribution is conditioned on <span class="math notranslate nohighlight">\(\mathbf{x}\)</span> and so we need to represent a conditional distribution in CUQIpy.</p>
+<p>Luckily, when <span class="math notranslate nohighlight">\(\mathbf{A}\)</span> is represented by a CUQIpy model this is easy as we simply provide the model in place of <span class="math notranslate nohighlight">\(\mathbf{A}\mathbf{x}\)</span> as follows.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">y</span> <span class="o">=</span> <span class="n">cuqi</span><span class="o">.</span><span class="n">distribution</span><span class="o">.</span><span class="n">Gaussian</span><span class="p">(</span><span class="n">mean</span><span class="o">=</span><span class="n">A</span><span class="p">,</span> <span class="n">cov</span><span class="o">=</span><span class="mf">0.05</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Recall from earlier that the model <code class="docutils literal notranslate"><span class="pre">A</span></code> had its forward parameter given by ‘x’:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CUQI LinearModel: Continuous1D(64,) -&gt; Continuous1D(64,).
+    Forward parameters: [&#39;x&#39;].
+</pre></div>
+</div>
+</div>
+</div>
+<p>If we now inspect <code class="docutils literal notranslate"><span class="pre">y</span></code>, we see that it has become a conditional distribution, conditioned on that same ‘x’ parameter.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CUQI Gaussian. Conditioning variables [&#39;x&#39;].
+</pre></div>
+</div>
+</div>
+</div>
+<p>Note that the mean of the Gaussian is really <code class="docutils literal notranslate"><span class="pre">A*x</span></code>, but since <code class="docutils literal notranslate"><span class="pre">x</span></code> is the forward parameter of <code class="docutils literal notranslate"><span class="pre">A</span></code>, this is implied.</p>
+<p>When working multiple distributions, one can be more explicit about the parameter to the forward model by explicitly <code class="docutils literal notranslate"><span class="pre">evaluating</span></code> the forward model with the desired distribution as input. In this way the forward parameter can also be changed from e.g. the default <code class="docutils literal notranslate"><span class="pre">x</span></code> to <code class="docutils literal notranslate"><span class="pre">u</span></code>:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">u</span> <span class="o">=</span> <span class="n">cuqi</span><span class="o">.</span><span class="n">distribution</span><span class="o">.</span><span class="n">Gaussian</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="p">),</span> <span class="n">cov</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>and using <code class="docutils literal notranslate"><span class="pre">u</span></code> we can now specify the mean <code class="docutils literal notranslate"><span class="pre">Au</span></code>:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">yu</span> <span class="o">=</span> <span class="n">cuqi</span><span class="o">.</span><span class="n">distribution</span><span class="o">.</span><span class="n">Gaussian</span><span class="p">(</span><span class="n">mean</span><span class="o">=</span><span class="n">A</span><span class="nd">@u</span><span class="p">,</span> <span class="n">cov</span><span class="o">=</span><span class="mf">0.05</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">yu</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CUQI Gaussian. Conditioning variables [&#39;u&#39;].
+</pre></div>
+</div>
+</div>
+</div>
+<p>and we see that <code class="docutils literal notranslate"><span class="pre">u</span></code> is now the conditioning variable instead of <code class="docutils literal notranslate"><span class="pre">x</span></code>.</p>
+</section>
+<section id="sampling-a-data-distribtuion">
+<h2>3.2 Sampling a data distribtuion<a class="headerlink" href="#sampling-a-data-distribtuion" title="Link to this heading">#</a></h2>
+<p>Evaluating a conditional distribution in CUQIpy is done by use of the “call” method on Python. That is, for a data distribution we would write <code class="docutils literal notranslate"><span class="pre">y(x=x_exact)</span></code> or simply <code class="docutils literal notranslate"><span class="pre">y(x_exact)</span></code>.</p>
+<p>Evaluating the conditional distribution creates a new distribution, where the conditioning variable is fixed. That is, one can think of the expression <code class="docutils literal notranslate"><span class="pre">y(x=x_exact)</span></code> as defining <span class="math notranslate nohighlight">\(p(\mathbf{y} \mid \mathbf{x}=\mathbf{x}_\mathrm{exact})\)</span>.</p>
+<p>Hence to simulate some noisy data, we just provide the conditioning variable <code class="docutils literal notranslate"><span class="pre">x_exact</span></code> to the data distribution and then sample.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">y_obs</span> <span class="o">=</span> <span class="n">y</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x_exact</span><span class="p">)</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
+<span class="n">y_obs</span><span class="o">.</span><span class="n">plot</span><span class="p">();</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Generated synthetic data&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/b701a15c0c69dee3f23cf2b15400be65d9c3de1ffb79b84f8b4196d037e3a9fc.png" src="../_images/b701a15c0c69dee3f23cf2b15400be65d9c3de1ffb79b84f8b4196d037e3a9fc.png" />
+</div>
+</div>
+<section id="id1">
+<h3>Try yourself (optional):<a class="headerlink" href="#id1" title="Link to this heading">#</a></h3>
+<p>The above example may seem like a rather extensive way to generate noisy data when the noise is additive Gaussian (and it is for this simple case!).</p>
+<p>Using the CUQIpy framework, try simulating data from the case where the data distribution follows a <a class="reference external" href="https://cuqi-dtu.github.io/CUQIpy/api/_autosummary/cuqi.distribution/cuqi.distribution.Laplace.html#cuqi.distribution.Laplace">Laplace distribution</a> with location <span class="math notranslate nohighlight">\(\mathbf{A}\mathbf{x}\)</span> and scale <span class="math notranslate nohighlight">\(0.2\)</span>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># This is where you type the code:</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="creating-custom-forward-models">
+<h2>4. Creating custom forward models <a class="anchor" id="custom"></a><a class="headerlink" href="#creating-custom-forward-models" title="Link to this heading">#</a></h2>
+</section>
+<section id="defining-model-from-a-matrix">
+<h2>4.1 Defining model from a matrix<a class="headerlink" href="#defining-model-from-a-matrix" title="Link to this heading">#</a></h2>
+<p>Defining a CUQIpy model from a matrix is easy. Suppose we have the matrix representing the forward operator of the following simple linear inverse problem, which is akin to a sudoko puzzle representing simple Computed Tomography.</p>
+<p>Consider a 2x2 square with unknown pixel values, to be determined from the row and column sums:</p>
+<p><img alt="image.png" src="chapter01/attachment:73e14688-21d1-4885-955d-bcccd6263dd2.png" /></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#Create a numpy matrix to act like a forward model (this matrix can be replaced to represent other problems)</span>
+<span class="n">mat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+    <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span>
+    <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span>
+    <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span>
+    <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span>
+<span class="p">])</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>To create a CUQIpy model represented by this matrix, all we have to do is pass it to the <code class="docutils literal notranslate"><span class="pre">LinearModel</span></code> class from the <code class="docutils literal notranslate"><span class="pre">model</span></code> module in CUQIpy as follows.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">model_mat</span> <span class="o">=</span> <span class="n">cuqi</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">LinearModel</span><span class="p">(</span><span class="n">mat</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">model_mat</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CUQI LinearModel: _DefaultGeometry1D(4,) -&gt; _DefaultGeometry1D(4,).
+    Forward parameters: [&#39;x&#39;].
+</pre></div>
+</div>
+</div>
+</div>
+<p>Here the range and domain geometry is inferred from the matrix. If we want to, we can pass in more explicit information about the range and domain geometries. Here we choose to represent the domain geometry of the four pixel values as a <a class="reference external" href="https://cuqi-dtu.github.io/CUQIpy/api/_autosummary/cuqi.geometry/cuqi.geometry.Image2D.html">Image2D</a> geometry:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">geom1</span> <span class="o">=</span> <span class="n">cuqi</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">Image2D</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">),</span> <span class="n">order</span><span class="o">=</span><span class="s2">&quot;F&quot;</span><span class="p">,</span> <span class="n">visual_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">geom1</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Image2D(4,)
+</pre></div>
+</div>
+</div>
+</div>
+<p>To match the picture above, we select the column-major order by defining <code class="docutils literal notranslate"><span class="pre">order=&quot;F&quot;</span></code> (F comes from Fortran for historical reasons).</p>
+<p>By default <code class="docutils literal notranslate"><span class="pre">Image2D</span></code> converts the input to an image before being evaluated by the model. In our case the matrix expects a vector, so we do not want this default behavior and thus set <code class="docutils literal notranslate"><span class="pre">visual_only=True</span></code> to not convert the vector to an image before model evaluation.</p>
+<p>We can create an example 2x2 solution as a CUQIarray equipped with the geometry:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">im1</span> <span class="o">=</span> <span class="n">cuqi</span><span class="o">.</span><span class="n">array</span><span class="o">.</span><span class="n">CUQIarray</span><span class="p">([</span><span class="mi">7</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="n">geometry</span><span class="o">=</span><span class="n">geom1</span><span class="p">)</span>
+<span class="n">im1</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CUQIarray: NumPy array wrapped with geometry.
+---------------------------------------------
+
+Geometry:
+ Image2D(4,)
+
+Parameters:
+ True
+
+Array:
+CUQIarray([7, 5, 3, 1])
+</pre></div>
+</div>
+</div>
+</div>
+<p>which will allow us to display it nicely, even through it is a stored as a vector:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">im1</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.colorbar.Colorbar at 0x7f1cc0303df0&gt;
+</pre></div>
+</div>
+<img alt="../_images/ff57851586bb346fd4082717841f2c9d46236890ccd010047dcfd7ff33e5ef9d.png" src="../_images/ff57851586bb346fd4082717841f2c9d46236890ccd010047dcfd7ff33e5ef9d.png" />
+</div>
+</div>
+<p>The row and column sum data we can - for the purpose of the example - let be of the type Discrete (labelled) geometry:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">geom2</span> <span class="o">=</span> <span class="n">cuqi</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">Discrete</span><span class="p">([</span><span class="s1">&#39;row1&#39;</span><span class="p">,</span><span class="s1">&#39;row2&#39;</span><span class="p">,</span><span class="s1">&#39;col1&#39;</span><span class="p">,</span><span class="s1">&#39;col2&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>We set up and display the observed data from the figure above:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">data</span> <span class="o">=</span> <span class="n">cuqi</span><span class="o">.</span><span class="n">array</span><span class="o">.</span><span class="n">CUQIarray</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">6</span><span class="p">],</span> <span class="n">geometry</span><span class="o">=</span><span class="n">geom2</span><span class="p">)</span>
+<span class="n">data</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CUQIarray: NumPy array wrapped with geometry.
+---------------------------------------------
+
+Geometry:
+ Discrete(4,)
+
+Parameters:
+ True
+
+Array:
+CUQIarray([3, 7, 4, 6])
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">data</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&lt;matplotlib.lines.Line2D at 0x7f1cc0238a00&gt;]
+</pre></div>
+</div>
+<img alt="../_images/4b63df4187f0b5117aa2524b648bb7cffc59eb73529ddb3492ce597adcb22e7a.png" src="../_images/4b63df4187f0b5117aa2524b648bb7cffc59eb73529ddb3492ce597adcb22e7a.png" />
+</div>
+</div>
+<p>We can equip our model with the geometries for its domain and range</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">model_mat</span><span class="o">.</span><span class="n">domain_geometry</span> <span class="o">=</span> <span class="n">geom1</span>
+<span class="n">model_mat</span><span class="o">.</span><span class="n">range_geometry</span> <span class="o">=</span> <span class="n">geom2</span>
+<span class="n">model_mat</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CUQI LinearModel: Image2D(4,) -&gt; Discrete(4,).
+    Forward parameters: [&#39;x&#39;].
+</pre></div>
+</div>
+</div>
+</div>
+<p>which will allow to apply the forward to an image as if it were a matrix:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">data1</span> <span class="o">=</span> <span class="n">model_mat</span><span class="nd">@im1</span>
+<span class="n">data1</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CUQIarray: NumPy array wrapped with geometry.
+---------------------------------------------
+
+Geometry:
+ Discrete(4,)
+
+Parameters:
+ True
+
+Array:
+CUQIarray([10,  6, 12,  4])
+</pre></div>
+</div>
+</div>
+</div>
+<p>Note the resulting <code class="docutils literal notranslate"><span class="pre">data1</span></code> automatically has the desired geometry.</p>
+<p>We can compare the data computed from <code class="docutils literal notranslate"><span class="pre">im1</span></code> against the observed data:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">data1</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+<span class="n">data</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">marker</span><span class="o">=</span><span class="s2">&quot;v&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">([</span><span class="s2">&quot;Observed data&quot;</span><span class="p">,</span> <span class="s2">&quot;Data from im1&quot;</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x7f1cc03ff310&gt;
+</pre></div>
+</div>
+<img alt="../_images/5a9d88c317d40cbbed3d9ba4643b9d8d5ba8bb5171b9d7ad6bb97ad2db1f4cc7.png" src="../_images/5a9d88c317d40cbbed3d9ba4643b9d8d5ba8bb5171b9d7ad6bb97ad2db1f4cc7.png" />
+</div>
+</div>
+<p>We can also apply the adjoint using matrix transpose notation:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">adjoint_data</span> <span class="o">=</span> <span class="n">model_mat</span><span class="o">.</span><span class="n">T</span><span class="nd">@data1</span>
+<span class="n">adjoint_data</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CUQIarray: NumPy array wrapped with geometry.
+---------------------------------------------
+
+Geometry:
+ Image2D(4,)
+
+Parameters:
+ True
+
+Array:
+CUQIarray([22, 18, 14, 10])
+</pre></div>
+</div>
+</div>
+</div>
+<p>and we can visualize the adjoint data (which should be in the domain geometry of A)</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">adjoint_data</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&lt;matplotlib.image.AxesImage at 0x7f1cc033eb00&gt;]
+</pre></div>
+</div>
+<img alt="../_images/5f40170e2ff4f50def03f9c0deaf44c453195e5a817cca6a3248909b5633f449.png" src="../_images/5f40170e2ff4f50def03f9c0deaf44c453195e5a817cca6a3248909b5633f449.png" />
+</div>
+</div>
+<section id="optional-exercise">
+<h3>Optional exercise:<a class="headerlink" href="#optional-exercise" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>Try our different values for the four elements of <code class="docutils literal notranslate"><span class="pre">im1</span></code> to find a set that produces the observed data.</p></li>
+<li><p>Note there is more than one solution. Can you describe all the solutions?</p></li>
+</ul>
+</section>
+</section>
+<section id="defining-model-from-a-function">
+<h2>4.2 Defining model from a function<a class="headerlink" href="#defining-model-from-a-function" title="Link to this heading">#</a></h2>
+<p>We can also define CUQIpy models from functions. In this case, we must at the minimum provide the dimensions of the range and domain, for example</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#This can be any function representing the forward computation. Here just a random function with 3 inputs and 2 outputs</span>
+<span class="k">def</span> <span class="nf">my_func</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="o">+</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="n">x</span><span class="p">[</span><span class="mi">2</span><span class="p">]])</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>We could provide any geometry of size 2 for the range and size 3 for the domain - here we use the short-hand integer notation to specify uninformative default geometries that only represent the dimension:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">model_func</span> <span class="o">=</span> <span class="n">cuqi</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">Model</span><span class="p">(</span><span class="n">my_func</span><span class="p">,</span> <span class="n">range_geometry</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">domain_geometry</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">model_func</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CUQI Model: _DefaultGeometry1D(3,) -&gt; _DefaultGeometry1D(2,).
+    Forward parameters: [&#39;x&#39;].
+</pre></div>
+</div>
+</div>
+</div>
+<p>Models will work both on simple numpy arrays and CUQIarrays. Numpy arrays will produce numpy array out:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">in1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">3.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">])</span>
+<span class="n">out1</span> <span class="o">=</span> <span class="n">model_func</span><span class="p">(</span><span class="n">in1</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">out1</span><span class="p">)</span>
+<span class="nb">type</span><span class="p">(</span><span class="n">out1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[11.  3.]
+</pre></div>
+</div>
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>numpy.ndarray
+</pre></div>
+</div>
+</div>
+</div>
+<p>Passing a CUQIarray in produces a CUQIarray out:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">in2</span> <span class="o">=</span> <span class="n">cuqi</span><span class="o">.</span><span class="n">array</span><span class="o">.</span><span class="n">CUQIarray</span><span class="p">(</span><span class="n">in1</span><span class="p">)</span>
+<span class="n">in2</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CUQIarray: NumPy array wrapped with geometry.
+---------------------------------------------
+
+Geometry:
+ _DefaultGeometry1D(3,)
+
+Parameters:
+ True
+
+Array:
+CUQIarray([3., 2., 1.])
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">out2</span> <span class="o">=</span> <span class="n">model_func</span><span class="p">(</span><span class="n">in2</span><span class="p">)</span>
+<span class="n">out2</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CUQIarray: NumPy array wrapped with geometry.
+---------------------------------------------
+
+Geometry:
+ _DefaultGeometry1D(2,)
+
+Parameters:
+ True
+
+Array:
+CUQIarray([11.,  3.])
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="linear-model-from-functions">
+<h2>4.3 Linear model from functions<a class="headerlink" href="#linear-model-from-functions" title="Link to this heading">#</a></h2>
+<p>If we have function for both the forward and adjoint, we can also specify a LinearModel from these functions. Here we illustrate by creating a forward and adjoint function from the matrix given earlier</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">mat_forward</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">mat</span><span class="nd">@x</span>
+
+<span class="k">def</span> <span class="nf">mat_adjoint</span><span class="p">(</span><span class="n">y</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">mat</span><span class="o">.</span><span class="n">T</span><span class="nd">@y</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>In this case, the range and domain dimensions (or geometry) cannot be inferred, so they also need to be defined</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">model_linear_func</span> <span class="o">=</span> <span class="n">cuqi</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">LinearModel</span><span class="p">(</span><span class="n">forward</span><span class="o">=</span><span class="n">mat_forward</span><span class="p">,</span> <span class="n">adjoint</span><span class="o">=</span><span class="n">mat_adjoint</span><span class="p">,</span> <span class="n">range_geometry</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">domain_geometry</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">model_linear_func</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CUQI LinearModel: _DefaultGeometry1D(4,) -&gt; _DefaultGeometry1D(4,).
+    Forward parameters: [&#39;x&#39;].
+</pre></div>
+</div>
+</div>
+</div>
+<p>The new linear model can then be applied to numpy arrays (or CUQIarrays if including geometries):</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">z1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">,</span> <span class="mf">3.</span><span class="p">,</span> <span class="mf">4.</span><span class="p">])</span>
+<span class="n">z2</span> <span class="o">=</span> <span class="n">model_linear_func</span><span class="p">(</span><span class="n">z1</span><span class="p">)</span>
+<span class="n">z2</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([4., 6., 3., 7.])
+</pre></div>
+</div>
+</div>
+</div>
+<p>and the adjoint function is also available:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">model_linear_func</span><span class="o">.</span><span class="n">T</span><span class="p">(</span><span class="n">z2</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([ 7.,  9., 11., 13.])
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section class="tex2jax_ignore mathjax_ignore" id="forward-uq">
+<h1>5. ★ Forward UQ <a class="anchor" id="forwardUQ"></a><a class="headerlink" href="#forward-uq" title="Link to this heading">#</a></h1>
+<p>In some cases, it may be interesting to see the effect a chosen prior has on the data-side, a so-called forward UQ analysis. This can easily be achieved using CUQIpy models and distributions.</p>
+<p>For this case, let us assume we have the data created from <span class="math notranslate nohighlight">\(\mathbf{x}_\mathrm{exact}\)</span> earlier, and we want to see if the prior encapsulates the measured data if we push it through forward model (ignoring noise in this case).</p>
+<p>To do this, we first define our prior and generate some samples from it</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Number of samples (try changing this)</span>
+<span class="n">Ns</span> <span class="o">=</span> <span class="mi">200</span>
+
+<span class="c1"># Building blocks for defining Gaussian mean</span>
+<span class="n">z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">20</span><span class="p">);</span> <span class="n">o</span> <span class="o">=</span> <span class="mf">0.5</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">24</span><span class="p">)</span> 
+
+<span class="c1"># Prior distribution</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">cuqi</span><span class="o">.</span><span class="n">distribution</span><span class="o">.</span><span class="n">Gaussian</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">z</span><span class="p">,</span><span class="n">o</span><span class="p">,</span><span class="n">z</span><span class="p">)),</span><span class="mf">0.5</span><span class="p">)</span>
+
+<span class="c1"># Sample prior</span>
+<span class="n">xs</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">Ns</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>We then plot a credibility interval for the prior and compare with <span class="math notranslate nohighlight">\(\mathbf{x}_\mathrm{exact}\)</span>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">xs</span><span class="o">.</span><span class="n">plot_ci</span><span class="p">(</span><span class="mi">95</span><span class="p">,</span> <span class="n">exact</span><span class="o">=</span><span class="n">x_exact</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&lt;matplotlib.lines.Line2D at 0x7f1cc366be80&gt;,
+ &lt;matplotlib.lines.Line2D at 0x7f1cc366a650&gt;,
+ &lt;matplotlib.collections.PolyCollection at 0x7f1cc3669d20&gt;]
+</pre></div>
+</div>
+<img alt="../_images/a7badcf5318360e60cd10c55b1040b56eb8f0d057173a6233fb86fffd1fc5972.png" src="../_images/a7badcf5318360e60cd10c55b1040b56eb8f0d057173a6233fb86fffd1fc5972.png" />
+</div>
+</div>
+<p>To perform the forward UQ analysis and compare on the data-side, we essentially have to compute the forward for each sample.</p>
+<p>This would normally be done with for loop. However, because <code class="docutils literal notranslate"><span class="pre">xs</span></code> is a CUQIpy samples object and <code class="docutils literal notranslate"><span class="pre">A</span></code> is CUQIpy model, we can simply call the forward on the entire samples object (where once again the range geometry is passed from the model to the Samples on the data side).</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ys</span> <span class="o">=</span> <span class="n">A</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">xs</span><span class="p">)</span> <span class="c1">#Notation A@xs or even A(xs) would also have worked</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>We then compare the <em>push-forward</em> samples with the data generated earlier</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ys</span><span class="o">.</span><span class="n">plot_ci</span><span class="p">(</span><span class="mi">95</span><span class="p">,</span> <span class="n">exact</span><span class="o">=</span><span class="n">y_obs</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">([</span><span class="s1">&#39;Mean of push-forward prior&#39;</span><span class="p">,</span> <span class="s1">&#39;Actual data&#39;</span><span class="p">,</span> <span class="s1">&#39;95% Credibility interval&#39;</span><span class="p">,</span> <span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x7f1cc34328f0&gt;
+</pre></div>
+</div>
+<img alt="../_images/c15342e081fe390b49cffaffcf5a93fc197d6011cec5d5fcdf4ad1bb03cc7972.png" src="../_images/c15342e081fe390b49cffaffcf5a93fc197d6011cec5d5fcdf4ad1bb03cc7972.png" />
+</div>
+</div>
+<p>In this case the actual data is within the credibility interval of the push-forward prior, which is a good sign that the prior is a good representation of
+the exact solution.</p>
+<p>This kind of forward UQ analysis is the stepping stone to the more general prior-predictive analysis, which we leave for future tutorials.</p>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "CUQI-DTU/CUQI-Book",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./chapter01"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="two_forward_problems_new.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Two forward models</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../chapter02/chapter02.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Chapter 2: Prior and Hierarchical Bayesian Models</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Extra material: Forward models, data generation and forward UQ</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#learning-objectives">Learning objectives</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#table-of-contents">Table of contents</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references">References</a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#access-forward-models-from-test-problems">1. Access forward models from test problems<a class="anchor" id="testproblems"></a></a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#deconvolution-in-1d">1.1 Deconvolution in 1D</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#deconvolution2d-inverse-problem-of-two-dimensional-image-deblurring">1.2 Deconvolution2D: Inverse problem of two-dimensional image deblurring</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#heat1d-a-model-for-a-pde-based-inverse-problem">1.3 Heat1D: A model for a PDE-based inverse problem</a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#basic-usage-of-models">2 Basic usage of models <a class="anchor" id="models"></a></a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#try-yourself-optional">★ Try yourself (optional):</a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#generating-synthetic-data">3. Generating synthetic data <a class="anchor" id="data"></a></a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data-distribution">3.1 Data distribution</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#sampling-a-data-distribtuion">3.2 Sampling a data distribtuion</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">Try yourself (optional):</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#creating-custom-forward-models">4. Creating custom forward models <a class="anchor" id="custom"></a></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#defining-model-from-a-matrix">4.1 Defining model from a matrix</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#optional-exercise">Optional exercise:</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#defining-model-from-a-function">4.2 Defining model from a function</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#linear-model-from-functions">4.3 Linear model from functions</a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#forward-uq">5. ★ Forward UQ <a class="anchor" id="forwardUQ"></a></a></li>
+</ul>
+
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By CUQIpy developer team
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=3ee479438cf8b5e0d341"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=3ee479438cf8b5e0d341"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

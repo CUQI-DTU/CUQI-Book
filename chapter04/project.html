@@ -1,0 +1,962 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>CUQIpy component final project &#8212; Uncertainty Quantification in Inverse Problems with CUQIpy</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=3ee479438cf8b5e0d341" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=3ee479438cf8b5e0d341" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=3ee479438cf8b5e0d341" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=3ee479438cf8b5e0d341" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=a3416100" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=87e54e7c" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=3ee479438cf8b5e0d341" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=3ee479438cf8b5e0d341" />
+  <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=3ee479438cf8b5e0d341"></script>
+
+    <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js?v=4a39c7ea"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'chapter04/project';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="Chapter 4: Advanced Bayesian Inference in CUQIpy" href="chapter04.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+
+<a class="navbar-brand logo" href="../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/logo.png" class="logo__image only-light" alt="Uncertainty Quantification in Inverse Problems with CUQIpy - Home"/>
+    <script>document.write(`<img src="../_static/logo.png" class="logo__image only-dark" alt="Uncertainty Quantification in Inverse Problems with CUQIpy - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../intro.html">
+                    Welcome to the “Uncertainty Quantification in Inverse Problems with CUQIpy” mini-book!
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../chapter01/chapter01.html">Chapter 1: Introduction to Bayesian Inverse Problems (BIP) in CUQIpy</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../chapter01/introduction_overview_of_cuqipy.html">Overview of CUQIpy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter01/Intro_example.html">Probably the simplest BIP in the world</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter01/two_forward_problems_new.html">Two forward models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter01/extra_forward_models.html">Extra material: Forward models, data generation and forward UQ</a></li>
+
+
+
+
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../chapter02/chapter02.html">Chapter 2: Prior and Hierarchical Bayesian Models</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../chapter02/prior.html">Distributions, priors, and basic sampling in CUQIpy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter02/gibbs.html">Gibbs sampling</a></li>
+
+
+
+
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../chapter03/chapter03.html">Chapter 3: Sampling with CUQIpy</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../chapter03/sampling_with_cuqipy_two_target.html">Sampling with CUQIpy: Two target distributions and exploring the posterior using the BayesianProblem class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter03/gradient_based_sampling_with_cuqipy.html">Sampling with CUQIpy: five little stories</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="chapter04.html">Chapter 4: Advanced Bayesian Inference in CUQIpy</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">CUQIpy component final project</a></li>
+
+
+
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-launch-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Launch interactive content">
+    <i class="fas fa-rocket"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://colab.research.google.com/github/CUQI-DTU/CUQI-Book/blob/master/chapter04/project.ipynb" target="_blank"
+   class="btn btn-sm dropdown-item"
+   title="Launch on Colab"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  
+    <img alt="Colab logo" src="../_static/images/logo_colab.png">
+  </span>
+<span class="btn__text-container">Colab</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="initThebeSBT()"
+  class="btn btn-sm btn-launch-thebe dropdown-item"
+  title="Launch Thebe"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-play"></i>
+  </span>
+<span class="btn__text-container">Live Code</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/CUQI-DTU/CUQI-Book" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/CUQI-DTU/CUQI-Book/issues/new?title=Issue%20on%20page%20%2Fchapter04/project.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/chapter04/project.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>CUQIpy component final project</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">CUQIpy component final project</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#create-a-cuqipy-forward-model-for-the-hydraulic-model">Create a CUQIpy forward model for the hydraulic model</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exercise-1-create-the-domain-geometry">Exercise 1. Create the domain geometry</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exercise-2-create-the-range-geometry">Exercise 2. Create the range geometry</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exercise-3-creating-the-forward-model">Exercise 3. Creating the forward model</a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#create-the-bayesian-inverse-problem">Create the Bayesian inverse problem</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exercise-4-create-the-prior">Exercise 4. Create the prior</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exercise-5-create-the-data-distribution">Exercise 5. Create the data distribution</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exercise-6-create-a-cuqipy-array-x-true-as-follows">Exercise 6. Create a CUQIpy array <code class="docutils literal notranslate"><span class="pre">x_true</span></code> as follows:</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exercise-7-use-the-data-distribution-to-generate-a-synthetic-data-set-y-obs-by-sampling-from-the-data-distribution">Exercise 7. Use the data distribution to generate a synthetic data set <code class="docutils literal notranslate"><span class="pre">y_obs</span></code> by sampling from the data distribution.</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exercise-8-visualize-the-true-porosity-field-x-true-the-data-y-obs-and-the-exact-data-a-x-true-in-the-same-plot">Exercise 8. Visualize the true porosity field <code class="docutils literal notranslate"><span class="pre">x_true</span></code>, the data <code class="docutils literal notranslate"><span class="pre">y_obs</span></code> and the exact data <code class="docutils literal notranslate"><span class="pre">A(x_true)</span></code> in the same plot.</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exercise-9-create-the-joint-distribution-and-the-posterior-distribution">Exercise 9. Create the joint distribution and the posterior distribution</a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#solve-the-bayesian-inverse-problem">Solve the Bayesian inverse problem</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exercise-10-sample-from-the-posterior-distribution-using-the-metropolis-hastings-sampler">Exercise 10. Sample from the posterior distribution using the Metropolis-Hastings sampler</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exercise-11-visualize-the-samples">Exercise 11. Visualize the samples</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exercise-12-sample-from-the-posterior-distribution-using-the-nuts-sampler">Exercise 12. Sample from the posterior distribution using the NUTS sampler.</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exercise-13-visualize-the-samples">Exercise 13. Visualize the samples</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exercise-14-compare-the-execution-time-and-the-effective-sample-size-ess-of-the-two-samplers">Exercise 14. Compare the execution time and the effective sample size (ess) of the two samplers</a></li>
+</ul>
+</li>
+</ul>
+
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="cuqipy-component-final-project">
+<h1>CUQIpy component final project<a class="headerlink" href="#cuqipy-component-final-project" title="Link to this heading">#</a></h1>
+<p>Solve the exercises in the following notebook:</p>
+<p>import required libraries</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">cuqi</span>
+<span class="kn">from</span> <span class="nn">scipy.linalg</span> <span class="kn">import</span> <span class="n">lu_factor</span><span class="p">,</span> <span class="n">lu_solve</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>This hydraulic_class is the same one that was provided with the final project. Two changes are made here:</p>
+<ul class="simple">
+<li><p>The class solve the forward problem for only one well injection pattern instead of 5. You specify which well by changing source_index which takes values from 0 to 4. 0 means injection in the first well, 1 the second and so on.</p></li>
+<li><p>The magnitude of the injection source term is changed here (multiplied by 10)</p></li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">hydraulic_class</span><span class="p">():</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">L</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">source_idx</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">L</span> <span class="o">=</span> <span class="n">L</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">N</span> <span class="o">=</span> <span class="n">N</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">L</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">L</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">N</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">source_idx</span> <span class="o">=</span> <span class="n">source_idx</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">):</span>
+        <span class="n">diag1</span> <span class="o">=</span> <span class="o">-</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">+</span> <span class="n">a</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">diag1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">diag1</span><span class="p">,[</span><span class="o">-</span><span class="n">a</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]])</span>
+        <span class="n">diag2</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+
+        <span class="n">Dxx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">diag1</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">diag2</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">diag2</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">Dxx</span> <span class="o">/=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dx</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">dx</span>
+
+        <span class="n">lu</span><span class="p">,</span> <span class="n">piv</span> <span class="o">=</span> <span class="n">lu_factor</span><span class="p">(</span><span class="n">Dxx</span><span class="p">)</span>
+
+        <span class="n">sol</span> <span class="o">=</span> <span class="n">lu_solve</span><span class="p">((</span><span class="n">lu</span><span class="p">,</span> <span class="n">piv</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">b_terms</span><span class="p">)</span> 
+
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">sol</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">source</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_source</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">std</span><span class="o">=</span><span class="mf">0.02</span><span class="p">):</span>
+        <span class="n">dist</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">L</span><span class="o">/</span><span class="p">(</span><span class="n">n_source</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">source_coords</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span> <span class="n">dist</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">L</span><span class="o">-</span><span class="n">dist</span><span class="p">,</span> <span class="n">n_source</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">b_terms</span> <span class="o">=</span>  <span class="mi">10</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span> <span class="o">-</span><span class="mf">0.5</span><span class="o">*</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">-</span> <span class="n">source_coords</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">source_idx</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="n">std</span><span class="o">/</span><span class="n">std</span> <span class="p">)</span><span class="o">/</span><span class="n">std</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Here we specify the number of nodes N, the prior standard deviation and the likelihood standard deviation.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">N</span> <span class="o">=</span> <span class="mi">128</span>
+<span class="n">sigma_prior</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="n">sigma_noise</span> <span class="o">=</span> <span class="mf">0.01</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>We create a list of <code class="docutils literal notranslate"><span class="pre">hydraulic_class</span></code> objects, each one corresponding to injection in a different well.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">list_of_hydraulic_models</span> <span class="o">=</span> <span class="p">[</span><span class="n">hydraulic_class</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">source_idx</span><span class="o">=</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">)]</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>We create a variable named <code class="docutils literal notranslate"><span class="pre">grid</span></code> in which we store the grid from one of the <code class="docutils literal notranslate"><span class="pre">hydraulic_class</span></code> objects.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">grid</span> <span class="o">=</span> <span class="n">list_of_hydraulic_models</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">x</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="create-a-cuqipy-forward-model-for-the-hydraulic-model">
+<h1>Create a CUQIpy forward model for the hydraulic model<a class="headerlink" href="#create-a-cuqipy-forward-model-for-the-hydraulic-model" title="Link to this heading">#</a></h1>
+<p>Now we want to create a CUQIpy forward model for the hydraulic model. We will create the domain geometry, the range geometry, and the model.</p>
+<section id="exercise-1-create-the-domain-geometry">
+<h2>Exercise 1. Create the domain geometry<a class="headerlink" href="#exercise-1-create-the-domain-geometry" title="Link to this heading">#</a></h2>
+<p>The unknown we infer in this Bayesian inverse problem are KL coefficients which are used to build the porosity field.
+First create a <code class="docutils literal notranslate"><span class="pre">cuqi.geometry.KLExpansion</span></code> object with the following parameters:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">grid</span></code> is the <code class="docutils literal notranslate"><span class="pre">grid</span></code> we defined above</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">num_modes</span></code> is equal to 10</p></li>
+</ul>
+<p>Then create the domain geometry <code class="docutils literal notranslate"><span class="pre">domain_geometry</span></code> as a <code class="docutils literal notranslate"><span class="pre">cuqi.geometry.MappedGeometry</span></code> object with the following parameters:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">geometry</span></code> is the KL expansion object you created</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">map</span></code> to be  <code class="docutils literal notranslate"><span class="pre">lambda</span> <span class="pre">x:</span> <span class="pre">np.exp(x)</span></code> which is the exponential map used to map the KL field to what is used in the hydraulic model as the porosity field.</p></li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># your code here</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="exercise-2-create-the-range-geometry">
+<h2>Exercise 2. Create the range geometry<a class="headerlink" href="#exercise-2-create-the-range-geometry" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>Create the model range geometry <code class="docutils literal notranslate"><span class="pre">range_geometry</span></code> as a <code class="docutils literal notranslate"><span class="pre">cuqi.geometry.Continuous1D</span></code> object with the following parameters:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">grid</span></code> is the <code class="docutils literal notranslate"><span class="pre">grid</span></code> we defined above</p></li>
+</ul>
+</li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># your code here</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="exercise-3-creating-the-forward-model">
+<h2>Exercise 3. Creating the forward model<a class="headerlink" href="#exercise-3-creating-the-forward-model" title="Link to this heading">#</a></h2>
+<p>After you have defined the range and domain geometries, use this exact code to create a list of <code class="docutils literal notranslate"><span class="pre">CUQIpy</span></code> forward models, each corresponding to the hydraulic model we created above.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">list_of_hydraulic_cuqi_models</span> <span class="o">=</span> <span class="p">[</span><span class="n">cuqi</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">Model</span><span class="p">(</span><span class="n">forward</span><span class="o">=</span><span class="n">problem</span><span class="o">.</span><span class="n">forward</span><span class="p">,</span> <span class="n">domain_geometry</span><span class="o">=</span><span class="n">domain_geometry</span><span class="p">,</span> <span class="n">range_geometry</span><span class="o">=</span><span class="n">range_geometry</span><span class="p">)</span> <span class="k">for</span> <span class="n">problem</span> <span class="ow">in</span> <span class="n">list_of_hydraulic_models</span><span class="p">]</span>
+</pre></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># your code here</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>We will only focus on the first hydraulic model. Let us name it <code class="docutils literal notranslate"><span class="pre">A</span></code> (use this code to create it: <code class="docutils literal notranslate"><span class="pre">A</span> <span class="pre">=</span> <span class="pre">list_of_hydraulic_cuqi_models[0]</span></code>).</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># your code here</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="create-the-bayesian-inverse-problem">
+<h1>Create the Bayesian inverse problem<a class="headerlink" href="#create-the-bayesian-inverse-problem" title="Link to this heading">#</a></h1>
+<section id="exercise-4-create-the-prior">
+<h2>Exercise 4. Create the prior<a class="headerlink" href="#exercise-4-create-the-prior" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>create a prior named <code class="docutils literal notranslate"><span class="pre">x</span></code> as a <code class="docutils literal notranslate"><span class="pre">cuqi.distribution.Gaussian</span></code> object with the following parameters:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">mean</span></code> is zero</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cov</span></code> is <code class="docutils literal notranslate"><span class="pre">sigma_prior**2</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">geometry</span></code> is the domain geometry <code class="docutils literal notranslate"><span class="pre">domain_geometry</span></code></p></li>
+</ul>
+</li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># your code here</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="exercise-5-create-the-data-distribution">
+<h2>Exercise 5. Create the data distribution<a class="headerlink" href="#exercise-5-create-the-data-distribution" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>create a data distribution named <code class="docutils literal notranslate"><span class="pre">y</span></code> as a <code class="docutils literal notranslate"><span class="pre">cuqi.distribution.Gaussian</span></code> object with the following parameters:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">mean</span></code> is <code class="docutils literal notranslate"><span class="pre">A(x)</span></code>, the forward model applied to the prior</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cov</span></code> is <code class="docutils literal notranslate"><span class="pre">sigma_noise**2</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">geometry</span></code> is the range geometry <code class="docutils literal notranslate"><span class="pre">range_geometry</span></code></p></li>
+</ul>
+</li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># your code here</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Assume the true KL coefficients that gave rise to the data is the following:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>  <span class="mf">4.72985831</span><span class="p">,</span>  <span class="o">-</span><span class="mf">6.81425879</span><span class="p">,</span>   <span class="mf">2.42439497</span><span class="p">,</span> <span class="o">-</span><span class="mf">17.00735634</span><span class="p">,</span>
+             <span class="mf">7.53142834</span><span class="p">,</span> <span class="o">-</span><span class="mf">15.3472134</span> <span class="p">,</span>   <span class="mf">0.05127078</span><span class="p">,</span>  <span class="o">-</span><span class="mf">1.2022767</span> <span class="p">,</span>
+            <span class="o">-</span><span class="mf">8.06981879</span><span class="p">,</span>  <span class="mf">28.71819395</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>We create a CUQIpy array <code class="docutils literal notranslate"><span class="pre">x_true</span></code> with these values</p>
+</section>
+<section id="exercise-6-create-a-cuqipy-array-x-true-as-follows">
+<h2>Exercise 6. Create a CUQIpy array <code class="docutils literal notranslate"><span class="pre">x_true</span></code> as follows:<a class="headerlink" href="#exercise-6-create-a-cuqipy-array-x-true-as-follows" title="Link to this heading">#</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">x_true</span> <span class="o">=</span> <span class="n">cuqi</span><span class="o">.</span><span class="n">array</span><span class="o">.</span><span class="n">CUQIarray</span><span class="p">(</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>  <span class="mf">4.72985831</span><span class="p">,</span>  <span class="o">-</span><span class="mf">6.81425879</span><span class="p">,</span>   <span class="mf">2.42439497</span><span class="p">,</span> <span class="o">-</span><span class="mf">17.00735634</span><span class="p">,</span>
+             <span class="mf">7.53142834</span><span class="p">,</span> <span class="o">-</span><span class="mf">15.3472134</span> <span class="p">,</span>   <span class="mf">0.05127078</span><span class="p">,</span>  <span class="o">-</span><span class="mf">1.2022767</span> <span class="p">,</span>
+             <span class="o">-</span><span class="mf">8.06981879</span><span class="p">,</span>  <span class="mf">28.71819395</span><span class="p">]),</span>
+    <span class="n">geometry</span><span class="o">=</span><span class="n">domain_geometry</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># your code here</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>And it can be plotted using <code class="docutils literal notranslate"><span class="pre">x_true.plot()</span></code>:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Uncomment the following lines to plot the true solution</span>
+<span class="c1">#x_true.plot()</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="exercise-7-use-the-data-distribution-to-generate-a-synthetic-data-set-y-obs-by-sampling-from-the-data-distribution">
+<h2>Exercise 7. Use the data distribution to generate a synthetic data set <code class="docutils literal notranslate"><span class="pre">y_obs</span></code> by sampling from the data distribution.<a class="headerlink" href="#exercise-7-use-the-data-distribution-to-generate-a-synthetic-data-set-y-obs-by-sampling-from-the-data-distribution" title="Link to this heading">#</a></h2>
+<p>You can use the following code. Note that the keyword argument <code class="docutils literal notranslate"><span class="pre">x</span></code> is the name of the prior distribution.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="c1"># Fix the seed for reproducibility</span>
+<span class="n">y_obs</span> <span class="o">=</span> <span class="n">y</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x_true</span><span class="p">)</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># your code here</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="exercise-8-visualize-the-true-porosity-field-x-true-the-data-y-obs-and-the-exact-data-a-x-true-in-the-same-plot">
+<h2>Exercise 8. Visualize the true porosity field <code class="docutils literal notranslate"><span class="pre">x_true</span></code>, the data <code class="docutils literal notranslate"><span class="pre">y_obs</span></code> and the exact data <code class="docutils literal notranslate"><span class="pre">A(x_true)</span></code> in the same plot.<a class="headerlink" href="#exercise-8-visualize-the-true-porosity-field-x-true-the-data-y-obs-and-the-exact-data-a-x-true-in-the-same-plot" title="Link to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># your code here</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="exercise-9-create-the-joint-distribution-and-the-posterior-distribution">
+<h2>Exercise 9. Create the joint distribution and the posterior distribution<a class="headerlink" href="#exercise-9-create-the-joint-distribution-and-the-posterior-distribution" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>Use the cuqipy <code class="docutils literal notranslate"><span class="pre">cuqi.distribution.JointDistribution</span></code> to create a joint distribution of <code class="docutils literal notranslate"><span class="pre">x</span></code> and <code class="docutils literal notranslate"><span class="pre">y</span></code> you created, named <code class="docutils literal notranslate"><span class="pre">joint</span></code>.</p></li>
+<li><p>Create the posterior distribution, named <code class="docutils literal notranslate"><span class="pre">posterior</span></code>, by conditioning the joint distribution on the data <code class="docutils literal notranslate"><span class="pre">y_obs</span></code>, i.e. <code class="docutils literal notranslate"><span class="pre">joint(y=y_obs)</span></code>.</p></li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># your code here</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="solve-the-bayesian-inverse-problem">
+<h1>Solve the Bayesian inverse problem<a class="headerlink" href="#solve-the-bayesian-inverse-problem" title="Link to this heading">#</a></h1>
+<section id="exercise-10-sample-from-the-posterior-distribution-using-the-metropolis-hastings-sampler">
+<h2>Exercise 10. Sample from the posterior distribution using the Metropolis-Hastings sampler<a class="headerlink" href="#exercise-10-sample-from-the-posterior-distribution-using-the-metropolis-hastings-sampler" title="Link to this heading">#</a></h2>
+<p>Complete the two incomplete lines in the following code to sample from the posterior distribution using MH sampler. Use the given Ns and Nb as the number of samples and the number of burn-in samples, respectively.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">Ns</span> <span class="o">=</span> <span class="mi">20000</span> <span class="c1"># number of samples</span>
+<span class="n">Nb</span> <span class="o">=</span> <span class="mi">5000</span> <span class="c1"># number of burn-in samples</span>
+
+<span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="c1"># fix the seed for reproducibility</span>
+<span class="n">MH_sampler</span> <span class="o">=</span> <span class="c1"># your code here to create a MH sampler</span>
+<span class="n">MH_samples</span> <span class="o">=</span> <span class="c1"># your code here to run the sampler (use sample_adapt method of the sampler)</span>
+</pre></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># your code here</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="exercise-11-visualize-the-samples">
+<h2>Exercise 11. Visualize the samples<a class="headerlink" href="#exercise-11-visualize-the-samples" title="Link to this heading">#</a></h2>
+<p>Plot the credibility interval using the <code class="docutils literal notranslate"><span class="pre">Samples</span></code> object method <code class="docutils literal notranslate"><span class="pre">plot_ci</span></code>. Pass the exact data <code class="docutils literal notranslate"><span class="pre">exact=x_true</span></code> to the method. Also, use the <code class="docutils literal notranslate"><span class="pre">Samples</span></code> object method <code class="docutils literal notranslate"><span class="pre">plot_trace</span></code> to visualize the sampler chains. And lastly, use the <code class="docutils literal notranslate"><span class="pre">Samples</span></code> object method <code class="docutils literal notranslate"><span class="pre">plot_pair</span></code> to visualize the pairwise distribution of the samples of some of the KL coefficients. How does the result look? Do you think the sampler has converged?</p>
+<p>Note: when plotting the credibility interval, convert the samples to function values first by using the <code class="docutils literal notranslate"><span class="pre">Samples</span></code> class property <code class="docutils literal notranslate"><span class="pre">funvals</span></code> then plot the credibility interval of the function values.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># your code here</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="exercise-12-sample-from-the-posterior-distribution-using-the-nuts-sampler">
+<h2>Exercise 12. Sample from the posterior distribution using the NUTS sampler.<a class="headerlink" href="#exercise-12-sample-from-the-posterior-distribution-using-the-nuts-sampler" title="Link to this heading">#</a></h2>
+<p>Use the following template to sample from the posterior distribution using the NUTS sampler. Use the given <code class="docutils literal notranslate"><span class="pre">Ns</span></code> as the number of samples.</p>
+<p><strong>Note (you may consider this):</strong> The NUTS sampler might take ~20 min to run. It is a good idea to test your code with a smaller number of samples first (e.g. <code class="docutils literal notranslate"><span class="pre">Ns=10</span></code>). Also you can save the samples (with the complete run <code class="docutils literal notranslate"><span class="pre">Ns=100</span></code>) in a file (e.g. save the numpy array <code class="docutils literal notranslate"><span class="pre">NUTS_samples.samples</span></code>) so you don’t have to run the sampler again. To load the samples, you can load the numpy array you stored (named for example <code class="docutils literal notranslate"><span class="pre">loaded_numpy_samples</span></code>) and pass it to the <code class="docutils literal notranslate"><span class="pre">Samples</span></code> object initializer as follows: <code class="docutils literal notranslate"><span class="pre">loaded_NUTS_samples=cuqi.samples.Samples(loaded_numpy_samples,</span> <span class="pre">geometry</span> <span class="pre">=</span> <span class="pre">domain_geometry)</span></code>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">Ns</span> <span class="o">=</span> <span class="mi">100</span> <span class="c1"># number of samples</span>
+<span class="n">Nb</span> <span class="o">=</span> <span class="mi">10</span> <span class="c1"># number of burn-in samples</span>
+<span class="n">posterior</span><span class="o">.</span><span class="n">enable_FD</span><span class="p">()</span> <span class="c1"># Note that the NUTS sampler requires the gradient of the </span>
+                      <span class="c1"># log posterior. This line enables the finite difference differentiation</span>
+<span class="n">NUTS_sampler</span> <span class="o">=</span> <span class="c1"># Create a NUTS sampler object, set `max_depth` (of the tree) to 10, and set `adapt_step_size` to False</span>
+<span class="n">NUTS_samples</span> <span class="o">=</span> <span class="c1"># Sample from the NUTS sampler</span>
+</pre></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># your code here</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="exercise-13-visualize-the-samples">
+<h2>Exercise 13. Visualize the samples<a class="headerlink" href="#exercise-13-visualize-the-samples" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>Similar to the MH sampler case, plot the credibility interval and generate the trace plot and the pair plot for the NUTS samples. How does the result compare to the MH sampler?</p></li>
+<li><p>Also plot the number of tree nodes visited at each iteration of the NUTS sampler which is stored in the <code class="docutils literal notranslate"><span class="pre">num_tree_node_list</span></code> property of the <code class="docutils literal notranslate"><span class="pre">NUTS_sampler</span></code>. Explain generally how does the tree size and the finite difference approximation of the gradient relate to the computational cost of the NUTS sampler?</p></li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># your code here</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="exercise-14-compare-the-execution-time-and-the-effective-sample-size-ess-of-the-two-samplers">
+<h2>Exercise 14. Compare the execution time and the effective sample size (ess) of the two samplers<a class="headerlink" href="#exercise-14-compare-the-execution-time-and-the-effective-sample-size-ess-of-the-two-samplers" title="Link to this heading">#</a></h2>
+<p>Use the <code class="docutils literal notranslate"><span class="pre">Samples</span></code> object method <code class="docutils literal notranslate"><span class="pre">compute_ess</span></code> to calculate the effective sample size of the two samplers. Also, look at the run time (appears at the bottom left of the code cell after running the cell) of the two samplers and compare them. Comment on the results.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># your code here</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "CUQI-DTU/CUQI-Book",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./chapter04"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="chapter04.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Chapter 4: Advanced Bayesian Inference in CUQIpy</p>
+      </div>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">CUQIpy component final project</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#create-a-cuqipy-forward-model-for-the-hydraulic-model">Create a CUQIpy forward model for the hydraulic model</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exercise-1-create-the-domain-geometry">Exercise 1. Create the domain geometry</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exercise-2-create-the-range-geometry">Exercise 2. Create the range geometry</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exercise-3-creating-the-forward-model">Exercise 3. Creating the forward model</a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#create-the-bayesian-inverse-problem">Create the Bayesian inverse problem</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exercise-4-create-the-prior">Exercise 4. Create the prior</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exercise-5-create-the-data-distribution">Exercise 5. Create the data distribution</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exercise-6-create-a-cuqipy-array-x-true-as-follows">Exercise 6. Create a CUQIpy array <code class="docutils literal notranslate"><span class="pre">x_true</span></code> as follows:</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exercise-7-use-the-data-distribution-to-generate-a-synthetic-data-set-y-obs-by-sampling-from-the-data-distribution">Exercise 7. Use the data distribution to generate a synthetic data set <code class="docutils literal notranslate"><span class="pre">y_obs</span></code> by sampling from the data distribution.</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exercise-8-visualize-the-true-porosity-field-x-true-the-data-y-obs-and-the-exact-data-a-x-true-in-the-same-plot">Exercise 8. Visualize the true porosity field <code class="docutils literal notranslate"><span class="pre">x_true</span></code>, the data <code class="docutils literal notranslate"><span class="pre">y_obs</span></code> and the exact data <code class="docutils literal notranslate"><span class="pre">A(x_true)</span></code> in the same plot.</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exercise-9-create-the-joint-distribution-and-the-posterior-distribution">Exercise 9. Create the joint distribution and the posterior distribution</a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#solve-the-bayesian-inverse-problem">Solve the Bayesian inverse problem</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exercise-10-sample-from-the-posterior-distribution-using-the-metropolis-hastings-sampler">Exercise 10. Sample from the posterior distribution using the Metropolis-Hastings sampler</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exercise-11-visualize-the-samples">Exercise 11. Visualize the samples</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exercise-12-sample-from-the-posterior-distribution-using-the-nuts-sampler">Exercise 12. Sample from the posterior distribution using the NUTS sampler.</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exercise-13-visualize-the-samples">Exercise 13. Visualize the samples</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exercise-14-compare-the-execution-time-and-the-effective-sample-size-ess-of-the-two-samplers">Exercise 14. Compare the execution time and the effective sample size (ess) of the two samplers</a></li>
+</ul>
+</li>
+</ul>
+
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By CUQIpy developer team
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=3ee479438cf8b5e0d341"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=3ee479438cf8b5e0d341"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
