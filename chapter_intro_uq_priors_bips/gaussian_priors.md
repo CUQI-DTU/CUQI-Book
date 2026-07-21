@@ -1,3 +1,8 @@
+---
+authors:
+  - name: Per Christian Hansen
+---
+
 # 4. Gaussians priors
 
 For pedagogical reasons it instructive to consider the special case

@@ -2,6 +2,8 @@
 numbering:
   equation:
     continue: false
+authors:
+  - name: Per Christian Hansen
 ---
 
 # Chapter 1: Introduction to uncertainty, priors, and Bayesian inverse problems
