@@ -1,5 +1,10 @@
+---
+authors:
+  - name: Per Christian Hansen
+---
+
 (gaussian_priors)=
-# 4. Gaussian priors
+# 4. Gaussians priors
 
 For pedagogical reasons it instructive to consider the special case
 where both the likelihood and the prior are Gaussian. Moreover, this choice is also commonly used in practice. Assuming again a linear forward model $b = A\, x$ and noisy data $b_{\mathrm{obs}}$

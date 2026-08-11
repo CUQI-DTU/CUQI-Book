@@ -1,3 +1,8 @@
+---
+authors:
+  - name: Per Christian Hansen
+---
+
 # 2. Inverse problems and ill-posed problems
 
 In the previous parameter-estimation examples we used data to estimate unknown parameters, in order to illustrate important concepts. These are simple examples of inverse problems. CUQIpy is, in fact, written to perform uncertainty quantification for inverse problems, so we should carefully define such problems.

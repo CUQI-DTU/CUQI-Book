@@ -1,6 +1,11 @@
-# Prior modeling and uncertainty quantification in X-ray computed tomography with application to defect detection in subsea pipes
+---
+authors:
+  - name: Silja L Christensen
+---
 
-## Summary
+# 5. Prior modeling and uncertainty quantification in X-ray computed tomography with application to defect detection in subsea pipes
+
+## 5.1 Summary
 Non-desctructive inspection of subsea pipes can be carried out using X-ray CT. The goal of such inspections is to verify the structural integrity of the pipes to avoid environmentally damaging and costly leaks. In this work, {cite}`Christensen2024`, we focus on defect detection in the pipes. With traditional CT reconstruction techniques a cross-sectional image of the pipe can be obtained given complete and high-quality data. Carrying out defect detection based on such images requires manual inspection or post-processing using for example segmentation techniques. We propose a Bayesian decomposed reconstruction framework that automatically separates the large scale structure of the pipes (circular layers of different materials) from the small defects that we are interested in detecting. In other words, defect segmentation is integrated in the reconstruction method and carried out simultaneously. Another advantage of our framework is that the Bayesian approach enables uncertainty quantification related to the reconstruction.
 
 Our method heavily depends on prior information about the two types of structure in the subsea pipes to separate them. For the large scale layered structure we encode the prior with information about the pipes that is generally known when the pipe manufacturing details are available: the number of layers of different materials, the attenuation properties of each layer, as well as the thickness of each layer. The prior representing the defects is formulated such that it promotes an image with few and small features.
@@ -27,6 +32,6 @@ We demonstrate our proposed methodology using real data from a 2-dimensional CT 
 </figure>
 
 
-## Resources
+## 5.2 Resources
 - Paper: {cite}`Christensen2024`
 - Paper code GitHub repository: https://github.com/CUQI-DTU/Paper-PipeDefectSplitting

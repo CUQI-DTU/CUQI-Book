@@ -1,3 +1,9 @@
+
+---
+authors:
+  - name: Per Christian Hansen
+---
+
 (prior_and_bip)=
 # 3. Prior information and Bayesian inverse problems
 

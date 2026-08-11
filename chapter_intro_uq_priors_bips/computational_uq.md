@@ -1,3 +1,8 @@
+---
+authors:
+  - name: Per Christian Hansen
+---
+
 (section:computational-uq)=
 # 5. Computational UQ: the need for sampling
 

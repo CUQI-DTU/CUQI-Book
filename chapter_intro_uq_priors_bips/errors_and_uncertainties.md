@@ -1,3 +1,8 @@
+---
+authors:
+  - name: Per Christian Hansen
+---
+
 # 1. Errors and uncertainties and why they matter
 
 Measured data inevitably contain errors, and we must understand how such errors influence the results that we compute. In other words, we want to understand the uncertainties in our results caused by the errors in the data. The CUQIpy package provides computational methods that allow us to do that, and this chapters provides the conceptual background for formulating and performing this uncertainty quantification.
