@@ -1,4 +1,3 @@
-
 ---
 authors:
   - name: Per Christian Hansen
