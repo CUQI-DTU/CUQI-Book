@@ -41,11 +41,15 @@ abstract = {Inverse problems, particularly those governed by Partial Differentia
   publisher={Link{\"o}ping University Electronic Press}
 }
 
-@unpublished{Alghamdi2025CochlearAqueduct,
-  author  = {Alghamdi, Amal and Mathiesen, Barbara K. and Miyakoshi, Leo and Nedergaard, Maiken and J{\o}rgensen, Jakob S. and Bork, Peter A. R.},
-  title   = {Cochlear aqueduct advection and diffusion inferred from computed tomography imaging with a Bayesian approach},
-  year    = {2025},
-  note    = {Submitted for publication}
+
+@article{Alghamdi2025CochlearAqueduct,
+  title={Cochlear Aqueduct Advection and Diffusion Inferred from Computed Tomography Imaging with a Bayesian Approach},
+  author={Alghamdi, Amal and Mathiesen, Barbara K and Miyakoshi, Leo and Nedergaard, Maiken and J{\o}rgensen, Jakob S and Bork, Peter AR},
+  journal={Journal of the Association for Research in Otolaryngology},
+  pages={1--13},
+  year={2026},
+  publisher={Springer},
+  url = { https://doi.org/10.1007/s10162-026-01047-x},
 }
 
 @article{everink2025computational,
@@ -215,7 +219,8 @@ author = {Wim {van Aarle} and Willem Jan Palenstijn and Jan {De Beenhouwer} and 
   title={Discrete Inverse Problems: Insight and Algorithms},
   author={Hansen, Per Christian},
   year={2010},
-  publisher={SIAM}
+  publisher={SIAM},
+  url = {https://doi.org/10.1137/1.9780898718836}
 }
 
 @article{neumaier1998solving,
@@ -250,3 +255,142 @@ author = {Wim {van Aarle} and Willem Jan Palenstijn and Jan {De Beenhouwer} and 
   year={2023},
   publisher={Springer}
 }
+
+
+@book{gelman2026bayesian,
+  title={Bayesian workflow},
+  author={Gelman, Andrew and Vehtari, Aki and McElreath, Richard and Simpson, Daniel and Margossian, Charles C and Yao, Yuling and Kennedy, Lauren and Gabry, Jonah and B{\"u}rkner, Paul-Christian and Modr{\'a}k, Martin and others},
+  year={2026},
+  publisher={CRC Press}
+}
+
+@article{bui2012gentle,
+  title={A gentle tutorial on statistical inversion using the Bayesian paradigm},
+  author={Bui-Thanh, Tan},
+  journal={ICES Report},
+  pages={12--18},
+  year={2012}
+}
+
+@book{kakacc2018heat,
+  title={Heat conduction},
+  author={Kaka{\c{c}}, Sad{\i}k and Yener, Yaman and Naveira-Cotta, Carolina P},
+  year={2018},
+  publisher={CRC press}
+}
+
+
+@book{bracewell1999fourier,
+  title     = {The Fourier Transform and Its Applications},
+  author    = {Bracewell, Ronald N.},
+  edition   = {3},
+  year      = {1999},
+  publisher = {McGraw-Hill},
+  isbn      = {9780073039381},
+  url       = {https://books.google.com/books?id=ecH2KgAACAAJ}
+}
+
+
+@article{hansen2002deconvolution,
+  title={Deconvolution and regularization with Toeplitz matrices},
+  author={Hansen, Per Christian},
+  journal={Numerical algorithms},
+  volume={29},
+  number={4},
+  pages={323--378},
+  year={2002},
+  publisher={Springer}
+}
+
+@book{gelman2013bayesian,
+  title     = {Bayesian Data Analysis},
+  edition   = {3},
+  author    = {Gelman, Andrew and Carlin, John B. and Stern, Hal S. and Dunson, David B. and Vehtari, Aki and Rubin, Donald B.},
+  year      = {2013},
+  publisher = {CRC Press},
+  address   = {Boca Raton, FL},
+  isbn      = {9781439840955}
+}
+
+@book{gunzburger2002perspectives,
+  title={Perspectives in flow control and optimization},
+  author={Gunzburger, Max D},
+  year={2002},
+  publisher={SIAM}
+}
+
+@article{hoffman2014no,
+  title={The No-U-Turn sampler: adaptively setting path lengths in Hamiltonian Monte Carlo.},
+  author={Hoffman, Matthew D and Gelman, Andrew and others},
+  journal={J. Mach. Learn. Res.},
+  volume={15},
+  number={1},
+  pages={1593--1623},
+  year={2014},
+  url= {https://arxiv.org/abs/1111.4246}
+}
+
+@article{neal2011mcmc,
+  title={MCMC using Hamiltonian dynamics},
+  author={Neal, Radford M and others},
+  journal={Handbook of markov chain monte carlo},
+  volume={2},
+  number={11},
+  pages={2},
+  year={2011},
+  publisher={Chapman and Hall/CRC},
+  url = {https://arxiv.org/abs/1206.1901}
+}
+
+@book{demkowicz2023mathematical,
+  title={Mathematical theory of finite elements},
+  author={Demkowicz, Leszek F},
+  year={2023},
+  publisher={SIAM},
+  url = {https://doi.org/10.1137/1.9781611977738}
+}
+
+@article{LEVINE2005363,
+title = {Implementing componentwise Hastings algorithms},
+journal = {Computational Statistics & Data Analysis},
+volume = {48},
+number = {2},
+pages = {363-389},
+year = {2005},
+issn = {0167-9473},
+doi = {https://doi.org/10.1016/j.csda.2004.02.002},
+url = {https://www.sciencedirect.com/science/article/pii/S0167947304000283},
+author = {Richard A. Levine and Zhaoxia Yu and William G. Hanley and John J. Nitao},
+keywords = {Markov chain Monte Carlo, Metropolis algorithm, Gibbs sampler, Adaptive sweep strategies, Random proposal distributions},
+abstract = {Markov chain Monte Carlo (MCMC) routines have revolutionized the application of Monte Carlo methods in statistical application and statistical computing methodology. The Hastings sampler, encompassing both the Gibbs and Metropolis samplers as special cases, is the most commonly applied MCMC algorithm. The performance of the Hastings sampler relies heavily on the choice of sweep strategy, that is, the method by which the components or blocks of the random variable X of interest are visited and updated, and the choice of proposal distribution, that is the distribution from which candidate variates are drawn for the accept–reject rule in each iteration of the algorithm. We focus on the random sweep strategy, where the components of X are updated in a random order, and random proposal distributions, where the proposal distribution is characterized by a randomly generated parameter. We develop an adaptive Hastings sampler which learns from and adapts to random variates generated during the algorithm towards choosing the optimal random sweep strategy and proposal distribution for the problem at hand. As part of the development, we prove convergence of the random variates to the distribution of interest and discuss practical implementations of the methods. We illustrate the results presented by applying the adaptive componentwise Hastings samplers developed to sample multivariate Gaussian target distributions and Bayesian frailty models.}
+}
+
+@article{roy2020convergence,
+  title={Convergence diagnostics for markov chain monte carlo},
+  author={Roy, Vivekananda},
+  journal={Annual Review of Statistics and Its Application},
+  volume={7},
+  number={1},
+  pages={387--412},
+  year={2020},
+  publisher={Annual Reviews}
+}
+
+@book{robert1999monte,
+  title={Monte Carlo statistical methods},
+  author={Robert, Christian P and Casella, George and Casella, George},
+  volume={2},
+  year={1999},
+  publisher={Springer}
+}
+
+@article{roininen2014whittle,
+  title={WHITTLE-MAT{\'E}RN PRIORS FOR BAYESIAN STATISTICAL INVERSION WITH APPLICATIONS IN ELECTRICAL IMPEDANCE TOMOGRAPHY.},
+  author={Roininen, Lassi and Huttunen, Janne MJ and Lasanen, Sari},
+  journal={Inverse Problems \& Imaging},
+  volume={8},
+  number={2},
+  pages={561},
+  year={2014}
+}
+

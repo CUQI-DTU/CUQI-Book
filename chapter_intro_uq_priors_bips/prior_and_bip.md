@@ -3,6 +3,7 @@ authors:
   - name: Per Christian Hansen
 ---
 
+(prior_and_bip)=
 # 3. Prior information and Bayesian inverse problems
 
 How do we supply prior information about a solution to an inverse problem,
