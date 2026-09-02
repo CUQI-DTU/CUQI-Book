@@ -45,7 +45,7 @@ project:
             - file: chapter_distributions_random_variables_priors/basics_distributions.ipynb
             - file: chapter_distributions_random_variables_priors/dist_gallery.ipynb
             - file: chapter_distributions_random_variables_priors/markov_random_fields.ipynb
-            - file: chapter_distributions_random_variables_priors/random_variables_and_hierarchical_priors.md
+            #- file: chapter_distributions_random_variables_priors/random_variables_and_hierarchical_priors.md
             - file: chapter_distributions_random_variables_priors/implicit_priors.md
             - file: chapter_distributions_random_variables_priors/entropy.ipynb
         - file: chapter_forward_models_likelihood/index.md #ch5
