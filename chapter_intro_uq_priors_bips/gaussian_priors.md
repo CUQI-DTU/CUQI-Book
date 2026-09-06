@@ -3,6 +3,7 @@ authors:
   - name: Per Christian Hansen
 ---
 
+(gaussian_priors)=
 # 4. Gaussians priors
 
 For pedagogical reasons it instructive to consider the special case
