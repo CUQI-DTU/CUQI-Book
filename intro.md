@@ -11,13 +11,9 @@ This book contains training material on how to use the [CUQIpy](https://github.c
 ## Authors
 - [Amal Mohammed A Alghamdi](https://github.com/amal-ghamdi)
 
-- [Nicolai André Brogaard Riis](https://github.com/nabriis)
-
-- [Jakob Sauer Jørgensen](https://github.com/jakobsj)
-
 - [Chao Zhang](https://github.com/chaozg)
 
-- [Per Christian Hansen](https://orbit.dtu.dk/en/persons/per-christian-hansen/)
+- [Nicolai André Brogaard Riis](https://github.com/nabriis)
 
 - [Jasper M. Everink](https://github.com/jeverink)
 
@@ -26,3 +22,7 @@ This book contains training material on how to use the [CUQIpy](https://github.c
 - [Silja L. Christensen](https://github.com/siljachr)
 
 - [Rémi Laumont](https://github.com/remilaumont)
+
+- [Per Christian Hansen](https://orbit.dtu.dk/en/persons/per-christian-hansen/)
+
+- [Jakob Sauer Jørgensen](https://github.com/jakobsj)
