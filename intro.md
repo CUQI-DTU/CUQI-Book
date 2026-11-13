@@ -5,6 +5,7 @@ This book contains training material on how to use the [CUQIpy](https://github.c
 
 This work was supported by [The Villum Foundation](https://villumfonden.dk) under [Grant No. 25893](https://villumfonden.dk/da/project/cuqi-computational-uncertainty-quantification-inverse-problems) as part of the [Computational Uncertainty Quantification for Inverse problems (CUQI) project](https://sites.dtu.dk/cuqi) at the [Technical University of Denmark](www.dtu.dk).
 
+![Book cover](images/warm.png)
 
 ## Authors
 - [Amal Mohammed A Alghamdi](https://github.com/amal-ghamdi)
